@@ -3,6 +3,12 @@ input[type=button] {
     background-color: white;
     color: black;
 }
+input[type=range] {
+    border: no;
+    background-color: white;
+    color: black;
+    width: 100px;
+}
 body {
     background-color: black;
 }
@@ -57,4 +63,8 @@ body {
     height: 15px;
     position: absolute;
     width: 30px;
+}
+#github_ico {
+    position: relative;
+    top: -5px;
 }
