@@ -12,7 +12,12 @@ class Window < Hash
     require 'rubygame'
     include Rubygame
     def initialize x, y, w = 800, h = 600
-        @dxy = [(w/x).to_i, (h/y).to_i]
+        if ENV.size == 0
+            w = `document.getElementById('screen').width`
+            h = `document.getElementById('screen').height`
+        end
+        p w, h
+        @dxy = [(w/x), (h/y)]
         @screen = Screen.new (@dxy).zip([x, y]).map{|i,j| i*j }
     end
     def write xy, c
@@ -73,16 +78,16 @@ class Emulator
         @pause = false
         @step = false
         @log = false
-        @iterations = 1
+        @iterations = 10
 	end
-    attr_accessor :ready, :pause, :step, :log
+    attr_accessor :ready, :pause, :step, :log, :iterations
     def run_multiple b = self
         `$opal.b = b` if ENV.size == 0
-        @iterations.times { b.run } if b.ready and (not b.pause or (b.pause and b.step))
+        @iterations.times { b.run if b.ready and (not b.pause or (b.pause and b.step)) }
         b.step = false
         if ENV.size == 0
             b.pause = `document.getElementById('pause').checked`
-            #b.iterations = `document.getElementById('iterations').value`.to_i
+            b.iterations = `document.getElementById('iterations').value`.to_i
             b.log = `document.getElementById('log').checked`
             `setTimeout(function() {b.$run_multiple($opal.b)}, 10)`
         else
