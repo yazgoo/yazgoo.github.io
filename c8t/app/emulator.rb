@@ -61,6 +61,14 @@ class Window < Hash
         end
     end
 end
+class Integer
+    def + b
+        (self + b) % 256
+    end
+    def - b
+        (self - b) % 256
+    end
+end
 class Emulator
 	def initialize str, ui
         @width = 64
@@ -69,7 +77,8 @@ class Emulator
 		@mem = ("PJJJPCGCCHPBPIPPBPBPJJPBBPIPBPPIPJPPBCEEPJPJPPJPBPPJPJJOJOJOPIIIPOJJJOPIPIPPIPII").chars.map(&:ord).collect{|x|(x-65)*16}
         @mem = @mem.concat([0] * ((@pc = 0x200) - 80)).concat(str)
         @mem = @mem.concat([0] * 1000)#).chars.map(&:ord)
-		@stack = @v = Array.new(16) { @I = @DT = @ST = 0 }
+		@stack = @v = Array.new(16) { 0 }
+        @I = @DT = @ST = 0 
 #		loop do
 #            sleep 0.001
 #		end
@@ -82,12 +91,14 @@ class Emulator
     attr_accessor :ready, :pause, :step, :log, :iterations
     def run_multiple b = self
         `$opal.b = b` if ENV.size == 0
-        @iterations.times { b.run if b.ready and (not b.pause or (b.pause and b.step)) }
-        b.step = false
         if ENV.size == 0
             b.pause = `document.getElementById('pause').getAttribute('class').indexOf('play') != -1`
             b.iterations = `document.getElementById('iterations').value`.to_i
             b.log = `document.getElementById('log').getAttribute('class').indexOf('file-o') != -1`
+        end
+        @iterations.times { b.run if b.ready and (not b.pause or (b.pause and b.step)) }
+        b.step = false
+        if ENV.size == 0
             `setTimeout(function() {b.$run_multiple($opal.b)}, 10)`
         else
             sleep 0.01
@@ -121,13 +132,13 @@ class Emulator
 			8.times do |dx|
 				xy = [(@v[f00] + dx) % @width, (@v[f0] + dy) % @height]
 				(@video[xy] ||= [0]).push(((line >> (7 - dx)) & 1) ^ @video[xy][0])
-                puts "(#{xy.join(",")}) (#{@video[xy].join(",")})" if self.log
 				@out.write xy, @video[xy][1]
 				@v[0xf] = 1 if @video[xy].delete_at(0) == 1 and @video[xy][0] == 0
 			end
 		end
 	end
 	def run_instruction i
+        0xf.times { |i| @v[i] = @v[i] % 0x100 }
         if self.log
             @assembler ||= Assembler.new
             ins = sprintf "%04x", i
@@ -153,8 +164,8 @@ class Emulator
             when 3 then @v[f00] = @v[f00] ^ @v[f0]
 			when 4 then a = (@v[f0]+@v[f00]);@v[15] = (a != (@v[f00]=(a%256))? 1 : 0)
 			when 5 then @v[0xf] = @v[f00] > @v[f0] ? 1 : 0; @v[f00] = @v[f00] - @v[f0];
-			when 6 then @v[0xf] = (@v[f00] & 1)
-			when 0xe then @v[0xf] = ((@v[f00] & 0xe000) >> 15)
+			when 6 then @v[0xf] = (@v[f00] & 1); @v[f00] /= 2
+			when 0xe then @v[0xf] = ((@v[f00] & 0xe000) >> 15); @v[f00] *= 2
 			end
 		when 1,2 then
             @stack.push(@pc) if(f000 == 2)

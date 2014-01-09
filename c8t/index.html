@@ -4,6 +4,7 @@
     <link rel="stylesheet"
     href="app/font-awesome-4.0.3/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="app.css"/>
+    <script src="app/jquery-1.7.2.min.js"></script>
     <script src="build.js"></script>
     <title>c8t</title>
   </head>
@@ -24,12 +25,27 @@ for(k in pack)
     <br/>
     <br/>
     <script>
+function getParameterProgram()
+{
+    p = location.search.split('p=')[1];
+    if(p == undefined) return false;
+    return p;
+}
+function shareProgramLink()
+{
+    var address = location.href;
+    if(getParameterProgram()) address = address.split("?")[0];
+    address += "?p=" + document.getElementById('editor').value;
+    address = "http://www.github.com";
+    emulator = Opal.Runner.$new().$minify(address);
+}
 window.key = null
+k = [1, 2, 3, 0xc, 4, 5, 6, 0xd, 7, 8, 9, 0xe, 0xa, 0, 0xb, 0xf]
 for(var i = 0; i < 4; i++)
 {
     for(var j = 0; j < 4; j++)
     {
-        s = (4 * i + j).toString(16);
+        s = k[(4 * i + j)].toString(16);
         document.write('<input id="key" class="key '
                 + "key_" + s + '" type="button" value="'
                 + s + '" onclick="window.key=0x' + s + '"/>')
@@ -139,6 +155,9 @@ function check_uncheck(a, on, off)
     <i class="control_button fa fa-file-text-o fa-2x"
         title="log" id="log"
         onclick="check_uncheck(this, 'file-text-o', 'file-o');"></i>
+    <i class="control_button fa fa-link fa-2x"
+        title="share current program" id="share link"
+        onclick="shareProgramLink()"></i>
     <input title="iterations per run" id="iterations"
     type="range" value="10" min="1" max="100"
     onchange="document.getElementById('iterations_text').value = this.value"/>
@@ -191,5 +210,20 @@ add_5:
     RET</textarea>
     <br/>
 </div>
+<script>
+
+if((p = getParameterProgram()))
+    document.getElementById("editor").value = p;
+
+    $("body").keydown(function(e) {
+            if(e.keyCode == 37) window.key = 4;
+            else if(e.keyCode == 39) window.key = 6;
+            else if(e.keyCode == 38) window.key = 2;
+            else if(e.keyCode == 40) window.key = 8;
+            else if(e.keyCode == 32) window.key = 5;
+            });
+
+
+</script>
   </body>
 </html>
