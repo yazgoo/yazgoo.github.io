@@ -12346,7 +12346,7 @@ if (x == null) x = nil;
       var $a, $b, TMP_3, self = this;
       ($a = ($b = self.special).$each, $a._p = (TMP_3 = function(s){var self = TMP_3._s || this;if (s == null) s = nil;
       return address = address.$gsub(s, ("%"['$+'](s.$ord().$to_s(16))))}, TMP_3._s = self, TMP_3), $a).call($b);
-      return address;
+      return address.$gsub("u00a", "%a");
     };
 
     def.$decode = function(address) {
