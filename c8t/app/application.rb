@@ -34,7 +34,7 @@ class Runner
         @special.each do |s|
             address = address.gsub ("%"+ s.ord.to_s(16)), s
         end
-        address
+        address.gsub('\u00a', '\n')
     end
     def minify address
         opts =  { 

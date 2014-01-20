@@ -12353,7 +12353,7 @@ if (x == null) x = nil;
       var $a, $b, TMP_4, self = this;
       ($a = ($b = self.special).$each, $a._p = (TMP_4 = function(s){var self = TMP_4._s || this;if (s == null) s = nil;
       return address = address.$gsub("%"['$+'](s.$ord().$to_s(16)), s)}, TMP_4._s = self, TMP_4), $a).call($b);
-      return address;
+      return address.$gsub("u00a", "\n");
     };
 
     return (def.$minify = function(address) {
