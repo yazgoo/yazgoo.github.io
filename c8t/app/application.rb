@@ -25,6 +25,7 @@ class Runner
         @special = [' ', ',', '/', '?', '=', '\n', ':']
     end
     def encode address
+        puts "kikoo"
         p address
         @special.each do |s|
             address = address.gsub s, (sprintf "%%%02x", s.ord)
