@@ -27,6 +27,7 @@ class Runner
     def encode address
         @special.each do |s|
             address = address.gsub s, (sprintf "%%%02x", s.ord)
+            p address
         end
         address
     end
