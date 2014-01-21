@@ -28,11 +28,13 @@ class Runner
         @special.each do |s|
             address = address.gsub s, (sprintf "%%%02x", s.ord)
         end
+        address
     end
     def decode address
         @special.each do |s|
             address = address.gsub (sprintf "%%%02x", s.ord), s
         end
+        address
     end
     def minify address
         opts =  { 
