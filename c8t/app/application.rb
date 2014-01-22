@@ -35,7 +35,7 @@ class Runner
     end
     def decode address
         @special.reverse.each do |s|
-            address = address.gsub (sprintf "%%%02x", s.ord), s
+            address = address.gsub (sprintf "%%%02X", s.ord), s
         end
         address
     end

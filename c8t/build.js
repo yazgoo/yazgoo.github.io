@@ -12355,7 +12355,7 @@ if (x == null) x = nil;
     def.$decode = function(address) {
       var $a, $b, TMP_4, self = this;
       ($a = ($b = self.special.$reverse()).$each, $a._p = (TMP_4 = function(s){var self = TMP_4._s || this;if (s == null) s = nil;
-      return address = address.$gsub(self.$sprintf("%%%02x", s.$ord()), s)}, TMP_4._s = self, TMP_4), $a).call($b);
+      return address = address.$gsub(self.$sprintf("%%%02X", s.$ord()), s)}, TMP_4._s = self, TMP_4), $a).call($b);
       return address;
     };
 
