@@ -176,7 +176,7 @@ function check_uncheck(a, on, off)
         onclick="check_uncheck(this, 'file-text-o', 'file-o');"></i>
     <i class="control_button fa fa-link fa-2x"
         title="share current program" id="share link"
-        onclick="shareProgramLink()"></i>
+        onclick="Opal.Runner.$new().$minify_program()()"></i>
     <select onchange="launch3(this.value)"
         hidefocus="hidefocus">
         <option>program</option>
