@@ -22,7 +22,7 @@ class Runner
         e
     end
     def initialize
-        @special = ['%', ' ', ',', '/', '?', '=', '\n', ':']
+        @special = ['%', ' ', ',', '/', '?', '=', '\n', ':', '{', '}']
     end
     def encode address
         @special.each do |s|
@@ -39,16 +39,18 @@ class Runner
     def parameter
         pa = `location.search.split('p=')[1]`
         return false if `pa == undefined`
-        decode(pa)
+        JSON.parse decode(pa)
     end
     def minify_program
         address = `location.href`
         address = address.split("?")[0] if parameter
-        address += "?p=" + encode(Element['#editor'].value)
+        address += "?p=" + encode({
+            :title => "unknown", 
+            :content => Element['#editor'].value}.to_json)
         minify address
     end
     def load_program
-        Element['#editor'].value = parameter if parameter
+        Element['#editor'].value = parameter[:content] if parameter
     end
     def minify address
         opts =  { 
