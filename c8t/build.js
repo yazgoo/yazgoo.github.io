@@ -12325,7 +12325,7 @@ if (x == null) x = nil;
     def.$assemble = function(text) {
       var $a, $b, TMP_1, $c, self = this;
       return ($a = ($b = (($c = $scope.Assembler) == null ? $opal.cm('Assembler') : $c).$new().$parse(text).$output()).$map, $a._p = (TMP_1 = function(x){var self = TMP_1._s || this;if (x == null) x = nil;
-      return self.$sprintf("%02x", x)}, TMP_1._s = self, TMP_1), $a).call($b).$join();
+      return self.$sprintf("%02X", x)}, TMP_1._s = self, TMP_1), $a).call($b).$join();
     };
 
     def.$run2 = function(text) {
@@ -12347,7 +12347,7 @@ if (x == null) x = nil;
       self.$puts("kikoo");
       self.$p(address);
       ($a = ($b = self.special).$each, $a._p = (TMP_3 = function(s){var self = TMP_3._s || this;if (s == null) s = nil;
-      address = address.$gsub(s, (self.$sprintf("%%%02x", s.$ord())));
+      address = address.$gsub(s, (self.$sprintf("%%%02X", s.$ord())));
         return self.$p(address);}, TMP_3._s = self, TMP_3), $a).call($b);
       return address;
     };
