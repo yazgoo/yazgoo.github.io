@@ -22,7 +22,7 @@ class Runner
         e
     end
     def initialize
-        @special = [' ', ',', '/', '?', '=', '\n', ':']
+        @special = ['%', ' ', ',', '/', '?', '=', '\n', ':']
     end
     def encode address
         puts "kikoo"
@@ -34,7 +34,7 @@ class Runner
         address
     end
     def decode address
-        @special.each do |s|
+        @special.reverse.each do |s|
             address = address.gsub (sprintf "%%%02x", s.ord), s
         end
         address
