@@ -69,11 +69,13 @@ class Runner
     end
     def list
         opts =  { 
-            :format => "json",
-            :payload => "apiKey=R_f857b8e18d6f401f917086b316e9f3de&login=c8tc8t"
+            :payload => "format=json&q=" + encode("select * from json where url=\"https://bitly.com/u/c8tc8t.json?callback=lol\""),
         }
-        HTTP.new("https://api.bitly.com/v3/user/link_history", "GET", opts) do |response|
-              puts response.body
+        HTTP.new("http://query.yahooapis.com/v1/public/yql", "POST", opts) do |response|
+            p response
+            p JSON.parse(response.body).results.json.data
+        end.errback do |a, b, c|
+            p a, b, c
         end.send!
     end
 end
