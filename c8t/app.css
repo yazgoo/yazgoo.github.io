@@ -45,6 +45,9 @@ select {
     left: -35px;
     top: -20px;
 }
+input[type=text] {
+    border: 1px solid black;
+}
 input[type=range] {
     border: no;
     background-color: transparent;

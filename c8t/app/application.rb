@@ -22,7 +22,7 @@ class Runner
         e
     end
     def initialize
-        @special = ['%', ' ', ',', '/', '?', '=', '\n', ':', '{', '}']
+        @special = ['%', ' ', ',', '/', '?', '=', '\n', ':', '{', '}', '"']
     end
     def encode address
         @special.each do |s|
@@ -45,7 +45,9 @@ class Runner
         address = `location.href`
         address = address.split("?")[0] if parameter
         address += "?p=" + encode({
-            :title => "unknown", 
+            :title => Element['#title'].value, 
+            :author => Element['#author'].value, 
+            :date => Element['#date'].value, 
             :content => Element['#editor'].value}.to_json)
         minify address
     end

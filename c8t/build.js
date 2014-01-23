@@ -12339,7 +12339,7 @@ if (x == null) x = nil;
 
     def.$initialize = function() {
       var self = this;
-      return self.special = ["%", " ", ",", "/", "?", "=", "\n", ":", "{", "}"];
+      return self.special = ["%", " ", ",", "/", "?", "=", "\n", ":", "{", "}", "\""];
     };
 
     def.$encode = function(address) {
@@ -12369,7 +12369,7 @@ if (x == null) x = nil;
       address = location.href;
       if (($a = self.$parameter()) !== false && $a !== nil) {
         address = address.$split("?")['$[]'](0)};
-      address = address['$+']("?p="['$+'](self.$encode($hash2(["title", "content"], {"title": "unknown", "content": (($a = $scope.Element) == null ? $opal.cm('Element') : $a)['$[]']("#editor").$value()}).$to_json())));
+      address = address['$+']("?p="['$+'](self.$encode($hash2(["title", "author", "date", "content"], {"title": (($a = $scope.Element) == null ? $opal.cm('Element') : $a)['$[]']("#title").$value(), "author": (($a = $scope.Element) == null ? $opal.cm('Element') : $a)['$[]']("#author").$value(), "date": (($a = $scope.Element) == null ? $opal.cm('Element') : $a)['$[]']("#date").$value(), "content": (($a = $scope.Element) == null ? $opal.cm('Element') : $a)['$[]']("#editor").$value()}).$to_json())));
       return self.$minify(address);
     };
 

@@ -81,6 +81,9 @@ for(var i = 0; i < 4; i++)
         // Opal.Runner.$new().$disassemble()
         text = game['content']
         document.getElementById('editor').value = text
+        document.getElementById('title').value = game['title']
+        document.getElementById('author').value = game['author']
+        document.getElementById('date').value = game['date']
         var description = game['description'];
         if(description == null) description = "";
         description = description.replace(/\n/g, "<br/>")
@@ -213,6 +216,15 @@ for(k in pack)
         onclick="document.getElementById('editor').value=
         Opal.Runner.$new().$assemble(
         document.getElementById('editor').value)"/>
+        <br/>
+        <input type="text" id="title" placeholder="title"
+        value="key"/>
+        <br/>
+        <input type="text" id="author" placeholder="author"
+        value="yazgoo"/>
+        <br/>
+        <input type="text" id="date" placeholder="date"
+        value="2013"/>
         <br/>
     <textarea id="editor">
 LD v0, 0
