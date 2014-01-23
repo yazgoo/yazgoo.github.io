@@ -68,8 +68,12 @@ class Runner
         end.send!
     end
     def list
-        HTTP.get("http://bitly.com/u/c8tc8t.json") do |response|
+        opts =  { 
+            :format => "json",
+            :payload => "apiKey=R_f857b8e18d6f401f917086b316e9f3de&login=c8tc8t"
+        }
+        HTTP.new("https://api.bitly.com/v3/user/link_history", "GET", opts) do |response|
               puts response.body
-        end
+        end.send!
     end
 end
