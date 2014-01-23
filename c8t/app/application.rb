@@ -69,13 +69,18 @@ class Runner
     end
     def list
         opts =  { 
-            :payload => "format=json&q=" + encode("select * from json where url=\"https://bitly.com/u/c8tc8t.json?callback=lol\""),
+            :payload => "format=json&q=" + encode("select * from json where url=\"https://bitly.com/u/c8tc8t.json\""),
         }
-        HTTP.new("http://query.yahooapis.com/v1/public/yql", "POST", opts) do |response|
-            p response
-            p JSON.parse(response.body).results.json.data
-        end.errback do |a, b, c|
-            p a, b, c
-        end.send!
+        HTTP.new("http://query.yahooapis.com/v1/public/yql?callback=parse_response", "POST", opts).send!
+    end
+    def parse_response response
+        data = `JSON.stringify(response.query.results.json.data)`
+        Element['#choose'].append("<option>----dyn---</option>")
+        JSON.parse(data).each do |l|
+            option_s = l["url"].split("?p=")[1]
+            option = JSON.parse(option_s)
+            Element['#choose'].append("<option value='#{option_s}'>#{option['title']}</option>")
+        end
+        Element['#choose'].append("<option>-------</option>")
     end
 end
