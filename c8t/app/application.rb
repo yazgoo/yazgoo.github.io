@@ -67,20 +67,24 @@ class Runner
             p a, b, c
         end.send!
     end
-    def list
+    @@page = 1
+    def list page=1
+        Element['#choose'].append("<option>----dyn---</option>") if page == 1
         opts =  { 
-            :payload => "format=json&q=" + encode("select * from json where url=\"https://bitly.com/u/c8tc8t.json\""),
+            :payload => "format=json&q=" + encode("select * from json where url=\"https://bitly.com/u/c8tc8t.json?page=#{page}\""),
         }
         HTTP.new("http://query.yahooapis.com/v1/public/yql?callback=parse_response", "POST", opts).send!
     end
     def parse_response response
-        data = `JSON.stringify(response.query.results.json.data)`
-        Element['#choose'].append("<option>----dyn---</option>")
-        JSON.parse(data).each do |l|
-            option_s = l["url"].split("?p=")[1]
-            option = JSON.parse(option_s)
-            Element['#choose'].append("<option value='#{option_s}'>#{option['title']}</option>")
+        if `response.query.results.json.data != undefined`
+            data = `JSON.stringify(response.query.results.json.data)`
+            JSON.parse(data).each do |l|
+                option_s = l["url"].split("?p=")[1]
+                option = JSON.parse(option_s)
+                Element['#choose'].append("<option value='#{option_s}'>#{option['title']}</option>")
+            end
+            @@page += 1
+            list @@page
         end
-        Element['#choose'].append("<option>-------</option>")
     end
 end
