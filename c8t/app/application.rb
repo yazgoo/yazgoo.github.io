@@ -67,4 +67,9 @@ class Runner
             p a, b, c
         end.send!
     end
+    def list
+        HTTP.get("http://bitly.com/u/c8tc8t.json") do |response|
+              puts response.body
+        end
+    end
 end

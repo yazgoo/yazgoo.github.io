@@ -255,8 +255,7 @@ add_5:
 <script>
 
     Opal.Runner.$new().$load_program();
-/*if((p = getParameterProgram()))
-    document.getElementById("editor").value = p;*/
+    Opal.Runner.$new().$list();
 
     $("body").keydown(function(e) {
             if(e.keyCode == 37) window.key = 4;
