@@ -46,7 +46,6 @@ function shareProgramLink()
     Opal.Runner.$new().$minify(address);
 }
 */
-window.key = null
 k = [1, 2, 3, 0xc, 4, 5, 6, 0xd, 7, 8, 9, 0xe, 0xa, 0, 0xb, 0xf]
 for(var i = 0; i < 4; i++)
 {
@@ -55,7 +54,7 @@ for(var i = 0; i < 4; i++)
         s = k[(4 * i + j)].toString(16);
         document.write('<input id="key" class="key '
                 + "key_" + s + '" type="button" value="'
-                + s + '" onclick="window.key=0x' + s + '"/>')
+                + s + '" onclick="Opal.Runner.$new().$keys_push(0x' + s + ')"/>')
     }
         document.write('<br/>')
 }
@@ -132,6 +131,11 @@ function check_uncheck(a, on, off)
         a.setAttribute('class', prefix + off);
     }
 }
+function play_pause()
+{
+    $("#big_play_button").css({'visibility': 'hidden'})
+    check_uncheck(document.getElementById("pause"), 'play', 'pause');
+}
     </script>
     <br/>
         <a href="//flattr.com/submit/auto?user_id=yazgoo&url=http%3A%2F%2Fyazgoo.github.io%2Fc8t">
@@ -146,13 +150,17 @@ function check_uncheck(a, on, off)
 </div>
 <div>
     <div id="screen_container">
-        <canvas id="screen"></canvas>
+        <i class="big_play_button fa fa-youtube-play fa-5x"
+            id="big_play_button"
+            onclick="play_pause();"></i>
+        <canvas id="screen">
+        </canvas>
     </div>
     <div id="control">
         <i class="control_button fa fa-play fa-2x"
             id="pause"
             title="play/pause"
-            onclick="check_uncheck(this, 'play', 'pause');"/></i>
+            onclick="play_pause();"/></i>
         <i class="control_button fa fa-refresh fa-2x" title="run"
             onclick="launch_hexa_or_source()"></i>
     <i id="step" value="step"
@@ -162,9 +170,6 @@ function check_uncheck(a, on, off)
     <i class="control_button fa fa-expand fa-2x"
         title="fullscreen"
         onclick="goFullScreen();"></i>
-    <i class="control_button fa fa-file-text-o fa-2x"
-        title="log" id="log"
-        onclick="check_uncheck(this, 'file-text-o', 'file-o');"></i>
     <i class="control_button fa fa-pencil fa-2x"
         title="hide/show editor"
         onclick="hide_show('#editor_container')"></i>
@@ -254,19 +259,19 @@ add_5:
 </div>
 <script>
 
-    Opal.Runner.$new().$load_program();
+    Opal.Runner.$new().$setup();
     function parse_response(response) {
     Opal.Runner.$new().$parse_response(response);
 }
     Opal.Runner.$new().$list();
 
-    $("body").keydown(function(e) {
+    /*$("body").keydown(function(e) {
             if(e.keyCode == 37) window.key = 4;
             else if(e.keyCode == 39) window.key = 6;
             else if(e.keyCode == 38) window.key = 2;
             else if(e.keyCode == 40) window.key = 8;
             else if(e.keyCode == 32) window.key = 5;
-            });
+            });*/
 
 
 </script>

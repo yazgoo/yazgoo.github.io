@@ -2,12 +2,24 @@ require "opal"
 require "opal-jquery"
 require "assembler"
 require "emulator"
+module Kernel
+    def clear what
+        `clearInterval(#{what})`
+    end
+    def every interval, &block
+        callback = `function(){ #{block.call}; }`
+        `setInterval(callback, #{interval})`
+    end
+end
 class Runner
     def run text
         assembly = Assembler.new.parse(text).output
         e = Emulator.new(assembly, "Window");
         e.run_multiple
         e
+    end
+    def keys_push k
+        @@keys << k
     end
     def disassemble text
         Assembler.new.unparse text
@@ -53,6 +65,26 @@ class Runner
     end
     def load_program
         Element['#editor'].value = parameter[:content] if parameter
+    end
+    def setup
+        @@keys = []
+        %x{ window.key = #{@@keys}}
+        load_program
+        key_to_keypad_key = {37=> 4, 39=> 6, 38=> 2, 40=> 8, 32=> 5}
+        Element['body'].on(:keydown) do |e|
+            keys_push << key_to_keypad_key[e.key_code]
+        end
+        Element['#screen'].on(:mousedown) do |e|
+            left = `e.$target().offset().left`
+            x = (e.page_x - left) / e.target.width
+            @click = every 100 do
+                k = x > 2.0/3 ? 6 : x > 1.0/3 ? 5 : 4
+                keys_push k
+            end
+        end
+        Element['#screen'].on(:mouseup) do |e|
+            clear @click
+        end
     end
     def minify address
         opts =  { 
