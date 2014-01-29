@@ -100,6 +100,14 @@ body {
 #ls.future {
     opacity: 0;
 }
+.spinner {
+    position: relative;
+    top: -165px;
+    left: -180px;
+}
+#driver_process2.future {
+    opacity: 0;
+}
 .comment.future {
     opacity: 0;
 }
@@ -164,48 +172,6 @@ body {
     border-right: 20px solid transparent;
     border-bottom: 20px solid black;
 }
-.driver_process_description { opacity: 0}
-.impress-enabled .driver_process_description { display: block }
-.impress-on-driver_process .driver_process_description {opacity:1}
-.fusermount_process_description { opacity: 0}
-.impress-enabled .fusermount_process_description { display: block }
-.impress-on-fusermount_process .fusermount_process_description {opacity:1}
-.fuse_description { opacity: 0}
-.impress-enabled .fuse_description { display: block }
-.impress-on-fuse .fuse_description {opacity:1}
-.sys_description { opacity: 0}
-.impress-enabled .sys_description { display: block }
-.impress-on-sys .sys_description {opacity:1}
-.proc_description { opacity: 0}
-.impress-enabled .proc_description { display: block }
-.impress-on-proc .proc_description {opacity:1}
-.udev_description { opacity: 0}
-.impress-enabled .udev_description { display: block }
-.impress-on-udev .udev_description {opacity:1}
-.fusermount2_description { opacity: 0}
-.impress-enabled .fusermount2_description { display: block }
-.impress-on-fusermount2 .fusermount2_description {opacity:1}
-.vfs_description { opacity: 0}
-.impress-enabled .vfs_description { display: block }
-.impress-on-vfs .vfs_description {opacity:1}
-.vfs2_description { opacity: 0}
-.impress-enabled .vfs2_description { display: block }
-.impress-on-vfs2 .vfs2_description {opacity:1}
-.ls_description { opacity: 0}
-.impress-enabled .ls_description { display: block }
-.impress-on-ls .ls_description {opacity:1}
-.fuse2_description { opacity: 0}
-.impress-enabled .fuse2_description { display: block }
-.impress-on-fuse2 .fuse2_description {opacity:1}
-.dev_fuse2_description { opacity: 0}
-.impress-enabled .dev_fuse2_description { display: block }
-.impress-on-dev_fuse2 .dev_fuse2_description {opacity:1}
-.driver_process2_description { opacity: 0}
-.impress-enabled .driver_process2_description { display: block }
-.impress-on-driver_process2 .driver_process2_description {opacity:1}
-.ls2_description { opacity: 0}
-.impress-enabled .ls2_description { display: block }
-.impress-on-ls2 .ls2_description {opacity:1}
         </style>
     </head>
     <body>
@@ -274,11 +240,15 @@ body {
                 id="dev_fuse2"></div>
             <div class="arrow" data-rotate="-45"></div>
             <div class="step" data-x="0" data-y="0"
-                id="driver_process2"></div>
+                id="driver_process2">
+                <img src="spinner.gif" class="spinner"/>
+            </div>
             <div class="arrow" data-rotate="-45"></div>
-            <div class="step" data-x="800" data-y="450"></div>
+            <div class="step" data-x="800" data-y="450"
+                id="dev_fuse3"></div>
             <div class="arrow"></div>
-            <div class="step" data-x="800" data-y="800"></div>
+            <div class="step" data-x="800" data-y="800"
+                id="fuse3"></div>
             <div class="arrow" data-x="530"></div>
             <div class="step" data-x="0" data-y="800"></div>
             <div class="arrow" data-rotate="-45"></div>
@@ -287,71 +257,91 @@ body {
             <div class="step" data-x="700" data-y="300"
                 data-scale="2.8"></div>
         </div>
-        <div class="description driver_process_description">
-            <li>FUSE allows to write file systems
-            which are processes running in userspace.</li>
-            <li>A fuse process is launched with a mountpoint
-            as argument: it is the root path where the FS
-            will be available. Let's say its /mountpoint here</li>
-            <li>When launched, the process will fork
-            fusermount program via libfuse</li>
-        </div>
-        <div class="description fusermount_process_description">
-            <li>fusermount is owned by root with setuid bit</li>
-            <li>The first thing fusermount does is ensure FUSE
-            driver is in the kernel: lets say its not</li>
-        </div>
-        <div class="description fuse_description">
-            <li>FUSE driver is inserted</li>
-            <li>FUSE filesystem is declared in the VFS</li>
-            <li>A misc block device is registered</li>
-        </div>
-        <div class="description sys_description">
-            a file appears in /sys to notify there's a new 
-            block device
-        </div>
-        <div class="description proc_description">
-            /proc/misc now contains the minor number for this device.
-            <br/>The major's is misc's (10)
-        </div>
-        <div class="description udev_description">
-            Since a new block device appeared in /sys, udev creates
-            /dev/fuse (mknod based on misc's major and fuse minor)
-        </div>
-        <div class="description fusermount2_description">
-            /dev/fuse is available. fusermount can now:
+        <div id="descriptions">
+            <div class="driver_process_description">
+                <li>FUSE allows to write file systems
+                which are processes running in userspace.</li>
+                <li>A fuse process is launched with a mountpoint
+                as argument: it is the root path where the FS
+                will be available. Let's say its /mountpoint here
+                </li>
+                <li>When launched, the process will fork
+                fusermount program via libfuse</li>
+            </div>
+            <div class="fusermount_process_description">
+                <li>fusermount is owned by root with setuid bit</li>
+                <li>The first thing fusermount does is ensure FUSE
+                driver is in the kernel: lets say its not</li>
+            </div>
+            <div class="fuse_description">
+                <li>FUSE driver is inserted</li>
+                <li>FUSE filesystem is declared in the VFS</li>
+                <li>A misc block device is registered</li>
+            </div>
+            <div class="sys_description">
+                a file appears in /sys to notify there's a new 
+                block device
+            </div>
+            <div class="proc_description">
+                /proc/misc now contains the minor number for this device.
+                <br/>The major's is misc's (10)
+            </div>
+            <div class="udev_description">
+                Since a new block device appeared in /sys, udev creates
+                /dev/fuse (mknod based on misc's major and fuse minor)
+            </div>
+            <div class="fusermount2_description">
+                /dev/fuse is available. fusermount can now:
                 <li>Open /dev/fuse and send its fd to the 
                 file system process for it
                 to comunicate with FUSE driver</li>
                 <li>mount -t fuse /dev/fuse /mountpoint</li>
-        </div>
-        <div class="description vfs_description">
-            After this mount, VFS associates /mountpoint with
-            FUSE filesystem.
-            The filesystem in user space can now be used.
-        </div>
-        <div class="description ls_description">
-            Let's say we launch an ls command on a file managed by
-            FUSE.
-        </div>
-        <div class="description vfs2_description">
-            This will issue a stat syscall to the VFS.
-        </div>
-        <div class="description fuse2_description">
-            Which will in turn call the stat implementation
-            from fuse.
-        </div>
-        <div class="description dev_fuse2_description">
-            Which will write a request to /dev/fuse.
-        </div>
-        <div class="description driver_process2_description">
-            That request will be read by the FS in userspace.<br/>
-            The FS will issue its implementation of stat.<br/>
-            Then it will write the result in /dev/fuse
-        </div>
-        <div class="description ls2_description">
-            ls process receives the stats generated
-            by fuse process.
+            </div>
+            <div class="vfs_description">
+                After this mount, VFS associates /mountpoint with
+                FUSE filesystem.
+                The filesystem in user space can now be used.
+            </div>
+            <div class="ls_description">
+                Let's say we launch an ls command on a file managed by
+                FUSE.
+            </div>
+            <div class="vfs2_description">
+                This will issue a stat syscall to the VFS.
+            </div>
+            <div class="fuse2_description">
+                Which will in turn call the stat implementation
+                from fuse.<br/>
+                This implementation will call request_send(),
+                which will add the request to the list
+                of request structure.
+            </div>
+            <div class="dev_fuse2_description">
+                <li>the FS in userspace process, via libfuse,
+                reads /dev/fuse.
+                The FUSE in kernel driver callback fuse_dev_read()
+                is called.</li>
+                <li>The callback returns commands from the list 
+                of request to libfuse</li>
+            </div>
+            <div class="driver_process2_description">
+                <li>libfuse calls the the FS in userspace
+                implementation of stat</li>
+                <li>The FS returns its result</li>
+            </div>
+            <div class="dev_fuse3_description">
+                <li>Then libfuse writes the result to /dev/fuse</li>
+            </div>
+            <div class="fuse3_description">
+                <li>This calls fuse_dev_write() which receives
+                the responses and places them in req-&gt;out</li>
+                <li>request_send() unblocks as there is a response.
+                it sends its result to the stat implementation</li>
+            </div>
+            <div class="ls2_description">
+                ls process receives the stats generated
+                by fuse process.
+            </div>
         </div>
         <script type="text/javascript" src="jquery-1.11.0.min.js">
         </script>
@@ -419,6 +409,15 @@ $("#ls").on("impress:stepenter", function(e) {
 $("#driver_process2").on("impress:stepenter", function(e) {
             $("#ls").nextAll(".arrow").hide()
             $("#driver_process2").nextAll(".arrow").show()
+        })
+$("#descriptions").children().each(function() {
+        id = this.className.split("_description")[0];
+        style = document.styleSheets[0]
+        len = style.cssRules.length
+        style.insertRule('.impress-on-' + id + ' .' + this.className + " { opacity: 1}", len);
+        style.insertRule('.impress-enabled .' + this.className + " { display: block}", len);
+        style.insertRule('.' + this.className + " { opacity: 0}", len);
+        $(this).addClass('description')
         })
         </script>
         <script type="text/javascript" src="impress.js"></script>
