@@ -80,7 +80,13 @@ body {
     height: 400px;
 }
 .future {
+    /*opacity: 0;*/
+}
+#dev_fuse.future {
     opacity: 0;
+}
+.arrow.future {
+    opacity: 1;
 }
 .present {
     opacity: 1;
@@ -112,6 +118,48 @@ body {
     font-size: 20px;
     padding: 20px;
     z-index: 100;
+}
+.arrow-body-common {
+    position: relative;
+    background-color: black;
+    float: left;
+}
+.arrow-body-horizontal {
+    width: 90%;
+    height: 10px;
+    top: 14px;
+}
+.arrow-body-vertical {
+    width: 10px;
+    height: 90%;
+    left: 14px;
+}
+.arrow-end {
+    width: 0; 
+    height: 0; 
+    position: relative;
+    left: -1px;
+    float: left;
+}
+.arrow-right {
+    border-bottom: 20px solid transparent;
+    border-top: 20px solid transparent;
+    border-left: 20px solid black;
+}
+.arrow-left {
+    border-bottom: 20px solid transparent;
+    border-top: 20px solid transparent;
+    border-right: 20px solid black;
+}
+.arrow-down {
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid black;
+}
+.arrow-up {
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid black;
 }
 .driver_process_description { opacity: 0}
 .impress-enabled .driver_process_description { display: block }
@@ -152,6 +200,9 @@ body {
 .driver_process2_description { opacity: 0}
 .impress-enabled .driver_process2_description { display: block }
 .impress-on-driver_process2 .driver_process2_description {opacity:1}
+.ls2_description { opacity: 0}
+.impress-enabled .ls2_description { display: block }
+.impress-on-ls2 .ls2_description {opacity:1}
         </style>
     </head>
     <body>
@@ -162,17 +213,21 @@ body {
                 <div class="lib box green">libfuse</div>
                 <div class="lib box salmon">glib</div>
             </div>
+            <div class="arrow"></div>
             <div id="fusermount_process" class="step" data-x="800"
                 data-y="0">
                 <div class="process box">fusermount</div>
             </div>
-            <div class="step kernel box" data-x="800" data-y="500">
+            <div class="step kernel box skip"
+                data-x="800" data-y="500">
                 Kernel land
             </div>
+            <div class="arrow"></div>
             <div id="fuse" class="step box green" data-x="800"
                 data-y="800">
                 FUSE driver
             </div>
+            <div class="arrow" data-rotate="60"></div>
             <div class="step box blue long" data-x="1400"
                 data-y="450" id="sys">
                 /sys/class/misc/fuse
@@ -181,37 +236,51 @@ body {
                 id="proc">
                 /proc/misc
             </div>
+            <div class="down arrow"
+                data-x="1620"></div>
             <div class="step process box" data-x="1600" data-y="0"
                 id="udev">
                 udev
             </div>
+            <div class="arrow" data-rotate="60"></div>
             <div class="step box yellow" data-x="800"
-                data-y="450">
+                data-y="450" id="dev_fuse">
                 /dev/fuse
             </div>
+            <div class="arrow"></div>
             <div class="step" data-x="800" data-y="0"
                 id="fusermount2"></div>
+            <div class="arrow" data-rotate="45"></div>
             <div class="step box green long large"
                 data-x="0" data-y="800" id="vfs">
                 VFS
             </div>
             <div class="step process long box"
                 data-x="-800" data-y="0" id="ls">
-                    ls /mountpoint/file
+                    ls -l /mountpoint/file
                     <div class="lib box salmon">glib</div>
             </div>
+            <div class="arrow" data-rotate="-45"></div>
             <div class="step" data-x="0" data-y="800"
                 id="vfs2"></div>
+            <div class="arrow" data-x="530"></div>
             <div class="step" data-x="800" data-y="800"
                 id="fuse2"></div>
+            <div class="arrow"></div>
             <div class="step" data-x="800" data-y="450"
                 id="dev_fuse"></div>
+            <div class="arrow" data-rotate="-45"></div>
             <div class="step" data-x="0" data-y="0"
                 id="driver_process2"></div>
+            <div class="arrow" data-rotate="-45"></div>
             <div class="step" data-x="800" data-y="450"></div>
+            <div class="arrow"></div>
             <div class="step" data-x="800" data-y="800"></div>
+            <div class="arrow" data-x="530"></div>
             <div class="step" data-x="0" data-y="800"></div>
-            <div class="step" data-x="-800" data-y="0"></div>
+            <div class="arrow" data-rotate="-45"></div>
+            <div class="step" data-x="-800" data-y="0"
+                id="ls2"></div>
             <div class="step" data-x="700" data-y="300"
                 data-scale="2.8"></div>
         </div>
@@ -277,9 +346,79 @@ body {
             The FS will issue its implementation of stat.<br/>
             Then it will write the result in /dev/fuse
         </div>
+        <div class="description ls2_description">
+            ls process receives the stats generated
+            by fuse process.
+        </div>
+        <script type="text/javascript" src="jquery-1.11.0.min.js">
+        </script>
+        <script>
+function do_skip(item, a)
+{
+    classes = []
+    do {
+        item = a(item);
+        classes = item.attr('class').split(' ');
+        console.log(classes, classes.indexOf('skip'));
+    }
+    while(classes.indexOf('skip') != -1)
+    return item;
+}
+function get_coordinates(i)
+{
+    next = do_skip($(i), function(a) { return a.next() });
+    prev = do_skip($(i), function(a) { return a.prev() });
+    console.log(next);
+    console.log(prev);
+    xb = parseInt(next.attr('data-x'))
+    xa = parseInt(prev.attr('data-x'))
+    yb = parseInt(next.attr('data-y'))
+    ya = parseInt(prev.attr('data-y'))
+    dx = xb - xa
+    dy = yb - ya
+    return [Math.abs((dx == 0 ? dy : dx) * 0.4), xa + dx / 2, ya + dy / 2, Math.abs(dy) > 0 ? (dy > 0 ? 'down' : 'up') : (dx > 0 ? 'right' : 'left'), ]
+}
+$(".arrow").each(function(i) {
+        p = get_coordinates(this);
+        console.log(p)
+        classes = this.className.split(' ')
+        direction = way = ''
+        if(classes.indexOf('right') != -1) { way = 'right' }
+        else if(classes.indexOf('down') != -1) { way = 'down' }
+        else if(classes.indexOf('up') != -1) { way = 'up' }
+        else way = p[3];
+        direction = way == "up" || way == "down" ? 'vertical' : 'horizontal'
+        what = direction == 'horizontal' ? 'width' : 'height'
+        //p = $(this).attr('p').split(',')
+        if($(this).attr('data-x') == undefined) $(this).attr('data-x', p[1])
+        if($(this).attr('data-y') == undefined) $(this).attr('data-y', p[2])
+        css = {}; css[what] = p[0]
+        $(this).addClass('step')
+        $(this).addClass('skip')
+        $(this).css(css)
+        html = ['<div class="arrow-body-common arrow-body-' + direction + '"></div>', '<div class="arrow-end arrow-' + way + '"></div>']
+        if(way == 'left' || way == 'up') html.reverse()
+        $(this).html(html.join())
+        })
+$("#driver_process").on("impress:stepenter", function(e) {
+            $("#udev").nextAll(".arrow").hide()
+        })
+$("#udev").on("impress:stepenter", function(e) {
+            $("#driver_process").nextAll(".arrow").hide()
+            $("#udev").nextAll(".arrow").show()
+            $("#ls").nextAll(".arrow").hide()
+        })
+$("#ls").on("impress:stepenter", function(e) {
+            $("#driver_process").nextAll(".arrow").hide()
+            $("#ls").nextAll(".arrow").show()
+            $("#driver_process2").nextAll(".arrow").hide()
+        })
+$("#driver_process2").on("impress:stepenter", function(e) {
+            $("#ls").nextAll(".arrow").hide()
+            $("#driver_process2").nextAll(".arrow").show()
+        })
+        </script>
         <script type="text/javascript" src="impress.js"></script>
         <script>impress().init();
 window.location.hash = "#/lol"
         </script>
-    </body>
-</html>
