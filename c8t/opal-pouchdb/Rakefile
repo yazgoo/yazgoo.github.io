@@ -1,0 +1,12 @@
+require 'opal'
+require 'opal-sprockets'
+desc "Build build/opal-pouchdb.js"
+task :build do
+    require 'fileutils'
+    FileUtils.mkdir_p 'build'
+    env = Opal::Environment.new
+    env.append_path 'opal'
+    File.open("build/opal-pouchdb.js", "w+") do |out|
+        out << env["opal-pouchdb"].to_s
+    end
+end

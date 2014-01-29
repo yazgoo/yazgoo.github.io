@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>How fuse filesystem works</title>
+        <meta http-equiv="Content-Type"
+        content="text/html; charset=UTF-8">
+        <style>
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+body {
+    font-family: 'PT Sans', sans-serif;
+    min-height: 740px;
+
+    background: rgb(215, 215, 215);
+    background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(rgb(240, 240, 240)), to(rgb(190, 190, 190)));
+    background: -webkit-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+    background: -moz-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+    background: -ms-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+    background: -o-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+    background: radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+}
+.box {
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, .3);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+    color: rgb(102, 102, 102);
+    text-shadow: 0 2px 2px rgba(0, 0, 0, .1);
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 60px;
+    line-height: 36px;
+    letter-spacing: -1px;
+    padding: 40px 60px;
+    margin: 20px;
+    text-align: center;
+}
+.kernel {
+    width: 10000px;
+    height: 1000px;
+    top: 500px;
+    left: -400px;
+}
+.green {
+    background-color: #daf6bf;
+}
+.salmon {
+    background-color: #ffdbb6;
+}
+.blue {
+    background-color: #d5ebff;
+}
+.yellow {
+    background-color: #f7ff7f;
+}
+.process {
+    display: block;
+}
+.long {
+    width: 600px;
+}
+.large {
+    height: 400px;
+}
+.future {
+    opacity: 0;
+}
+.present {
+    opacity: 1;
+    transition: opacity .1s ease-in-out;
+    -moz-transition: opacity .1s ease-in-out;
+    -webkit-transition: opacity .1s ease-in-out;
+}
+.past {
+    opacity: 1;
+}
+.comment.future {
+    opacity: 0;
+}
+.comment.present {
+    opacity: 1;
+}
+.comment.past {
+    opacity: 0;
+}
+.description {
+    display: none;
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 50%;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.5);
+    color: #EEE;
+    font-size: 20px;
+    padding: 20px;
+    z-index: 100;
+}
+.driver_process_description { opacity: 0}
+.impress-enabled .driver_process_description { display: block }
+.impress-on-driver_process .driver_process_description {opacity:1}
+.fusermount_process_description { opacity: 0}
+.impress-enabled .fusermount_process_description { display: block }
+.impress-on-fusermount_process .fusermount_process_description {opacity:1}
+.fuse_description { opacity: 0}
+.impress-enabled .fuse_description { display: block }
+.impress-on-fuse .fuse_description {opacity:1}
+.sys_description { opacity: 0}
+.impress-enabled .sys_description { display: block }
+.impress-on-sys .sys_description {opacity:1}
+.proc_description { opacity: 0}
+.impress-enabled .proc_description { display: block }
+.impress-on-proc .proc_description {opacity:1}
+.udev_description { opacity: 0}
+.impress-enabled .udev_description { display: block }
+.impress-on-udev .udev_description {opacity:1}
+.fusermount2_description { opacity: 0}
+.impress-enabled .fusermount2_description { display: block }
+.impress-on-fusermount2 .fusermount2_description {opacity:1}
+.vfs_description { opacity: 0}
+.impress-enabled .vfs_description { display: block }
+.impress-on-vfs .vfs_description {opacity:1}
+.vfs2_description { opacity: 0}
+.impress-enabled .vfs2_description { display: block }
+.impress-on-vfs2 .vfs2_description {opacity:1}
+.ls_description { opacity: 0}
+.impress-enabled .ls_description { display: block }
+.impress-on-ls .ls_description {opacity:1}
+.fuse2_description { opacity: 0}
+.impress-enabled .fuse2_description { display: block }
+.impress-on-fuse2 .fuse2_description {opacity:1}
+.dev_fuse_description { opacity: 0}
+.impress-enabled .dev_fuse_description { display: block }
+.impress-on-dev_fuse .dev_fuse_description {opacity:1}
+.driver_process2_description { opacity: 0}
+.impress-enabled .driver_process2_description { display: block }
+.impress-on-driver_process2 .driver_process2_description {opacity:1}
+        </style>
+    </head>
+    <body>
+        <div id="impress">
+            <div id="driver_process" class="step process box"
+                data-x="0" data-y="0">
+                Fuse Driver process
+                <div class="lib box green">libfuse</div>
+                <div class="lib box salmon">glib</div>
+            </div>
+            <div id="fusermount_process" class="step" data-x="800"
+                data-y="0">
+                <div class="process box">fusermount</div>
+            </div>
+            <div class="step kernel box" data-x="800" data-y="500">
+                Kernel land
+            </div>
+            <div id="fuse" class="step box green" data-x="800"
+                data-y="800">
+                FUSE driver
+            </div>
+            <div class="step box blue long" data-x="1400"
+                data-y="450" id="sys">
+                /sys/class/misc/fuse
+            </div>
+            <div class="step box blue" data-x="2000" data-y="450"
+                id="proc">
+                /proc/misc
+            </div>
+            <div class="step process box" data-x="1600" data-y="0"
+                id="udev">
+                udev
+            </div>
+            <div class="step box yellow" data-x="800"
+                data-y="450">
+                /dev/fuse
+            </div>
+            <div class="step" data-x="800" data-y="0"
+                id="fusermount2"></div>
+            <div class="step box green long large"
+                data-x="0" data-y="800" id="vfs">
+                VFS
+            </div>
+            <div class="step process long box"
+                data-x="-800" data-y="0" id="ls">
+                    ls /mountpoint/file
+                    <div class="lib box salmon">glib</div>
+            </div>
+            <div class="step" data-x="0" data-y="800"
+                id="vfs2"></div>
+            <div class="step" data-x="800" data-y="800"
+                id="fuse2"></div>
+            <div class="step" data-x="800" data-y="450"
+                id="dev_fuse"></div>
+            <div class="step" data-x="0" data-y="0"
+                id="driver_process2"></div>
+            <div class="step" data-x="800" data-y="450"></div>
+            <div class="step" data-x="800" data-y="800"></div>
+            <div class="step" data-x="0" data-y="800"></div>
+            <div class="step" data-x="-800" data-y="0"></div>
+            <div class="step" data-x="700" data-y="300"
+                data-scale="2.8"></div>
+        </div>
+        <div class="description driver_process_description">
+            <li>FUSE allows to write file systems
+            which are processes running in userspace.</li>
+            <li>A fuse process is launched with a mountpoint
+            as argument: it is the root path where the FS
+            will be available. Let's say its /mountpoint here</li>
+            <li>When launched, the process will fork
+            fusermount program via libfuse</li>
+        </div>
+        <div class="description fusermount_process_description">
+            <li>fusermount is owned by root with setuid bit</li>
+            <li>The first thing fusermount does is ensure FUSE
+            driver is in the kernel: lets say its not</li>
+        </div>
+        <div class="description fuse_description">
+            <li>FUSE driver is inserted</li>
+            <li>FUSE filesystem is declared in the VFS</li>
+            <li>A misc block device is registered</li>
+        </div>
+        <div class="description sys_description">
+            a file appears in /sys to notify there's a new 
+            block device
+        </div>
+        <div class="description proc_description">
+            /proc/misc now contains the minor number for this device
+            The major's is misc's (10)
+        </div>
+        <div class="description udev_description">
+            Since a new block device appeared in /sys, udev creates
+            /dev/fuse (mknod based on misc's major and fuse minor)
+        </div>
+        <div class="description fusermount2_description">
+            /dev/fuse is available. fusermount can now:
+                <li>Open /dev/fuse and send its fd to the 
+                file system process for it
+                to comunicate with FUSE driver</li>
+                <li>mount -t fuse /dev/fuse /mountpoint</li>
+        </div>
+        <div class="description vfs_description">
+            After this mount, VFS associates /mountpoint with
+            FUSE filesystem.
+            The filesystem in user space can now be used.
+        </div>
+        <div class="description ls_description">
+            Let's say we launch an ls command on a file managed by
+            FUSE.
+        </div>
+        <div class="description vfs2_description">
+            This will issue a stat syscall to the VFS.
+        </div>
+        <div class="description fuse2_description">
+            Which will in turn call the stat implementation
+            from fuse.
+        </div>
+        <div class="description dev_fuse_description">
+            Which will write a request to /dev/fuse.
+        </div>
+        <div class="description driver_process2_description">
+            That request will be read by the FS in userspace.<br/>
+            The FS will issue its implementation of stat.<br/>
+            Then it will write the result in /dev/fuse
+        </div>
+        <script type="text/javascript" src="impress.js"></script>
+        <script>impress().init();
+window.location.hash = "#/lol"
+        </script>
+    </body>
+</html>
