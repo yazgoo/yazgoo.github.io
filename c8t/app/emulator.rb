@@ -23,7 +23,34 @@ class Window < Hash
         u = [0, 1].map { |a| xy.zip(@dxy).map{|i,j| (i + a)*j } }
         @screen.draw_box_s(u[0], u[1], [c * 0xff] * 3).update
     end
-    def beep() end
+    def beep()
+        if ENV.size == 0
+            dt = 167
+            @@beep_duration ||= 0
+            `var oscillator = undefined`
+            if @@beep_duration == 0
+                %x{ audio = new AudioContext()
+            oscillator = audio.createOscillator()
+            oscillator.type = "triangle"
+            oscillator.frequency.value = 440;
+            oscillator.connect(audio.destination)
+            oscillator.start(0);
+                }
+                int = every dt do
+                    @@beep_duration -= dt * 2
+                    if @@beep_duration < 0
+                        @@beep_duration = 0
+                        `oscillator.stop(0)`
+                        clear int
+                    end
+                end
+            end
+            now = Time.now
+            @last_call ||= now
+            @@beep_duration += ((now - @last_call) * 1000).to_i + 1
+            @last_call = now
+        end
+    end
     attr_accessor :eq, :block, :on_unblock
     def unqueue a = self
         i = nil
@@ -78,15 +105,17 @@ class Emulator
         @pause = false
         @step = false
         @log = false
+        @sound = false
         @iterations = 10
 	end
-    attr_accessor :ready, :pause, :step, :log, :iterations
+    attr_accessor :ready, :pause, :step, :log, :iterations, :sound
     def run_multiple b = self
         `$opal.b = b` if ENV.size == 0
         if ENV.size == 0
             b.pause = `document.getElementById('pause').getAttribute('class').indexOf('play') != -1`
             b.iterations = `document.getElementById('iterations').value`.to_i
             b.log = `document.getElementById('log').getAttribute('class').indexOf('file-o') != -1`
+            b.sound = `document.getElementById('sound').getAttribute('class').indexOf('volume-up') != -1`
         end
         @iterations.times { b.run if b.ready and (not b.pause or (b.pause and b.step)) }
         b.step = false
@@ -104,7 +133,7 @@ class Emulator
             @t = Time.now
             @DT -= 1 if @DT > 0
             if (@ST -= 1) > 0
-                @out.beep
+                @out.beep if @sound
             else
                 @ST = 0
             end
@@ -113,6 +142,7 @@ class Emulator
 	def key_pressed mode, char = @in.get_current_key
         f00 = (@i & 0xf00) >> (2 * 4)
 		test = (char.nil? or char.to_i != @v[f00])
+        #p "#{char} was pressed, expected #{@v[f00]} => #{test} => #{((!mode && test) || (mode && !test))}" if not char.nil?
         @pc += 2 if ((!mode && test) || (mode && !test))
 	end
 	def draw
@@ -127,7 +157,6 @@ class Emulator
                 if xy[0] < @width or xy[1] < @height
                     (@video[xy] ||= [0]).push(((line >> (7 - dx)) & 1) ^ @video[xy][0])
                     @out.write xy, @video[xy][1]
-                    p xy, @video[xy][1] if log
                     @v[0xf] = 1 if @video[xy].delete_at(0) == 1 and @video[xy][0] == 0
                 end
 			end

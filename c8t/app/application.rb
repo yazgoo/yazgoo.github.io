@@ -10,6 +10,10 @@ module Kernel
         callback = `function(){ #{block.call}; }`
         `setInterval(callback, #{interval})`
     end
+    def after interval, &block
+        callback = `function(){ #{block.call}; }`
+        `setTimeout(callback, #{interval})`
+    end
 end
 class Runner
     def run text
@@ -19,7 +23,7 @@ class Runner
         e
     end
     def keys_push k
-        @@keys << k
+        @@keys << [k, Time.new]
     end
     def disassemble text
         Assembler.new.unparse text
@@ -72,7 +76,7 @@ class Runner
         load_program
         key_to_keypad_key = {37=> 4, 39=> 6, 38=> 2, 40=> 8, 32=> 5}
         Element['body'].on(:keydown) do |e|
-            keys_push << key_to_keypad_key[e.key_code]
+            keys_push key_to_keypad_key[e.key_code]
         end
         Element['#screen'].on(:mousedown) do |e|
             left = `e.$target().offset().left`
@@ -83,6 +87,7 @@ class Runner
             end
         end
         Element['#screen'].on(:mouseup) do |e|
+            e.target.focus()
             clear @click
         end
     end
@@ -101,7 +106,6 @@ class Runner
     end
     @@page = 1
     def list page=1
-        Element['#choose'].append("<option>----dyn---</option>") if page == 1
         opts =  { 
             :payload => "format=json&q=" + encode("select * from json where url=\"https://bitly.com/u/c8tc8t.json?page=#{page}\""),
         }
@@ -118,5 +122,80 @@ class Runner
             @@page += 1
             list @@page
         end
+    end
+    def writeHelp
+        Element["#description"].html(<<-eos
+This is a chip8 emulator.<br/>
+On the right, you have an editor with the current program.<br/>
+You can either erase it or (dis)assemble it.<br/>
+The assembly is in hexadecimal.<br/>
+You can start playing the current program with the play button.<br/>
+Once started, the default program prints the current key pressed.
+<br/>
+Keys, from 0 to f, are available on the left.<br/>
+You can pause, reload, fullscreen the current program.<br/>
+Finaly you can load ROMs via the upper left drop down menu.<br/>
+The editor allows you to modify/write your own program.<br/>
+Once your modification is done, just press the reload button.<br/>
+You can pause the program, enable logging and playing it
+step by step.<br/>
+Some usefull links:
+<ul><li><a href=http://www.chip8.com>chip8.com</a></li>
+<li><a href=http://devernay.free.fr/hacks/chip8/C8TECH10.HTM>
+a really good description</a></li></ul>
+eos
+)
+    end
+    def goFullScreen
+        canvas = Element["#screen"]
+        %x{ if(canvas.requestFullScreen)
+            canvas.requestFullScreen()
+        else if(canvas.webkitRequestFullScreen != undefined)
+            canvas.webkitRequestFullScreen()
+        else if(canvas.mozRequestFullScreen != undefined)
+            canvas.mozRequestFullScreen() }
+        return
+    end
+    def fill_keyboard
+        k = [1,2,3,0xc,4,5,6,0xd,7,8,9,0xe,0xa,0,0xb,0xf]
+        html = ""
+        4.times do |i|
+            4.times do |j|
+                s = k[(4 * i + j)].to_s(16)
+                html += "<input id='key' class='key key_#{s}'\
+                type='button' value='#{s}'\ 
+                onclick='window.runner.$keys_push(0x#{s})'/>"
+            end
+            html += "<br/>"
+        end
+        Element["#keyboard"].html html
+    end
+    def hide_show g
+        e = Element[g]
+        e.toggle
+        screen_width = e.parent.css('width').to_f
+        show = e.css('display') != 'none'
+        f = Element['#screen_container']
+        _p = f.css('width').to_f
+        _p /= screen_width
+        size = (_p + (show ? -1 : 1) * 0.2) * screen_width
+        f.width(size)
+        Element['#control'].width(size)
+    end
+    def check_uncheck a, on, off
+        prefix = 'control_button fa fa-2x fa-';
+        %x{
+        if(a.getAttribute('class').indexOf(on) == -1) {
+            a.setAttribute('class', prefix + on);
+        }
+        else {
+            if(emulator == null) launch_hexa_or_source();
+                a.setAttribute('class', prefix + off);
+        }}
+        return
+    end
+    def play_pause
+        Element["#big_play_button"].css :visibility => :hidden
+        check_uncheck `document.getElementById("pause")`, "play", "pause"
     end
 end
