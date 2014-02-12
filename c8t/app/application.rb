@@ -16,11 +16,12 @@ module Kernel
     end
 end
 class Runner
+    attr_accessor :emulator
     def run text
         assembly = Assembler.new.parse(text).output
-        e = Emulator.new(assembly, "Window");
-        e.run_multiple
-        e
+        @emulator = Emulator.new(assembly, "Window");
+        @emulator.run_multiple
+        @emulator
     end
     def keys_push k
         @@keys << [k, Time.new]
@@ -39,6 +40,8 @@ class Runner
     end
     def initialize
         @special = ['%', ' ', ',', '/', '?', '=', '\n', ':', '{', '}', '"']
+        fill_keyboard
+        setup
     end
     def encode address
         @special.each do |s|
@@ -147,13 +150,18 @@ eos
 )
     end
     def goFullScreen
-        canvas = Element["#screen"]
-        %x{ if(canvas.requestFullScreen)
-            canvas.requestFullScreen()
-        else if(canvas.webkitRequestFullScreen != undefined)
-            canvas.webkitRequestFullScreen()
-        else if(canvas.mozRequestFullScreen != undefined)
-            canvas.mozRequestFullScreen() }
+        %x{ 
+        elem = document.getElementById("screen");
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+          } else if (elem.msRequestFullscreen) {
+              elem.msRequestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+              elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) {
+              elem.webkitRequestFullscreen();
+        }
+        }
         return
     end
     def fill_keyboard
@@ -184,12 +192,13 @@ eos
     end
     def check_uncheck a, on, off
         prefix = 'control_button fa fa-2x fa-';
+        e = @emulator
         %x{
         if(a.getAttribute('class').indexOf(on) == -1) {
             a.setAttribute('class', prefix + on);
         }
         else {
-            if(emulator == null) launch_hexa_or_source();
+            if(e == null) launch_hexa_or_source();
                 a.setAttribute('class', prefix + off);
         }}
         return
@@ -197,5 +206,31 @@ eos
     def play_pause
         Element["#big_play_button"].css :visibility => :hidden
         check_uncheck `document.getElementById("pause")`, "play", "pause"
+    end
+    def launch3 select
+        @emulator.pause if not @emulator.nil?
+        game = JSON.parse select
+        ['title', 'author', 'date'].each do |i|
+            Element["##{i}"].value = game[i]
+        end
+        text = game['content'] 
+        Element["#editor"].value = text
+        description = game['description']
+        description = "" if description.nil?
+        description = description.gsub '\n', "<br/>"
+        Element["#description"].html = <<-eos
+        <b>#{game['title']}</b>, by #{game['author']}
+        in #{game['date']}<hr/>#{description}
+eos
+        run2 text
+    end
+    def launch_hexa_or_source
+        @emulator.pause if not @emulator.nil?
+        code = Element['#editor'].value
+        if code.include? " "
+            run code
+        else
+            run2 code
+        end
     end
 end
