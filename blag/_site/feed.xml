@@ -1,0 +1,955 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-12-05T21:59:25+01:00</updated><id>http://localhost:4000/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Neovim terminal: one week without tmux</title><link href="http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html" rel="alternate" type="text/html" title="Neovim terminal: one week without tmux" /><published>2017-11-29T00:00:00+01:00</published><updated>2017-11-29T00:00:00+01:00</updated><id>http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux</id><content type="html" xml:base="http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">&lt;p&gt;Disclaimer:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;not an advanced vim user&lt;/li&gt;
+  &lt;li&gt;not an advanced tmux user&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;tnoremap jj &amp;lt;C-&amp;gt;&lt;C-n&gt;&lt;/C-n&gt;&lt;/p&gt;
+
+&lt;p&gt;http://www.michaelabrahamsen.com/posts/replace-tmux-with-neovim/&lt;/p&gt;
+
+&lt;p&gt;on enter terminal buffer keep in non insert mode, not a big deal to push i when I want to write to them&lt;/p&gt;
+
+&lt;p&gt;copy paste:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;just the usual y p&lt;/li&gt;
+  &lt;li&gt;when want to pass stuff to the os, use “+ register&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;resizing:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;vertical-resize, resize work!&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;zooming:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;vim-zoom: kinda works, but buffer needs to be saved and you have to save your buffers&lt;/li&gt;
+  &lt;li&gt;ZoomWin:
+    &lt;ul&gt;
+      &lt;li&gt;big lag&lt;/li&gt;
+      &lt;li&gt;doesn’t play well with pandoc and other plugins, many errors when zooming/restoring&lt;/li&gt;
+      &lt;li&gt;bad with swap files&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;szw/vim-maximizer:
+    &lt;ul&gt;
+      &lt;li&gt;just equivalent to doing a resize, so other windows don’t disappear just minimized&lt;/li&gt;
+      &lt;li&gt;fast and simple =&amp;gt; my choice&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;nesting:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;no protection against it:
+just have to forget the worflow of:
+    &lt;ol&gt;
+      &lt;li&gt;navigating in a terminal&lt;/li&gt;
+      &lt;li&gt;launching vim
+instead:&lt;/li&gt;
+      &lt;li&gt;navigate in a terminal (or better in NERD)&lt;/li&gt;
+      &lt;li&gt;open file in a split
+will work, but some escape sequence won’t&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;detaching:&lt;/p&gt;
+
+&lt;p&gt;tmux is a terminal multiplexer, but it also supports detaching/attaching
+  this is really a usefull feature I’m not ready to lose yet.
+  For example, it allows me to upgrade my terminal emulator without loosing my session.&lt;/p&gt;
+
+&lt;p&gt;As mentioned here https://github.com/neovim/neovim/issues/5035#issuecomment-288144900 ,
+  lets use abduco (a detach clone) for that:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;alias vmux=&quot;abduco -e '^q' -A nvim-session nvim&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Just use CTRL+q to detach from the session&lt;/p&gt;
+
+&lt;p&gt;completion:&lt;/p&gt;
+
+&lt;p&gt;^n completion will pick up everything managed by vim, including stuff written in your terminal !&lt;/p&gt;
+
+&lt;p&gt;controlling vim session from within terminal:&lt;/p&gt;
+
+&lt;p&gt;One usual workflow I have is:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;open a terminal&lt;/li&gt;
+  &lt;li&gt;find files in a directory&lt;/li&gt;
+  &lt;li&gt;open a file in the directory&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;With tmux, I just had to do&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;vim myfile&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;At first, I just copied the name of a file in a buffer, then open it in my vim session.
+  But I find it complicated.
+  What I’d like to do is, from within my terminal, call&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;vsplit myfile&lt;/li&gt;
+  &lt;li&gt;split myfile&lt;/li&gt;
+  &lt;li&gt;e myfile
+  Let’s change our vmux command to:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;alias vmux=”(abduco -l&lt;/td&gt;
+      &lt;td&gt;grep nvim-session)&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;rm -f /tmp/vim-server;abduco -e ‘^g’ -A nvim-session nvim –cmd &quot;let g:server_addr = serverstart(‘/tmp/vim-server’)&quot;”&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;let’s create ‘$HOME/.config/nvim/send_command_to_vim_session.py :vsplit”&lt;/p&gt;
+
+&lt;p&gt;#!/usr/bin/env python3
+  import neovim
+  import sys
+  nvim = neovim.attach(‘socket’, path=’/tmp/vim-server’)
+  nvim.command(“ “.join(sys.argv[1:]))&lt;/p&gt;
+
+&lt;p&gt;alias vmux-send=”$HOME/.config/nvim/send_command_to_vim_session.py”
+  for cmd in split vsplit e tabnew
+  do
+    alias $cmd=”vmux-send :$cmd”
+  done&lt;/p&gt;
+
+&lt;p&gt;Now in a :terminal, we will be able to call split or vsplit command !&lt;/p&gt;</content><author><name></name></author><summary type="html">Disclaimer:</summary></entry><entry><title type="html">Consuming fuse_kafka events with logstash</title><link href="http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash.html" rel="alternate" type="text/html" title="Consuming fuse_kafka events with logstash" /><published>2015-01-15T00:00:00+01:00</published><updated>2015-01-15T00:00:00+01:00</updated><id>http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash</id><content type="html" xml:base="http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash.html">&lt;p&gt;&lt;a href=&quot;https://github.com/yazgoo/fuse_kafka&quot;&gt;fuse_kafka&lt;/a&gt; is a project I’ve
+been working on for the past months.&lt;/p&gt;
+
+&lt;p&gt;Basically, it is a system that captures writes done to specific directories
+and sends those to apache kafka.
+It aims to facilitate heterongeneous log retrieval.&lt;/p&gt;
+
+&lt;p&gt;Once you get logs in &lt;a href=&quot;http://kafka.apache.org/&quot;&gt;kafka&lt;/a&gt;, you may want to be able to put
+them into a generic enough log centralization system.&lt;/p&gt;
+
+&lt;p&gt;That’s why I wrote a plugin for &lt;a href=&quot;http://logstash.net/&quot;&gt;logstash&lt;/a&gt; which
+allows to read logstash events from kafka.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/logstash_fuse_kafka_logo.png&quot; alt=&quot;logstash and fuse_kafka!&quot; title=&quot;logstash and fuse_kafka!&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;sample-architecture&quot;&gt;Sample architecture&lt;/h2&gt;
+
+&lt;p&gt;Here is an example of &lt;code class=&quot;highlighter-rouge&quot;&gt;fuse_kafka&lt;/code&gt; setup&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../../images/fuse_kafka_with_logstash.svg&quot; alt=&quot;generic architecture&quot; title=&quot;generic architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;fuse_kafka is the log shipper: its role is to retrieve logs from machines and send it to kafka&lt;/li&gt;
+  &lt;li&gt;kafka acts as the logging event messaging queue it is compouned with:
+    &lt;ol&gt;
+      &lt;li&gt;usually several kafka messaging broker machines&lt;/li&gt;
+      &lt;li&gt;usually several zookeeper machines&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;logstash retrieves logs from kafka and writes them for example to an indexer 
+ like elasticsearch&lt;/li&gt;
+  &lt;li&gt;logs can then be queried via a UI (here kibana)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;In this article, we’re going to do a fully local setup of this architecture.&lt;/p&gt;
+
+&lt;h2 id=&quot;getting-stuff&quot;&gt;Getting stuff&lt;/h2&gt;
+
+&lt;p&gt;Let’s create a working directory&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!bash&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;mkdir /tmp/tutorial
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /tmp/tutorial
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s download &lt;a href=&quot;http://logstash.net/&quot;&gt;logstash&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!bash&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget https://download.elasticsearch.org/logstash/logstash/logstash-1.4.2.tar.gz
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;xzf logstash-1.4.2.tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And fuse_kafka:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!bash&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git clone https://github.com/yazgoo/fuse_kafka.git
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;starting-fuse_kafka-agent&quot;&gt;Starting fuse_kafka agent&lt;/h2&gt;
+
+&lt;p&gt;Following fuse_kafka quickstart in
+&lt;a href=&quot;https://github.com/yazgoo/fuse_kafka/blob/master/README.md&quot;&gt;README&lt;/a&gt;,
+we’ll first build fuse_kafka:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!bash&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./fuse_kafka/build.py
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, we’ll open one terminal and start zookeeper (this will also download kafka):&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!bash&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./fuse_kafka/build.py zookeeper_start
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;On another terminal, let’s start kafka:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!bash&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./fuse_kafka/build.py kafka_start
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, we’ll start fuse_kafka shipper:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!bash&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;fuse_kafka
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;src/fuse_kafka.py start
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s check the shipper is running:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!bash&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;src/fuse_kafka.py status
+listening on /tmp/fuse-kafka-test
+service is running
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;starting-logstash-agent&quot;&gt;Starting logstash agent&lt;/h2&gt;
+
+&lt;p&gt;Ok, so from a new terminal, in fuse_kafka directory, let’s launch logstash:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ../logstash-1.4.2/bin/logstash -p src/ -f conf/logstash.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, let’s try and write to the directory that fuse_kafka is watching:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ echo &quot;hello, world&quot; &amp;gt; /tmp/fuse-kafka-test/first
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;On logstash terminal, you should get this output
+(see &lt;a href=&quot;https://github.com/yazgoo/fuse_kafka/blob/master/README.md&quot;&gt;README&lt;/a&gt;
+ for more information on each field):&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!ruby&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+          &lt;span class=&quot;s2&quot;&gt;&quot;path&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/tmp/fuse-kafka-test/first&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;s2&quot;&gt;&quot;pid&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4682&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;s2&quot;&gt;&quot;uid&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;s2&quot;&gt;&quot;gid&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s2&quot;&gt;&quot;@message&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;hello, world&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;@timestamp&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;2015-01-16T11:45:41.000+01:00&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+          &lt;span class=&quot;s2&quot;&gt;&quot;user&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;yazgoo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         &lt;span class=&quot;s2&quot;&gt;&quot;group&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;yazgoo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+       &lt;span class=&quot;s2&quot;&gt;&quot;command&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;-bash &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s2&quot;&gt;&quot;@version&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;0.1.4&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+       &lt;span class=&quot;s2&quot;&gt;&quot;@fields&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;s2&quot;&gt;&quot;hostname&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;test&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+         &lt;span class=&quot;s2&quot;&gt;&quot;@tags&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;test&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This shows that the whole thing worked as expected:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. fuse_kafka captured the writing done with echo and sent it to kafka
+1. logstash read it from kafka
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;under-the-hood&quot;&gt;Under the hood&lt;/h2&gt;
+
+&lt;h3 id=&quot;logstash-configuration&quot;&gt;logstash configuration&lt;/h3&gt;
+
+&lt;p&gt;Let’s have a look at logstash configuration in &lt;code class=&quot;highlighter-rouge&quot;&gt;conf/logstash.conf&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!ruby&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;input&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;kafka&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;load&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;$PWD/kafka_2.8.0-0.8.1.1/libs/**/*.jar&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;zk_connect&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;localhost&quot;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;group_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;logstash&quot;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;topic&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;logs&quot;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;num_threads&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;output&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;codec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rubydebug&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is the most basic configuration (see &lt;a href=&quot;http://logstash.net/docs/1.4.2/configuration#conditionals&quot;&gt;documentation&lt;/a&gt; for more information on the syntax).&lt;/p&gt;
+
+&lt;p&gt;The output part is writing events to stdout.&lt;/p&gt;
+
+&lt;p&gt;In the input part,
+we’re reading from a local kafka (&lt;code class=&quot;highlighter-rouge&quot;&gt;zk_connect&lt;/code&gt; is zookeeper address),
+    &lt;code class=&quot;highlighter-rouge&quot;&gt;load&lt;/code&gt;ing jars from kafka directory, and reading logs &lt;code class=&quot;highlighter-rouge&quot;&gt;topic&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;kafka-plugin&quot;&gt;kafka plugin&lt;/h3&gt;
+
+&lt;p&gt;We use &lt;a href=&quot;https://github.com/yazgoo/fuse_kafka/blob/master/src/logstash/inputs/kafka.rb&quot;&gt;kafka input plugin&lt;/a&gt;,
+which is available in &lt;code class=&quot;highlighter-rouge&quot;&gt;src/logstash/inputs/kafka.rb&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This plugin is based on kafka java consumer, hence the jars we load from
+&lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;$PWD/kafka_2.8.0-0.8.1.1/libs/**/*.jar&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;using-elasticsearch-and-kibana&quot;&gt;Using elasticsearch and kibana&lt;/h2&gt;
+
+&lt;p&gt;logstash being so easy to use, we can enable kibana and elastic search,
+just by replacing the output line in &lt;code class=&quot;highlighter-rouge&quot;&gt;conf/logstash.conf&lt;/code&gt; with:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!ruby&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;output&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;elasticsearch&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;host&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;localhost&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;embedded&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;codec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rubydebug&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So now, let’s launch logstash with elasticsearch and kibana UI in embedded mode:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;../logstash-1.4.2/bin/logstash -p src/ -f conf/logstash.conf web --port 1234
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;A default UI should be available at 
+&lt;a href=&quot;http://localhost:1234/index.html#/dashboard/file/guided.json&quot;&gt;http://localhost:1234/index.html#/dashboard/file/guided.json&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;On the &lt;code class=&quot;highlighter-rouge&quot;&gt;DOCUMENTS&lt;/code&gt; widget, lets select:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;@fields.hostname&lt;/li&gt;
+  &lt;li&gt;@timestamp&lt;/li&gt;
+  &lt;li&gt;path&lt;/li&gt;
+  &lt;li&gt;@message&lt;/li&gt;
+  &lt;li&gt;command&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Here is what we get:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/kibana.png&quot; alt=&quot;kibana screenshot&quot; title=&quot;kibana screenshot&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Logstash/ElasticSearch/Kibana are awesome, and fuse_kafka/kafka 
+now can fit right with this power trio!&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><category term="log centralization" /><category term="fuse_kafka" /><category term="elasticsearch" /><category term="kibana" /><category term="kafka" /><summary type="html">fuse_kafka is a project I’ve been working on for the past months.</summary></entry><entry><title type="html">Output rotation with logstash</title><link href="http://localhost:4000/2015/01/08/output-rotation-with-logstash.html" rel="alternate" type="text/html" title="Output rotation with logstash" /><published>2015-01-08T00:00:00+01:00</published><updated>2015-01-08T00:00:00+01:00</updated><id>http://localhost:4000/2015/01/08/output-rotation-with-logstash</id><content type="html" xml:base="http://localhost:4000/2015/01/08/output-rotation-with-logstash.html">&lt;p&gt;I love &lt;a href=&quot;http://logstash.net/&quot;&gt;logstash&lt;/a&gt;, it is a really powerfull tool,
+and it also leverages jruby so it is really self-contained and portable.&lt;/p&gt;
+
+&lt;p&gt;Let’s say you want to use &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; different outputs based on current date.
+Here is the solution I use.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h2 id=&quot;configuration&quot;&gt;Configuration&lt;/h2&gt;
+
+&lt;p&gt;Lets write logstash &lt;a href=&quot;http://logstash.net/docs/1.4.2/configuration&quot;&gt;configuration&lt;/a&gt;.
+First, we’ll be using &lt;a href=&quot;http://logstash.net/docs/1.4.2/inputs/stdin&quot;&gt;stdin&lt;/a&gt;
+as input.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!ruby&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stdin&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, lets &lt;a href=&quot;http://logstash.net/docs/1.4.2/filters/mutate#add_field&quot;&gt;add a field&lt;/a&gt; named &lt;code class=&quot;highlighter-rouge&quot;&gt;t&lt;/code&gt; containing the time.
+Logstash configuration have a nice feature called
+&lt;a href=&quot;http://logstash.net/docs/1.4.2/configuration#sprintf&quot;&gt;sprintf&lt;/a&gt;,
+which allows you to set a value based on a field or on a java
+&lt;a href=&quot;http://joda-time.sourceforge.net/apidocs/org/joda/time/format/DateTimeFormat.html&quot;&gt;DateTimeFormat&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Here, I will use the seconds in current minute, but you could, for example
+use the day (by replacing &lt;code class=&quot;highlighter-rouge&quot;&gt;ss&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;dd&lt;/code&gt;):&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!ruby&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;filter&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mutate&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add_field&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;t&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;%{+ss}&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, lets write our output (we’ll write on &lt;a href=&quot;http://logstash.net/docs/1.4.2/outputs/stdout&quot;&gt;stdout&lt;/a&gt; for tests purpose) using
+&lt;a href=&quot;http://logstash.net/docs/1.4.2/configuration#conditionals&quot;&gt;conditionals&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!ruby&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;output&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If the time field is even, we will display events with rubydebug codec:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!ruby&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=~&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;/.*[02468]$/&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;codec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rubydebug&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If it is odd, we will display events with json codec:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!ruby&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=~&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;/.*[13579]$/&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;codec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s close the output bracket:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!ruby&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Here is the whole configuration:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!ruby&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stdin&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;filter&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mutate&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add_field&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;t&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;%{+ss}&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;output&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=~&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;/.*[02468]$/&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;codec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rubydebug&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=~&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;/.*[13579]$/&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;codec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;testing-it&quot;&gt;Testing it&lt;/h2&gt;
+
+&lt;p&gt;Lets run the previous configuration with logstash sending an input.
+Here, on an odd second:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!bash&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;blax | ./bin/logstash agent &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; /tmp/logstash &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;message&quot;&lt;/span&gt;:&lt;span class=&quot;s2&quot;&gt;&quot;blax&quot;&lt;/span&gt;,&lt;span class=&quot;s2&quot;&gt;&quot;@version&quot;&lt;/span&gt;:&lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;,&lt;span class=&quot;s2&quot;&gt;&quot;@timestamp&quot;&lt;/span&gt;:&lt;span class=&quot;s2&quot;&gt;&quot;2015-01-09T19:14:15.517Z&quot;&lt;/span&gt;,&lt;span class=&quot;s2&quot;&gt;&quot;host&quot;&lt;/span&gt;:&lt;span class=&quot;s2&quot;&gt;&quot;machine&quot;&lt;/span&gt;,&lt;span class=&quot;s2&quot;&gt;&quot;t&quot;&lt;/span&gt;:&lt;span class=&quot;s2&quot;&gt;&quot;15&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Here, on an even second:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!bash&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;blax | ./bin/logstash agent &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; /tmp/logstash &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+       &lt;span class=&quot;s2&quot;&gt;&quot;message&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;blax&quot;&lt;/span&gt;,
+      &lt;span class=&quot;s2&quot;&gt;&quot;@version&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;@timestamp&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;2015-01-09T19:14:24.232Z&quot;&lt;/span&gt;,
+          &lt;span class=&quot;s2&quot;&gt;&quot;host&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;machine&quot;&lt;/span&gt;,
+             &lt;span class=&quot;s2&quot;&gt;&quot;t&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;24&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;##Conclusion##&lt;/p&gt;
+
+&lt;p&gt;Here, we chose the output based on the second parity using regexes.&lt;/p&gt;
+
+&lt;p&gt;But we may have chosen another criteria, for example,
+we might have chosen an output on the two first seconds via this conditional:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!ruby&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;01&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;02&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We also have chosen the output based on the &lt;code class=&quot;highlighter-rouge&quot;&gt;@timestamp&lt;/code&gt; field, but I wanted to use
+an output based on the actual current time, not based on the time associated with an event
+(both may differ).&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><summary type="html">I love logstash, it is a really powerfull tool, and it also leverages jruby so it is really self-contained and portable.</summary></entry><entry><title type="html">Orphan black gets it right</title><link href="http://localhost:4000/2015/01/02/orphan-black-gets-it-right.html" rel="alternate" type="text/html" title="Orphan black gets it right" /><published>2015-01-02T00:00:00+01:00</published><updated>2015-01-02T00:00:00+01:00</updated><id>http://localhost:4000/2015/01/02/orphan-black-gets-it-right</id><content type="html" xml:base="http://localhost:4000/2015/01/02/orphan-black-gets-it-right.html">&lt;p&gt;I’ve been re-watching the awesome Orphan Black first series.
+If you’ve not watched it yet, this post might contain spoilers.&lt;/p&gt;
+
+&lt;p&gt;I’m not going to talk about Tatiana Maslany acting nor about
+special effects when twins are involved which are both great.&lt;/p&gt;
+
+&lt;p&gt;What I’m gonna talk about is the geeky stuff happening on the last
+episode of the first season.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h2 id=&quot;information-we-get&quot;&gt;Information we get&lt;/h2&gt;
+
+&lt;p&gt;Here is the plot: two characters are trying to figure out how 
+information is encoded into one’s genome.&lt;/p&gt;
+
+&lt;p&gt;We get this screenshot:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/screenshot_genome.png&quot; alt=&quot;genome screenshot&quot; title=&quot;genome screenshot&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Delphine also states that she knows Cosima’s tag #, which is:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;324b21 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I’m gonna assume that what we see here actually means something
+(remember, we’re watching TV).&lt;/p&gt;
+
+&lt;h2 id=&quot;decoding&quot;&gt;Decoding&lt;/h2&gt;
+
+&lt;p&gt;Ok, so let’s try and decode the part that’s highligted!&lt;/p&gt;
+
+&lt;p&gt;Here it is:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;GCTTGCTTCGAAGGTCGCAAGTGCGAAGCGTGCGTTGGAGCGATGCGA
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This part is 48 nucleotides long.
+One thing you can notice here is that 48 is a multiple of 8 (6 times 8).&lt;/p&gt;
+
+&lt;p&gt;Oh! 324b21, also is 6 characters long!&lt;/p&gt;
+
+&lt;p&gt;Let’s assume the second 8 bytes encode the character ‘2’ in ASCII,
+which is 50 in ASCII, 00110010 in binary.
+Following this assumption, CGAAGGTC is equivalent to 00110010.
+So G and C would be zeroes, and A and T would be ones.&lt;/p&gt;
+
+&lt;h2 id=&quot;wrapping-it-up&quot;&gt;Wrapping it up&lt;/h2&gt;
+
+&lt;p&gt;Now, we can write a script that tries and decodes clone DNA:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ARGV&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/[AT]/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/[^1]/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;scan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/......../&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;collect&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to_i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;chr&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;join&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;substitutes As and Ts with 1s&lt;/li&gt;
+  &lt;li&gt;substitutes all other letters with 0s&lt;/li&gt;
+  &lt;li&gt;split the string in strings of eight bits&lt;/li&gt;
+  &lt;li&gt;convert each 8bit part to an integer from base 2&lt;/li&gt;
+  &lt;li&gt;convert each integer to a character&lt;/li&gt;
+  &lt;li&gt;joins all characters&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Lets try it on our sequence:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ./decode.rb GCTTGCTTCGAAGGTCGCAAGTGCGAAGCGTGCGTTGGAGCGATGCGA
+324b21
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Cosima’s tag!&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Our assumption on the second character encoding ‘2’ in ASCII is validated.
+The other assumption that it all made sense, which was far more risky is
+validated too!&lt;/p&gt;
+
+&lt;p&gt;This kind of detail on TV is just great.
+It just make the series far more realistic 
+(though I have no idea on how realistic the biology part is)!&lt;/p&gt;</content><author><name></name></author><category term="orphan black" /><category term="ascii" /><summary type="html">I’ve been re-watching the awesome Orphan Black first series. If you’ve not watched it yet, this post might contain spoilers.</summary></entry><entry><title type="html">ruby gem to jar and war</title><link href="http://localhost:4000/2014/06/21/ruby-gem-to-jar-and-war.html" rel="alternate" type="text/html" title="ruby gem to jar and war" /><published>2014-06-21T00:00:00+02:00</published><updated>2014-06-21T00:00:00+02:00</updated><id>http://localhost:4000/2014/06/21/ruby-gem-to-jar-and-war</id><content type="html" xml:base="http://localhost:4000/2014/06/21/ruby-gem-to-jar-and-war.html">&lt;p&gt;Some days ago I read the following tweet:&lt;/p&gt;
+
+&lt;div&gt;
+&lt;blockquote class=&quot;twitter-tweet&quot; lang=&quot;en&quot;&gt;&lt;p&gt;Today is one of those days I question my time spent working on JRuby, when so many Rubyists still treat us like the great Satan.&lt;/p&gt;&amp;mdash; Charles Nutter (@headius) &lt;a href=&quot;https://twitter.com/headius/statuses/478133674710679552&quot;&gt;June 15, 2014&lt;/a&gt;&lt;/blockquote&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It made me a little sad to see headius feel this way…
+His work is just so cool.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h2 id=&quot;jruby&quot;&gt;jruby&lt;/h2&gt;
+
+&lt;p&gt;If you don’t know about &lt;a href=&quot;//www.jruby.org/&quot;&gt;jruby&lt;/a&gt;, an implementation of ruby on the JVM,
+check out this video:&lt;/p&gt;
+
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;//www.youtube.com/embed/etCJKDCbCj4&quot; frameborder=&quot;0&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;h2 id=&quot;the-plan&quot;&gt;the plan&lt;/h2&gt;
+
+&lt;p&gt;After the previous tweet, I wanted to see how you could get from
+simple ruby code to a jar, and, when we’re at it, why not run it in a webapp.
+So this is article is a little like a step by step guide.&lt;/p&gt;
+
+&lt;h2 id=&quot;our-little-gem&quot;&gt;our little gem&lt;/h2&gt;
+
+&lt;p&gt;First, let’s build a dummy ruby gem.&lt;/p&gt;
+
+&lt;p&gt;You’ll need bundler, which allows to develop gems quickly:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo gem install bundler
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, you can create your gem directory layout:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ bundle gem x2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This creates an empty gem project.
+This dummy gem will take a number and multiply it by 2.
+You may want to edit the x2.gemspec file next by updating those two lines:&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;description&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;multiply by 2&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;summary&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, lets write our main code in lib/x2.rb.
+When done, the file should contain:&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;x2/version&quot;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;module&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;X2&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;X2&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;initialize&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;
+            &lt;span class=&quot;vi&quot;&gt;@value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to_i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;to_i&lt;/span&gt;
+            &lt;span class=&quot;vi&quot;&gt;@value&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Basically, we take a value, cast it to an integer, multiply it by 2.
+When to_i is called, we’ll return the result.&lt;/p&gt;
+
+&lt;h2 id=&quot;an-executable-for-our-gem&quot;&gt;an executable for our gem&lt;/h2&gt;
+
+&lt;p&gt;Now, lets make an executable we can call.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ mkdir bin
+$ touch bin/x2
+$ chmod +x bin/x2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s edit bin/x2&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'x2'&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;X2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;X2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ARGV&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to_i&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see, the x2 command takes the first argument and displays the
+result.
+Lets test it:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ruby -Ilib ./bin/x2 21
+42
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Lets add it to the bundler project:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git add .
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;warbler&quot;&gt;warbler&lt;/h2&gt;
+
+&lt;p&gt;Meet &lt;a href=&quot;//github.com/jruby/warbler&quot;&gt;warbler&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Warbler is a gem to make a Java jar or war file out of any Ruby,
+Rails or Rack application&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;a-jar-from-our-gem&quot;&gt;a jar from our gem&lt;/h2&gt;
+
+&lt;p&gt;Lets see how hard it is to get an “executable” jar from all this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ warble
+rm -f x2.jar
+Creating x2.jar
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And it’s done. Now run it:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ java -jar x2.jar 21
+42
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;a-web-application-from-our-gem&quot;&gt;a web application from our gem&lt;/h2&gt;
+
+&lt;p&gt;Now let’s run our code in a webapp.
+First, we need a web application engine, we’ll use 
+&lt;a href=&quot;//www.sinatrarb.com/&quot;&gt;sinatra&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Sinatra is a DSL for quickly creating web applications in Ruby
+ with minimal effort&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Let’s add it as a runtime dependency to the x2.gemspec:&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;add_runtime_dependency&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sinatra&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s write the webapp main rackup code in config.ru:&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'bundler'&lt;/span&gt;
+&lt;span class=&quot;no&quot;&gt;Bundler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;require&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'sinatra'&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'x2'&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/:number'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;X2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;X2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to_i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to_s&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Sinatra&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Application&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;What this does is load libraries based on bundler,
+load our library and sinatra.&lt;/p&gt;
+
+&lt;p&gt;Then, with the “get” method, we declare an URL pattern.&lt;/p&gt;
+
+&lt;p&gt;Basically, when /number will be called, the number will be multiply by 2
+and we’ll return the result.&lt;/p&gt;
+
+&lt;p&gt;Then, the run statement starts sinatra engine.&lt;/p&gt;
+
+&lt;p&gt;To run it in development mode, just run&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ rackup
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, to query it:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl http://localhost:9292/21
+42
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see, this was pretty easy.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-war-our-web-application-in-an-app-server&quot;&gt;a war: our web application in an app server&lt;/h2&gt;
+
+&lt;p&gt;Now let’s try and run this in an application server.
+First download &lt;a href=&quot;//tomee.apache.org/downloads.html&quot;&gt;tommee plus&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Then, let’s uncompress it.&lt;/p&gt;
+
+&lt;p&gt;Now in our x2 project, let’s build the war using warble:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ warble
+rm -f x2.war
+Creating x2.war
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And yes, because you have a config.ru file,
+warbler assumes you want a war!&lt;/p&gt;
+
+&lt;p&gt;Now, let’s copy x2.war to your TomEE:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ cp x2.war /path/to/tomee/webapps/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And let’s start TomEE:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ /path/to/tommee/bin/startup.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And lets query the webapp:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl http://localhost:8080/x2/21
+42
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;to-conclude&quot;&gt;to conclude&lt;/h2&gt;
+
+&lt;p&gt;As you can see, in no time, thanks to jruby,
+   we got from ruby to production ready jar and webapp,
+   which is, lets face it, kinda awesome.&lt;/p&gt;
+
+&lt;p&gt;Hence:&lt;/p&gt;
+
+&lt;div&gt;
+&lt;blockquote class=&quot;twitter-tweet&quot; lang=&quot;en&quot;&gt;&lt;p&gt;&lt;a href=&quot;https://twitter.com/headius&quot;&gt;@headius&lt;/a&gt; Don&amp;#39;t. Your work is very usefull to me on a daily basis!&lt;/p&gt;&amp;mdash; yazgoo (@oogzay) &lt;a href=&quot;https://twitter.com/oogzay/statuses/478140729974611969&quot;&gt;June 15, 2014&lt;/a&gt;&lt;/blockquote&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;references&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;//thenice.tumblr.com/post/133345213/deploying-a-rails-application-in-tomcat-with-jruby-a&quot;&gt;deploying a rails application in tomcat with jruby&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;//guides.rubygems.org/make-your-own-gem/&quot;&gt;make your own gem&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">Some days ago I read the following tweet:</summary></entry><entry><title type="html">impress arrows and impress circle</title><link href="http://localhost:4000/2014/06/04/impress-arrows-and-impress-circle.html" rel="alternate" type="text/html" title="impress arrows and impress circle" /><published>2014-06-04T00:00:00+02:00</published><updated>2014-06-04T00:00:00+02:00</updated><id>http://localhost:4000/2014/06/04/impress-arrows-and-impress-circle</id><content type="html" xml:base="http://localhost:4000/2014/06/04/impress-arrows-and-impress-circle.html">&lt;p&gt;I’d like to introduce you to the stuff I’ve been working on for
+the last few weeks or so which are helper libraries on top of
+the awesome impress.js.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;####impress.js####&lt;/p&gt;
+
+&lt;p&gt;If you don’t know about impress.js, &lt;a href=&quot;http://bartaz.github.io/impress.js&quot;&gt;go check it out know&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Writing nice presentations with HTML is just really great.
+I needed some more stuff so I figured I would share it.&lt;/p&gt;
+
+&lt;p&gt;####impress_arrows####&lt;/p&gt;
+
+&lt;p&gt;I first needed to add arrows to my presentation.
+I then thought I could use it to draw basic graphs.
+For example:&lt;/p&gt;
+
+&lt;img src=arrow://http://cdn.rawgit.com/yazgoo/impress_arrow/master/minimal.html#/done width=500 height=200
+title=minimal /&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/yazgoo/impress_arrows&quot;&gt;Here&lt;/a&gt; is the project repository.&lt;/p&gt;
+
+&lt;p&gt;####arrow images####&lt;/p&gt;
+
+&lt;p&gt;I wanted to be able to include presentation in other HTML documents.
+Here is how impress arrow allows you to do so (this includes previous graph):&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;img src=arrow://http://cdn.rawgit.com/yazgoo/impress_arrow/master/minimal.html#/done width=500 height=200 title=minimal /&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You can use eithere relative or absolute URLs.
+Then, issuing a load_images will include those document in your page:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;script type=text/javascript src=https://cdn.rawgit.com/yazgoo/impress_arrows/master/impress_arrows_all.js&amp;gt;
+&amp;lt;/script&amp;gt;
+&amp;lt;script&amp;gt;
+impress_arrows().load_images();
+&amp;lt;/script&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;####impress_circle####&lt;/p&gt;
+
+&lt;p&gt;I also wanted to have a presentation layout with a rotating menu.
+That’s why I created &lt;a href=&quot;https://github.com/yazgoo/impress_circle&quot;&gt;impress circle&lt;/a&gt;
+(focus on the document below and press space or arrows as you would on a standalone page).&lt;/p&gt;
+
+&lt;img src=arrow://http://cdn.rawgit.com/yazgoo/impress_circle/master/index.html width=740 height=400
+title=&quot;impress circle example&quot; /&gt;
+&lt;script type=text/javascript src=https://cdn.rawgit.com/yazgoo/impress_arrows/master/impress_arrows_all.js&gt;
+&lt;/script&gt;
+&lt;script&gt;
+impress_arrows().load_images();
+&lt;/script&gt;
+
+&lt;p&gt;What I find nice with impress_circle is that, as for impress.js, this is only HTML.
+For example here is part of the previous document source:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;div class=&quot;circle&quot;&amp;gt;
+    &amp;lt;div data-name=&quot;create document&quot;&amp;gt;
+        &amp;lt;div data-name=&quot;stylesheet&quot;&amp;gt;
+            load the stylesheet
+        &amp;lt;/div&amp;gt;
+        &amp;lt;div data-name=&quot;create impress div&quot;&amp;gt;
+            you can add as many normal impress steps as you like
+        &amp;lt;/div&amp;gt;
+    &amp;lt;/div&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I hope all these can help you in some way.&lt;/p&gt;</content><author><name></name></author><category term="javascript" /><category term="impress.js" /><summary type="html">I’d like to introduce you to the stuff I’ve been working on for the last few weeks or so which are helper libraries on top of the awesome impress.js.</summary></entry><entry><title type="html">X240 Thinkpad touchpad</title><link href="http://localhost:4000/2014/05/16/x240-thinkpad-touchpad.html" rel="alternate" type="text/html" title="X240 Thinkpad touchpad" /><published>2014-05-16T00:00:00+02:00</published><updated>2014-05-16T00:00:00+02:00</updated><id>http://localhost:4000/2014/05/16/x240-thinkpad-touchpad</id><content type="html" xml:base="http://localhost:4000/2014/05/16/x240-thinkpad-touchpad.html">&lt;p&gt;Out of the box, the suport for x240 touchpad under Ubuntu is poor.
+Here is what I did to fix it, based on &lt;a href=&quot;http://mydevelopedworld.wordpress.com/2013/11/30/how-to-configure-new-lenovo-x240-touchpad-on-ubuntu-13-10/&quot;&gt;this article&lt;/a&gt;.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;####The problems####&lt;/p&gt;
+
+&lt;p&gt;The touchpad is in only one part (it’s also called a clickpad):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/clickpad.png&quot; alt=&quot;clickpad image&quot; title=&quot;clickpad&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;On ubuntu, by default, there are problems with it:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;When you click, you move the mouse.&lt;/li&gt;
+  &lt;li&gt;Right click is configured on the lower right corner: 
+     I would expect it to be on the upper right one.&lt;/li&gt;
+  &lt;li&gt;There is no middle click.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;####The xorg synaptic configuration####&lt;/p&gt;
+
+&lt;p&gt;The file we’ll be editing is: 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/share/X11/xorg.conf.d/50-synaptics.conf&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;So you should back it up.&lt;/p&gt;
+
+&lt;p&gt;####Fix with no explanation####&lt;/p&gt;
+
+&lt;p&gt;Here is a summary of the fix (if you want explanations, skip this part):&lt;/p&gt;
+
+&lt;p&gt;In this section:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Section &quot;InputClass&quot;
+        Identifier &quot;Default clickpad buttons&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;replace: &lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;SoftButtonAreas&quot; &quot;50% 0 82% 0 0 0 0 0&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;with: &lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;SoftButtonAreas&quot; &quot;65% 0 0 10% 35% 60% 0 10%&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;And in the same section, add: &lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;AreaTopEdge&quot; &quot;10%&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Then restart Xorg: (e.g. &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo service lightdm restart&lt;/code&gt;).&lt;br /&gt;
+You’re done.&lt;/p&gt;
+
+&lt;p&gt;To sum it up, here is a diff (run &lt;code class=&quot;highlighter-rouge&quot;&gt;patch 50-synaptics.conf $with_this&lt;/code&gt;):&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;34c34
+&amp;lt;         Option &quot;SoftButtonAreas&quot; &quot;50% 0 82% 0 0 0 0 0&quot;
+---
+&amp;gt;       Option &quot;SoftButtonAreas&quot; &quot;65% 0 0 10% 35% 65% 0 10%&quot;
+37c37
+&amp;lt; #       Option &quot;AreaBottomEdge&quot; &quot;82%&quot;
+---
+&amp;gt;         Option &quot;AreaTopEdge&quot; &quot;10%&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;####Fixing the click problem#####&lt;/p&gt;
+
+&lt;p&gt;in the following section:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Section &quot;InputClass&quot;
+        Identifier &quot;Default clickpad buttons&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We have to update the SoftButtonAreas field which has height parameters.
+From &lt;code class=&quot;highlighter-rouge&quot;&gt;man snyaptics&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Option &quot;SoftButtonAreas&quot; &quot;RBL RBR RBT RBB MBL MBR MBT MBB&quot;
+
+This option is only available on ClickPad devices.
+Enable soft button click area support on ClickPad devices.
+The first four parameters are the left, right, top, bottom edge of the right button, respectively,
+the second four parameters are  the  left, right, top, bottom edge of the middle button, respectively.
+[...]
+If any edge is set to 0 (not 0%), the button is assumed to extend  to  infinity 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Here is the initial value: &lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;SoftButtonAreas&quot; &quot;50% 0 82% 0 0 0 0 0&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;So the right button is starting at half the left of the clickpad and starting at 82% of its top.
+Also, the manual states that:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Setting all values to 0 (not 0%) disables soft button areas.
+test
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So the middle button is disabled.
+So here is the right click zone (clicking anywhere else is considered as a left click):&lt;/p&gt;
+
+&lt;div style=&quot;width:520px; height:370px; background-image:url('http://localhost:4000/images/clickpad.png')&quot;&gt;
+&lt;div style=&quot;position:relative; left: 50%; top: 82%; width: 42%; height:16.65%; background-color: green; border-bottom-right-radius: 10px; opacity: 0.8;&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Say we want the right button to start at 65% of the left and stop at 10% of the top.
+If we want the middle button to start at 35% of the left and end at 10% of the top, here is what we should write:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;SoftButtonAreas&quot; &quot;65% 0 0 10% 35% 65% 0 10%&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;The resulting zones are (blue is middle click, green is right click):&lt;/p&gt;
+
+&lt;div style=&quot;width:520px; height:370px; background-image:url('http://localhost:4000/images/clickpad.png')&quot;&gt;
+&lt;div style=&quot;position: relative; float: left; left: 38%; top: 6%; width: 27%; height:10%; background-color: blue; opacity: 0.8;&quot;&gt;
+&lt;/div&gt;
+&lt;div style=&quot;position: relative; left: 65%; top: 6%; width: 26%; height:10%; background-color: green; opacity: 0.8;&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;####Do not move the mouse while clicking####&lt;/p&gt;
+
+&lt;p&gt;Again from the manual, there’s this option:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Option &quot;AreaTopEdge&quot; &quot;integer&quot;
+
+Ignore  movements,  scrolling  and  tapping  which  take  place above this edge.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So we’d like enable that below the buttons which are located at 10% of the touchpad.
+So let’s add:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;AreaTopEdge&quot; &quot;10%&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Then, restart Xorg: (e.g. &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo service lightdm restart&lt;/code&gt;).&lt;br /&gt;
+We’re done.&lt;/p&gt;</content><author><name></name></author><category term="thinkpad" /><category term="x240" /><category term="touchpad" /><summary type="html">Out of the box, the suport for x240 touchpad under Ubuntu is poor. Here is what I did to fix it, based on this article.</summary></entry></feed>
