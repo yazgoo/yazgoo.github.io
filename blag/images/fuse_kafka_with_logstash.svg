@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="29cm" height="5cm" viewBox="40 59 1168 207" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <ellipse style="fill: #ffffff" cx="303" cy="175" rx="73" ry="47"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="303" cy="175" rx="73" ry="47"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="303" y="179.425">
+    <tspan x="303" y="179.425">Fuse Kafka</tspan>
+  </text>
+  <g>
+    <ellipse style="fill: #ffffff" cx="114.7" cy="173.9" rx="73" ry="47"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="114.7" cy="173.9" rx="73" ry="47"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="114.7" y="178.138">
+    <tspan x="114.7" y="178.138">Application</tspan>
+  </text>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #bfbfbf" d="M 289.776,118.784 A 94.4096,94.4096 0 0 0 123.946,126.274"/>
+    <polygon style="fill: #bfbfbf" points="293.393,125.314 284.616,118.389 290.205,118.526 293.667,114.137 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #bfbfbf" points="293.393,125.314 284.616,118.389 290.205,118.526 293.667,114.137 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="213" y="75.2381">
+    <tspan x="213" y="75.2381">writes logs</tspan>
+  </text>
+  <g>
+    <ellipse style="fill: #ffffff" cx="511.7" cy="171.9" rx="73" ry="47"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="511.7" cy="171.9" rx="73" ry="47"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="511.7" y="168.138">
+    <tspan x="511.7" y="168.138">Kafka</tspan>
+    <tspan x="511.7" y="184.138">Cluster</tspan>
+  </text>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #bfbfbf" d="M 332.135,219.074 A 110.208,110.208 0 0 0 477.068,222.956"/>
+    <polygon style="fill: #bfbfbf" points="482.678,218.016 479.077,228.601 477.342,223.287 472.049,221.486 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #bfbfbf" points="482.678,218.016 479.077,228.601 477.342,223.287 472.049,221.486 "/>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="715.7" cy="170.9" rx="73" ry="47"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="715.7" cy="170.9" rx="73" ry="47"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="714.7" y="191.325">
+    <tspan x="714.7" y="191.325">Logstash</tspan>
+  </text>
+  <g>
+    <ellipse style="fill: #ffffff" cx="919.7" cy="162.9" rx="73" ry="47"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="919.7" cy="162.9" rx="73" ry="47"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="919.7" y="167.138">
+    <tspan x="919.7" y="167.138">ElasticSearch</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="410" y="246.238">
+    <tspan x="410" y="246.238">queues</tspan>
+    <tspan x="410" y="262.238"> logs</tspan>
+  </text>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #bfbfbf" d="M 700.991,123.863 A 102.153,102.153 0 0 0 531.228,116.728"/>
+    <polygon style="fill: #bfbfbf" points="527.025,122.904 527.83,111.753 530.854,116.455 536.429,116.857 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #bfbfbf" points="527.025,122.904 527.83,111.753 530.854,116.455 536.429,116.857 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="614" y="72.2381">
+    <tspan x="614" y="72.2381">unqueues</tspan>
+    <tspan x="614" y="88.2381">logs</tspan>
+  </text>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #bfbfbf" d="M 739.731,216.265 A 104.131,104.131 0 0 0 893.938,216.395"/>
+    <polygon style="fill: #bfbfbf" points="898.781,210.706 896.768,221.704 894.274,216.701 888.775,215.694 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #bfbfbf" points="898.781,210.706 896.768,221.704 894.274,216.701 888.775,215.694 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="819" y="245.425">
+    <tspan x="819" y="245.425">writes</tspan>
+    <tspan x="819" y="261.425">to</tspan>
+  </text>
+  <g>
+    <ellipse style="fill: #ffffff" cx="1134.7" cy="163.9" rx="73" ry="47"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="1134.7" cy="163.9" rx="73" ry="47"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="1134.7" y="168.138">
+    <tspan x="1134.7" y="168.138">Kibana</tspan>
+  </text>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #bfbfbf" d="M 1109.18,118.891 A 112.103,112.103 0 0 0 952.73,111.264"/>
+    <polygon style="fill: #bfbfbf" points="947.287,116.387 950.545,105.692 952.451,110.948 957.798,112.577 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #bfbfbf" points="947.287,116.387 950.545,105.692 952.451,110.948 957.798,112.577 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="1029" y="78.2381">
+    <tspan x="1029" y="78.2381">searches</tspan>
+    <tspan x="1029" y="94.2381">from</tspan>
+  </text>
+  <g>
+    <ellipse style="fill: #ffffff" cx="715.5" cy="143.5" rx="47.5" ry="19.5"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="715.5" cy="143.5" rx="47.5" ry="19.5"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="715.5" y="139.925">
+    <tspan x="715.5" y="139.925">kafka input</tspan>
+    <tspan x="715.5" y="155.925">plugin</tspan>
+  </text>
+</svg>
