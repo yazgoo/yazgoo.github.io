@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>It must be bunnies</title>
-  <meta name="description" content="My little blog">
+  <title>Neovim terminal: one week without tmux</title>
+  <meta name="description" content="Disclaimer:">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/404.html">
+  <link rel="canonical" href="http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">
   <link rel="alternate" type="application/rss+xml" title="It must be bunnies" href="/feed.xml">
   
   
@@ -67,26 +67,162 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <style type="text/css" media="screen">
-  .container {
-    margin: 10px auto;
-    max-width: 600px;
-    text-align: center;
-  }
-  h1 {
-    margin: 30px 0;
-    font-size: 4em;
-    line-height: 1;
-    letter-spacing: -1px;
-  }
-</style>
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-<div class="container">
-  <h1>404</h1>
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Neovim terminal: one week without tmux</h1>
+    <p class="post-meta">
+      <time datetime="2017-11-29T00:00:00+01:00" itemprop="datePublished">
+        
+        Nov 29, 2017
+      </time>
+      </p>
+  </header>
 
-  <p><strong>Page not found :(</strong></p>
-  <p>The requested page could not be found.</p>
-</div>
+  <div class="post-content" itemprop="articleBody">
+    <p>Disclaimer:</p>
+
+<ul>
+  <li>not an advanced vim user</li>
+  <li>not an advanced tmux user</li>
+</ul>
+
+<p>tnoremap jj &lt;C-&gt;<C-n></C-n></p>
+
+<p>http://www.michaelabrahamsen.com/posts/replace-tmux-with-neovim/</p>
+
+<p>on enter terminal buffer keep in non insert mode, not a big deal to push i when I want to write to them</p>
+
+<p>copy paste:</p>
+
+<ul>
+  <li>just the usual y p</li>
+  <li>when want to pass stuff to the os, use “+ register</li>
+</ul>
+
+<p>resizing:</p>
+
+<ul>
+  <li>vertical-resize, resize work!</li>
+</ul>
+
+<p>zooming:</p>
+
+<ul>
+  <li>vim-zoom: kinda works, but buffer needs to be saved and you have to save your buffers</li>
+  <li>ZoomWin:
+    <ul>
+      <li>big lag</li>
+      <li>doesn’t play well with pandoc and other plugins, many errors when zooming/restoring</li>
+      <li>bad with swap files</li>
+    </ul>
+  </li>
+  <li>szw/vim-maximizer:
+    <ul>
+      <li>just equivalent to doing a resize, so other windows don’t disappear just minimized</li>
+      <li>fast and simple =&gt; my choice</li>
+    </ul>
+  </li>
+</ul>
+
+<p>nesting:</p>
+
+<ul>
+  <li>no protection against it:
+just have to forget the worflow of:
+    <ol>
+      <li>navigating in a terminal</li>
+      <li>launching vim
+instead:</li>
+      <li>navigate in a terminal (or better in NERD)</li>
+      <li>open file in a split
+will work, but some escape sequence won’t</li>
+    </ol>
+  </li>
+</ul>
+
+<p>detaching:</p>
+
+<p>tmux is a terminal multiplexer, but it also supports detaching/attaching
+  this is really a usefull feature I’m not ready to lose yet.
+  For example, it allows me to upgrade my terminal emulator without loosing my session.</p>
+
+<p>As mentioned here https://github.com/neovim/neovim/issues/5035#issuecomment-288144900 ,
+  lets use abduco (a detach clone) for that:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>alias vmux="abduco -e '^q' -A nvim-session nvim"
+</code></pre></div></div>
+
+<p>Just use CTRL+q to detach from the session</p>
+
+<p>completion:</p>
+
+<p>^n completion will pick up everything managed by vim, including stuff written in your terminal !</p>
+
+<p>controlling vim session from within terminal:</p>
+
+<p>One usual workflow I have is:</p>
+
+<ol>
+  <li>open a terminal</li>
+  <li>find files in a directory</li>
+  <li>open a file in the directory</li>
+</ol>
+
+<p>With tmux, I just had to do</p>
+
+<p><code class="highlighter-rouge">vim myfile</code></p>
+
+<p>At first, I just copied the name of a file in a buffer, then open it in my vim session.
+  But I find it complicated.
+  What I’d like to do is, from within my terminal, call</p>
+<ul>
+  <li>vsplit myfile</li>
+  <li>split myfile</li>
+  <li>e myfile
+  Let’s change our vmux command to:</li>
+</ul>
+
+<table>
+  <tbody>
+    <tr>
+      <td>alias vmux=”(abduco -l</td>
+      <td>grep nvim-session)</td>
+      <td> </td>
+      <td>rm -f /tmp/vim-server;abduco -e ‘^g’ -A nvim-session nvim –cmd "let g:server_addr = serverstart(‘/tmp/vim-server’)"”</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>let’s create ‘$HOME/.config/nvim/send_command_to_vim_session.py :vsplit”</p>
+
+<p>#!/usr/bin/env python3
+  import neovim
+  import sys
+  nvim = neovim.attach(‘socket’, path=’/tmp/vim-server’)
+  nvim.command(“ “.join(sys.argv[1:]))</p>
+
+<p>alias vmux-send=”$HOME/.config/nvim/send_command_to_vim_session.py”
+  for cmd in split vsplit e tabnew
+  do
+    alias $cmd=”vmux-send :$cmd”
+  done</p>
+
+<p>Now in a :terminal, we will be able to call split or vsplit command !</p>
+
+<p>cd with terminal</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function cd() {  
+builtin cd "$@";
+# if the parent process is nvim, do a vim cd 
+(ps -o comm= $PPID | grep nvim &gt; /dev/null) &amp;&amp; vmux-send :cd "$@"
+}   export cd
+</code></pre></div></div>
+
+  </div>
+
+  
+</article>
 
       </div>
     </main>

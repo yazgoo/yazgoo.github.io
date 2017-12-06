@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-12-05T21:59:25+01:00</updated><id>http://localhost:4000/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Neovim terminal: one week without tmux</title><link href="http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html" rel="alternate" type="text/html" title="Neovim terminal: one week without tmux" /><published>2017-11-29T00:00:00+01:00</published><updated>2017-11-29T00:00:00+01:00</updated><id>http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux</id><content type="html" xml:base="http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">&lt;p&gt;Disclaimer:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-12-06T22:23:21+01:00</updated><id>http://localhost:4000/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Neovim terminal: one week without tmux</title><link href="http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html" rel="alternate" type="text/html" title="Neovim terminal: one week without tmux" /><published>2017-11-29T00:00:00+01:00</published><updated>2017-11-29T00:00:00+01:00</updated><id>http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux</id><content type="html" xml:base="http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">&lt;p&gt;Disclaimer:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;not an advanced vim user&lt;/li&gt;
@@ -126,7 +126,16 @@ will work, but some escape sequence won’t&lt;/li&gt;
     alias $cmd=”vmux-send :$cmd”
   done&lt;/p&gt;
 
-&lt;p&gt;Now in a :terminal, we will be able to call split or vsplit command !&lt;/p&gt;</content><author><name></name></author><summary type="html">Disclaimer:</summary></entry><entry><title type="html">Consuming fuse_kafka events with logstash</title><link href="http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash.html" rel="alternate" type="text/html" title="Consuming fuse_kafka events with logstash" /><published>2015-01-15T00:00:00+01:00</published><updated>2015-01-15T00:00:00+01:00</updated><id>http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash</id><content type="html" xml:base="http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash.html">&lt;p&gt;&lt;a href=&quot;https://github.com/yazgoo/fuse_kafka&quot;&gt;fuse_kafka&lt;/a&gt; is a project I’ve
+&lt;p&gt;Now in a :terminal, we will be able to call split or vsplit command !&lt;/p&gt;
+
+&lt;p&gt;cd with terminal&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;function cd() {  
+builtin cd &quot;$@&quot;;
+# if the parent process is nvim, do a vim cd 
+(ps -o comm= $PPID | grep nvim &amp;gt; /dev/null) &amp;amp;&amp;amp; vmux-send :cd &quot;$@&quot;
+}   export cd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><summary type="html">Disclaimer:</summary></entry><entry><title type="html">Consuming fuse_kafka events with logstash</title><link href="http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash.html" rel="alternate" type="text/html" title="Consuming fuse_kafka events with logstash" /><published>2015-01-15T00:00:00+01:00</published><updated>2015-01-15T00:00:00+01:00</updated><id>http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash</id><content type="html" xml:base="http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash.html">&lt;p&gt;&lt;a href=&quot;https://github.com/yazgoo/fuse_kafka&quot;&gt;fuse_kafka&lt;/a&gt; is a project I’ve
 been working on for the past months.&lt;/p&gt;
 
 &lt;p&gt;Basically, it is a system that captures writes done to specific directories
