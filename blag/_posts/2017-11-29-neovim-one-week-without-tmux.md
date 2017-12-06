@@ -102,3 +102,12 @@ controlling vim session from within terminal:
   done
 
   Now in a :terminal, we will be able to call split or vsplit command !
+
+cd with terminal
+
+	function cd() {  
+    builtin cd "$@";
+    # if the parent process is nvim, do a vim cd 
+    (ps -o comm= $PPID | grep nvim > /dev/null) && vmux-send :cd "$@"
+	}
+  export cd
