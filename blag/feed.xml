@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-12-06T22:26:27+01:00</updated><id>http://localhost:4000/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Neovim terminal: one week without tmux</title><link href="http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html" rel="alternate" type="text/html" title="Neovim terminal: one week without tmux" /><published>2017-11-29T00:00:00+01:00</published><updated>2017-11-29T00:00:00+01:00</updated><id>http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux</id><content type="html" xml:base="http://localhost:4000/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">&lt;p&gt;Disclaimer:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2017-12-06T23:27:55+01:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Neovim terminal: one week without tmux</title><link href="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html" rel="alternate" type="text/html" title="Neovim terminal: one week without tmux" /><published>2017-11-29T00:00:00+01:00</published><updated>2017-11-29T00:00:00+01:00</updated><id>http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux</id><content type="html" xml:base="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">&lt;p&gt;Disclaimer:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;not an advanced vim user&lt;/li&gt;
@@ -135,7 +135,7 @@ builtin cd &quot;$@&quot;;
 # if the parent process is nvim, do a vim cd 
 (ps -o comm= $PPID | grep nvim &amp;gt; /dev/null) &amp;amp;&amp;amp; vmux-send :cd &quot;$@&quot;
 }   export cd
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><summary type="html">Disclaimer:</summary></entry><entry><title type="html">Consuming fuse_kafka events with logstash</title><link href="http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash.html" rel="alternate" type="text/html" title="Consuming fuse_kafka events with logstash" /><published>2015-01-15T00:00:00+01:00</published><updated>2015-01-15T00:00:00+01:00</updated><id>http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash</id><content type="html" xml:base="http://localhost:4000/2015/01/15/consuming-fuse-kafka-events-with-logstash.html">&lt;p&gt;&lt;a href=&quot;https://github.com/yazgoo/fuse_kafka&quot;&gt;fuse_kafka&lt;/a&gt; is a project I’ve
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><summary type="html">Disclaimer:</summary></entry><entry><title type="html">Consuming fuse_kafka events with logstash</title><link href="http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html" rel="alternate" type="text/html" title="Consuming fuse_kafka events with logstash" /><published>2015-01-15T00:00:00+01:00</published><updated>2015-01-15T00:00:00+01:00</updated><id>http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash</id><content type="html" xml:base="http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html">&lt;p&gt;&lt;a href=&quot;https://github.com/yazgoo/fuse_kafka&quot;&gt;fuse_kafka&lt;/a&gt; is a project I’ve
 been working on for the past months.&lt;/p&gt;
 
 &lt;p&gt;Basically, it is a system that captures writes done to specific directories
@@ -150,7 +150,7 @@ allows to read logstash events from kafka.&lt;/p&gt;
 
 &lt;!-- more --&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/logstash_fuse_kafka_logo.png&quot; alt=&quot;logstash and fuse_kafka!&quot; title=&quot;logstash and fuse_kafka!&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/logstash_fuse_kafka_logo.png&quot; alt=&quot;logstash and fuse_kafka!&quot; title=&quot;logstash and fuse_kafka!&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;sample-architecture&quot;&gt;Sample architecture&lt;/h2&gt;
 
@@ -349,12 +349,12 @@ just by replacing the output line in &lt;code class=&quot;highlighter-rouge&quot
 
 &lt;p&gt;Here is what we get:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/kibana.png&quot; alt=&quot;kibana screenshot&quot; title=&quot;kibana screenshot&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/kibana.png&quot; alt=&quot;kibana screenshot&quot; title=&quot;kibana screenshot&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;Logstash/ElasticSearch/Kibana are awesome, and fuse_kafka/kafka 
-now can fit right with this power trio!&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><category term="log centralization" /><category term="fuse_kafka" /><category term="elasticsearch" /><category term="kibana" /><category term="kafka" /><summary type="html">fuse_kafka is a project I’ve been working on for the past months.</summary></entry><entry><title type="html">Output rotation with logstash</title><link href="http://localhost:4000/2015/01/08/output-rotation-with-logstash.html" rel="alternate" type="text/html" title="Output rotation with logstash" /><published>2015-01-08T00:00:00+01:00</published><updated>2015-01-08T00:00:00+01:00</updated><id>http://localhost:4000/2015/01/08/output-rotation-with-logstash</id><content type="html" xml:base="http://localhost:4000/2015/01/08/output-rotation-with-logstash.html">&lt;p&gt;I love &lt;a href=&quot;http://logstash.net/&quot;&gt;logstash&lt;/a&gt;, it is a really powerfull tool,
+now can fit right with this power trio!&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><category term="log centralization" /><category term="fuse_kafka" /><category term="elasticsearch" /><category term="kibana" /><category term="kafka" /><summary type="html">fuse_kafka is a project I’ve been working on for the past months.</summary></entry><entry><title type="html">Output rotation with logstash</title><link href="http://localhost:4000/blag/2015/01/08/output-rotation-with-logstash.html" rel="alternate" type="text/html" title="Output rotation with logstash" /><published>2015-01-08T00:00:00+01:00</published><updated>2015-01-08T00:00:00+01:00</updated><id>http://localhost:4000/blag/2015/01/08/output-rotation-with-logstash</id><content type="html" xml:base="http://localhost:4000/blag/2015/01/08/output-rotation-with-logstash.html">&lt;p&gt;I love &lt;a href=&quot;http://logstash.net/&quot;&gt;logstash&lt;/a&gt;, it is a really powerfull tool,
 and it also leverages jruby so it is really self-contained and portable.&lt;/p&gt;
 
 &lt;p&gt;Let’s say you want to use &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; different outputs based on current date.
@@ -465,7 +465,7 @@ we might have chosen an output on the two first seconds via this conditional:&lt
 
 &lt;p&gt;We also have chosen the output based on the &lt;code class=&quot;highlighter-rouge&quot;&gt;@timestamp&lt;/code&gt; field, but I wanted to use
 an output based on the actual current time, not based on the time associated with an event
-(both may differ).&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><summary type="html">I love logstash, it is a really powerfull tool, and it also leverages jruby so it is really self-contained and portable.</summary></entry><entry><title type="html">Orphan black gets it right</title><link href="http://localhost:4000/2015/01/02/orphan-black-gets-it-right.html" rel="alternate" type="text/html" title="Orphan black gets it right" /><published>2015-01-02T00:00:00+01:00</published><updated>2015-01-02T00:00:00+01:00</updated><id>http://localhost:4000/2015/01/02/orphan-black-gets-it-right</id><content type="html" xml:base="http://localhost:4000/2015/01/02/orphan-black-gets-it-right.html">&lt;p&gt;I’ve been re-watching the awesome Orphan Black first series.
+(both may differ).&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><summary type="html">I love logstash, it is a really powerfull tool, and it also leverages jruby so it is really self-contained and portable.</summary></entry><entry><title type="html">Orphan black gets it right</title><link href="http://localhost:4000/blag/2015/01/02/orphan-black-gets-it-right.html" rel="alternate" type="text/html" title="Orphan black gets it right" /><published>2015-01-02T00:00:00+01:00</published><updated>2015-01-02T00:00:00+01:00</updated><id>http://localhost:4000/blag/2015/01/02/orphan-black-gets-it-right</id><content type="html" xml:base="http://localhost:4000/blag/2015/01/02/orphan-black-gets-it-right.html">&lt;p&gt;I’ve been re-watching the awesome Orphan Black first series.
 If you’ve not watched it yet, this post might contain spoilers.&lt;/p&gt;
 
 &lt;p&gt;I’m not going to talk about Tatiana Maslany acting nor about
@@ -483,7 +483,7 @@ information is encoded into one’s genome.&lt;/p&gt;
 
 &lt;p&gt;We get this screenshot:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/screenshot_genome.png&quot; alt=&quot;genome screenshot&quot; title=&quot;genome screenshot&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/screenshot_genome.png&quot; alt=&quot;genome screenshot&quot; title=&quot;genome screenshot&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Delphine also states that she knows Cosima’s tag #, which is:&lt;/p&gt;
 
@@ -547,7 +547,7 @@ validated too!&lt;/p&gt;
 
 &lt;p&gt;This kind of detail on TV is just great.
 It just make the series far more realistic 
-(though I have no idea on how realistic the biology part is)!&lt;/p&gt;</content><author><name></name></author><category term="orphan black" /><category term="ascii" /><summary type="html">I’ve been re-watching the awesome Orphan Black first series. If you’ve not watched it yet, this post might contain spoilers.</summary></entry><entry><title type="html">ruby gem to jar and war</title><link href="http://localhost:4000/2014/06/21/ruby-gem-to-jar-and-war.html" rel="alternate" type="text/html" title="ruby gem to jar and war" /><published>2014-06-21T00:00:00+02:00</published><updated>2014-06-21T00:00:00+02:00</updated><id>http://localhost:4000/2014/06/21/ruby-gem-to-jar-and-war</id><content type="html" xml:base="http://localhost:4000/2014/06/21/ruby-gem-to-jar-and-war.html">&lt;p&gt;Some days ago I read the following tweet:&lt;/p&gt;
+(though I have no idea on how realistic the biology part is)!&lt;/p&gt;</content><author><name></name></author><category term="orphan black" /><category term="ascii" /><summary type="html">I’ve been re-watching the awesome Orphan Black first series. If you’ve not watched it yet, this post might contain spoilers.</summary></entry><entry><title type="html">ruby gem to jar and war</title><link href="http://localhost:4000/blag/2014/06/21/ruby-gem-to-jar-and-war.html" rel="alternate" type="text/html" title="ruby gem to jar and war" /><published>2014-06-21T00:00:00+02:00</published><updated>2014-06-21T00:00:00+02:00</updated><id>http://localhost:4000/blag/2014/06/21/ruby-gem-to-jar-and-war</id><content type="html" xml:base="http://localhost:4000/blag/2014/06/21/ruby-gem-to-jar-and-war.html">&lt;p&gt;Some days ago I read the following tweet:&lt;/p&gt;
 
 &lt;div&gt;
 &lt;blockquote class=&quot;twitter-tweet&quot; lang=&quot;en&quot;&gt;&lt;p&gt;Today is one of those days I question my time spent working on JRuby, when so many Rubyists still treat us like the great Satan.&lt;/p&gt;&amp;mdash; Charles Nutter (@headius) &lt;a href=&quot;https://twitter.com/headius/statuses/478133674710679552&quot;&gt;June 15, 2014&lt;/a&gt;&lt;/blockquote&gt;
@@ -766,7 +766,7 @@ warbler assumes you want a war!&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;//thenice.tumblr.com/post/133345213/deploying-a-rails-application-in-tomcat-with-jruby-a&quot;&gt;deploying a rails application in tomcat with jruby&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;//guides.rubygems.org/make-your-own-gem/&quot;&gt;make your own gem&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">Some days ago I read the following tweet:</summary></entry><entry><title type="html">impress arrows and impress circle</title><link href="http://localhost:4000/2014/06/04/impress-arrows-and-impress-circle.html" rel="alternate" type="text/html" title="impress arrows and impress circle" /><published>2014-06-04T00:00:00+02:00</published><updated>2014-06-04T00:00:00+02:00</updated><id>http://localhost:4000/2014/06/04/impress-arrows-and-impress-circle</id><content type="html" xml:base="http://localhost:4000/2014/06/04/impress-arrows-and-impress-circle.html">&lt;p&gt;I’d like to introduce you to the stuff I’ve been working on for
+&lt;p&gt;&lt;a href=&quot;//guides.rubygems.org/make-your-own-gem/&quot;&gt;make your own gem&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">Some days ago I read the following tweet:</summary></entry><entry><title type="html">impress arrows and impress circle</title><link href="http://localhost:4000/blag/2014/06/04/impress-arrows-and-impress-circle.html" rel="alternate" type="text/html" title="impress arrows and impress circle" /><published>2014-06-04T00:00:00+02:00</published><updated>2014-06-04T00:00:00+02:00</updated><id>http://localhost:4000/blag/2014/06/04/impress-arrows-and-impress-circle</id><content type="html" xml:base="http://localhost:4000/blag/2014/06/04/impress-arrows-and-impress-circle.html">&lt;p&gt;I’d like to introduce you to the stuff I’ve been working on for
 the last few weeks or so which are helper libraries on top of
 the awesome impress.js.&lt;/p&gt;
 
@@ -836,7 +836,7 @@ For example here is part of the previous document source:&lt;/p&gt;
     &amp;lt;/div&amp;gt; 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;I hope all these can help you in some way.&lt;/p&gt;</content><author><name></name></author><category term="javascript" /><category term="impress.js" /><summary type="html">I’d like to introduce you to the stuff I’ve been working on for the last few weeks or so which are helper libraries on top of the awesome impress.js.</summary></entry><entry><title type="html">X240 Thinkpad touchpad</title><link href="http://localhost:4000/2014/05/16/x240-thinkpad-touchpad.html" rel="alternate" type="text/html" title="X240 Thinkpad touchpad" /><published>2014-05-16T00:00:00+02:00</published><updated>2014-05-16T00:00:00+02:00</updated><id>http://localhost:4000/2014/05/16/x240-thinkpad-touchpad</id><content type="html" xml:base="http://localhost:4000/2014/05/16/x240-thinkpad-touchpad.html">&lt;p&gt;Out of the box, the suport for x240 touchpad under Ubuntu is poor.
+&lt;p&gt;I hope all these can help you in some way.&lt;/p&gt;</content><author><name></name></author><category term="javascript" /><category term="impress.js" /><summary type="html">I’d like to introduce you to the stuff I’ve been working on for the last few weeks or so which are helper libraries on top of the awesome impress.js.</summary></entry><entry><title type="html">X240 Thinkpad touchpad</title><link href="http://localhost:4000/blag/2014/05/16/x240-thinkpad-touchpad.html" rel="alternate" type="text/html" title="X240 Thinkpad touchpad" /><published>2014-05-16T00:00:00+02:00</published><updated>2014-05-16T00:00:00+02:00</updated><id>http://localhost:4000/blag/2014/05/16/x240-thinkpad-touchpad</id><content type="html" xml:base="http://localhost:4000/blag/2014/05/16/x240-thinkpad-touchpad.html">&lt;p&gt;Out of the box, the suport for x240 touchpad under Ubuntu is poor.
 Here is what I did to fix it, based on &lt;a href=&quot;http://mydevelopedworld.wordpress.com/2013/11/30/how-to-configure-new-lenovo-x240-touchpad-on-ubuntu-13-10/&quot;&gt;this article&lt;/a&gt;.&lt;/p&gt;
 
 &lt;!-- more --&gt;
@@ -845,7 +845,7 @@ Here is what I did to fix it, based on &lt;a href=&quot;http://mydevelopedworld.
 
 &lt;p&gt;The touchpad is in only one part (it’s also called a clickpad):&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/clickpad.png&quot; alt=&quot;clickpad image&quot; title=&quot;clickpad&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/clickpad.png&quot; alt=&quot;clickpad image&quot; title=&quot;clickpad&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;On ubuntu, by default, there are problems with it:&lt;/p&gt;
 
@@ -927,7 +927,7 @@ test
 &lt;p&gt;So the middle button is disabled.
 So here is the right click zone (clicking anywhere else is considered as a left click):&lt;/p&gt;
 
-&lt;div style=&quot;width:520px; height:370px; background-image:url('http://localhost:4000/images/clickpad.png')&quot;&gt;
+&lt;div style=&quot;width:520px; height:370px; background-image:url('http://localhost:4000/blag/images/clickpad.png')&quot;&gt;
 &lt;div style=&quot;position:relative; left: 50%; top: 82%; width: 42%; height:16.65%; background-color: green; border-bottom-right-radius: 10px; opacity: 0.8;&quot;&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -939,7 +939,7 @@ If we want the middle button to start at 35% of the left and end at 10% of the t
 
 &lt;p&gt;The resulting zones are (blue is middle click, green is right click):&lt;/p&gt;
 
-&lt;div style=&quot;width:520px; height:370px; background-image:url('http://localhost:4000/images/clickpad.png')&quot;&gt;
+&lt;div style=&quot;width:520px; height:370px; background-image:url('http://localhost:4000/blag/images/clickpad.png')&quot;&gt;
 &lt;div style=&quot;position: relative; float: left; left: 38%; top: 6%; width: 27%; height:10%; background-color: blue; opacity: 0.8;&quot;&gt;
 &lt;/div&gt;
 &lt;div style=&quot;position: relative; left: 65%; top: 6%; width: 26%; height:10%; background-color: green; opacity: 0.8;&quot;&gt;
