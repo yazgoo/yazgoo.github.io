@@ -1,83 +1,93 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2017-12-06T23:27:55+01:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Neovim terminal: one week without tmux</title><link href="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html" rel="alternate" type="text/html" title="Neovim terminal: one week without tmux" /><published>2017-11-29T00:00:00+01:00</published><updated>2017-11-29T00:00:00+01:00</updated><id>http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux</id><content type="html" xml:base="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">&lt;p&gt;Disclaimer:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2017-12-07T01:20:34+01:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Neovim terminal: one week without tmux</title><link href="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html" rel="alternate" type="text/html" title="Neovim terminal: one week without tmux" /><published>2017-11-29T00:00:00+01:00</published><updated>2017-11-29T00:00:00+01:00</updated><id>http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux</id><content type="html" xml:base="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">&lt;p&gt;For a while now there has been a &lt;a href=&quot;https://neovim.io/doc/user/nvim_terminal_emulator.html&quot;&gt;terminal feature integrated in neovim&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://vimcasts.org/episodes/neovim-terminal/&quot;&gt;There’s a vimcast&lt;/a&gt; on it if you want more info.&lt;/p&gt;
+
+&lt;p&gt;Vim has buffers, tabs, and splits.
+The question I’ve been asking myself is simple:
+Is it possible to replace my use of tmux with neovim ?
+Here is my feedback, of one week leaving tmux.&lt;/p&gt;
+
+&lt;p&gt;Disclaimer:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;I am not an advanced vim/neovim user&lt;/li&gt;
+  &lt;li&gt;Nor do am I am an advanced tmux user&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&quot;basic-usage-and-configuration&quot;&gt;Basic usage and configuration&lt;/h1&gt;
+
+&lt;p&gt;To use the terminal in vim, just type:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;:terminal&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This will replace the current buffer you’re focused on with a terminal emulator.
+You can write in the terminal by switching to insert mode.&lt;/p&gt;
+
+&lt;p&gt;To leave the emulator, just type &lt;code class=&quot;highlighter-rouge&quot;&gt;^\^n&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I find it kind of complicated, so I’ve done the following re-mapping based on
+&lt;a href=&quot;http://www.michaelabrahamsen.com/posts/replace-tmux-with-neovim/&quot;&gt;Michael Abrahamsen blogpost&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;tnoremap jj &amp;lt;C-\&amp;gt;&amp;lt;C-n&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;basic-stuff&quot;&gt;Basic stuff&lt;/h1&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;not an advanced vim user&lt;/li&gt;
-  &lt;li&gt;not an advanced tmux user&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;To copy paste, the usual &lt;code class=&quot;highlighter-rouge&quot;&gt;y&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;p&lt;/code&gt; work, I mostly use the &lt;code class=&quot;highlighter-rouge&quot;&gt;+&lt;/code&gt; register.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;:resize&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;:vertical-resize&lt;/code&gt; works, which is awesome.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;^n&lt;/code&gt; completion will pick up everything managed by vim, including stuff written in your terminal !&lt;/p&gt;
+  &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;tnoremap jj &amp;lt;C-&amp;gt;&lt;C-n&gt;&lt;/C-n&gt;&lt;/p&gt;
+&lt;h1 id=&quot;zooming&quot;&gt;Zooming&lt;/h1&gt;
 
-&lt;p&gt;http://www.michaelabrahamsen.com/posts/replace-tmux-with-neovim/&lt;/p&gt;
-
-&lt;p&gt;on enter terminal buffer keep in non insert mode, not a big deal to push i when I want to write to them&lt;/p&gt;
-
-&lt;p&gt;copy paste:&lt;/p&gt;
+&lt;p&gt;tmux has a really nice &lt;a href=&quot;https://sanctum.geek.nz/arabesque/zooming-tmux-panes/&quot;&gt;zooming feature&lt;/a&gt;.
+I checked a few solutions to do that with vim.&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;just the usual y p&lt;/li&gt;
-  &lt;li&gt;when want to pass stuff to the os, use “+ register&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;resizing:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;vertical-resize, resize work!&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;zooming:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;vim-zoom: kinda works, but buffer needs to be saved and you have to save your buffers&lt;/li&gt;
-  &lt;li&gt;ZoomWin:
+  &lt;li&gt;&lt;a href=&quot;https://github.com/dhruvasagar/vim-zoom&quot;&gt;vim-zoom&lt;/a&gt;: kinda works, but your buffer needs to be saved&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/regedarek/ZoomWin&quot;&gt;ZoomWin&lt;/a&gt;:
     &lt;ul&gt;
-      &lt;li&gt;big lag&lt;/li&gt;
-      &lt;li&gt;doesn’t play well with pandoc and other plugins, many errors when zooming/restoring&lt;/li&gt;
-      &lt;li&gt;bad with swap files&lt;/li&gt;
+      &lt;li&gt;When I used it it had a few second lags when zooming&lt;/li&gt;
+      &lt;li&gt;It did not play well with pandoc and other plugins, I got many errors when zooming/restoring&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;szw/vim-maximizer:
+  &lt;li&gt;&lt;a href=&quot;https://github.com/szw/vim-maximizer&quot;&gt;vim-maximizer&lt;/a&gt;:
     &lt;ul&gt;
-      &lt;li&gt;just equivalent to doing a resize, so other windows don’t disappear just minimized&lt;/li&gt;
-      &lt;li&gt;fast and simple =&amp;gt; my choice&lt;/li&gt;
+      &lt;li&gt;It is equivalent to doing a resize, so other windows don’t disappear, they are just minimized&lt;/li&gt;
+      &lt;li&gt;It is fast and simple =&amp;gt; my goto choice&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;nesting:&lt;/p&gt;
+&lt;h1 id=&quot;nesting&quot;&gt;Nesting&lt;/h1&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;no protection against it:
-just have to forget the worflow of:
-    &lt;ol&gt;
-      &lt;li&gt;navigating in a terminal&lt;/li&gt;
-      &lt;li&gt;launching vim
-instead:&lt;/li&gt;
-      &lt;li&gt;navigate in a terminal (or better in NERD)&lt;/li&gt;
-      &lt;li&gt;open file in a split
-will work, but some escape sequence won’t&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;There is no protection against running vim in vim:
+  It will work, but some escape sequence might not.&lt;/p&gt;
 
-&lt;p&gt;detaching:&lt;/p&gt;
+&lt;h1 id=&quot;detaching&quot;&gt;Detaching&lt;/h1&gt;
 
 &lt;p&gt;tmux is a terminal multiplexer, but it also supports detaching/attaching
   this is really a usefull feature I’m not ready to lose yet.
-  For example, it allows me to upgrade my terminal emulator without loosing my session.&lt;/p&gt;
+  For example, it allows me to upgrade my terminal emulator without loosing my session or to keep a session over SSH.&lt;/p&gt;
 
-&lt;p&gt;As mentioned here https://github.com/neovim/neovim/issues/5035#issuecomment-288144900 ,
-  lets use abduco (a detach clone) for that:&lt;/p&gt;
+&lt;p&gt;As mentioned &lt;a href=&quot;https://github.com/neovim/neovim/issues/5035#issuecomment-288144900&quot;&gt;here&lt;/a&gt;,
+  let’s use abduco (a detach clone) for that:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;alias vmux=&quot;abduco -e '^q' -A nvim-session nvim&quot;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;alias &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;vmux&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;abduco -e '^g' -A nvim-session nvim&quot;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Just use CTRL+q to detach from the session&lt;/p&gt;
+&lt;p&gt;When we want to run vim as a terminal multiplexer, we’ll just have to run &lt;code class=&quot;highlighter-rouge&quot;&gt;vmux&lt;/code&gt;.
+  Just use &lt;code class=&quot;highlighter-rouge&quot;&gt;CTRL+g&lt;/code&gt; to detach from the session.&lt;/p&gt;
 
-&lt;p&gt;completion:&lt;/p&gt;
-
-&lt;p&gt;^n completion will pick up everything managed by vim, including stuff written in your terminal !&lt;/p&gt;
-
-&lt;p&gt;controlling vim session from within terminal:&lt;/p&gt;
+&lt;h1 id=&quot;controlling-vim-session-from-within-terminal&quot;&gt;Controlling vim session from within terminal&lt;/h1&gt;
 
 &lt;p&gt;One usual workflow I have is:&lt;/p&gt;
 
@@ -89,53 +99,81 @@ will work, but some escape sequence won’t&lt;/li&gt;
 
 &lt;p&gt;With tmux, I just had to do&lt;/p&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;vim myfile&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;$ vim myfile&lt;/code&gt;&lt;/p&gt;
 
-&lt;p&gt;At first, I just copied the name of a file in a buffer, then open it in my vim session.
-  But I find it complicated.
-  What I’d like to do is, from within my terminal, call&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;vsplit myfile&lt;/li&gt;
-  &lt;li&gt;split myfile&lt;/li&gt;
-  &lt;li&gt;e myfile
-  Let’s change our vmux command to:&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;At first, I just copied the name of a file in a buffer, then opened it in my vim session.
+But I find it complicated.
+What I’d like to do is, from within my terminal, call:&lt;/p&gt;
 
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;alias vmux=”(abduco -l&lt;/td&gt;
-      &lt;td&gt;grep nvim-session)&lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-      &lt;td&gt;rm -f /tmp/vim-server;abduco -e ‘^g’ -A nvim-session nvim –cmd &quot;let g:server_addr = serverstart(‘/tmp/vim-server’)&quot;”&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ vsplit myfile
+$ split myfile
+$ e myfile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;let’s create ‘$HOME/.config/nvim/send_command_to_vim_session.py :vsplit”&lt;/p&gt;
+&lt;p&gt;Let’s change our vmux command to:&lt;/p&gt;
 
-&lt;p&gt;#!/usr/bin/env python3
-  import neovim
-  import sys
-  nvim = neovim.attach(‘socket’, path=’/tmp/vim-server’)
-  nvim.command(“ “.join(sys.argv[1:]))&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/sh&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;alias &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;vmux&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;(abduco -l|grep nvim-session) || rm -f /tmp/vim-server;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+  abduco -e '^g' -A nvim-session nvim --cmd &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;let g:server_addr = serverstart('/tmp/vim-server')&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;alias vmux-send=”$HOME/.config/nvim/send_command_to_vim_session.py”
-  for cmd in split vsplit e tabnew
-  do
-    alias $cmd=”vmux-send :$cmd”
-  done&lt;/p&gt;
+&lt;p&gt;This will create a &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/vim-server&lt;/code&gt; file used to comunicate with neovim.&lt;/p&gt;
 
-&lt;p&gt;Now in a :terminal, we will be able to call split or vsplit command !&lt;/p&gt;
+&lt;p&gt;As a command line client to the vim server, 
+Let’s create &lt;code class=&quot;highlighter-rouge&quot;&gt;$HOME/.config/nvim/send_command_to_vim_session.py&lt;/code&gt;&lt;/p&gt;
 
-&lt;p&gt;cd with terminal&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/env python&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;neovim&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sys&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;nvim&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;neovim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attach&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'socket'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'/tmp/vim-server'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;nvim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot; &quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;function cd() {  
-builtin cd &quot;$@&quot;;
-# if the parent process is nvim, do a vim cd 
-(ps -o comm= $PPID | grep nvim &amp;gt; /dev/null) &amp;amp;&amp;amp; vmux-send :cd &quot;$@&quot;
-}   export cd
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><summary type="html">Disclaimer:</summary></entry><entry><title type="html">Consuming fuse_kafka events with logstash</title><link href="http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html" rel="alternate" type="text/html" title="Consuming fuse_kafka events with logstash" /><published>2015-01-15T00:00:00+01:00</published><updated>2015-01-15T00:00:00+01:00</updated><id>http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash</id><content type="html" xml:base="http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html">&lt;p&gt;&lt;a href=&quot;https://github.com/yazgoo/fuse_kafka&quot;&gt;fuse_kafka&lt;/a&gt; is a project I’ve
+&lt;p&gt;In &lt;code class=&quot;highlighter-rouge&quot;&gt;.bashrc&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;.zshrc&lt;/code&gt;, let’s declare new commands:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/sh&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;alias &lt;/span&gt;vmux-send&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$HOME&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/.config/nvim/send_command_to_vim_session.py&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;cmd &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;split vsplit e tabnew
+&lt;span class=&quot;k&quot;&gt;do
+  &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;alias&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$cmd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;vmux-send :&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$cmd&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now in a &lt;code class=&quot;highlighter-rouge&quot;&gt;:terminal&lt;/code&gt; session, we will be able to call split or vsplit command !&lt;/p&gt;
+
+&lt;h1 id=&quot;cd-with-terminal&quot;&gt;cd with terminal&lt;/h1&gt;
+
+&lt;p&gt;When in terminal mode, when I change directory (&lt;code class=&quot;highlighter-rouge&quot;&gt;cd&lt;/code&gt;), I would like vim to also change its
+working directory (&lt;code class=&quot;highlighter-rouge&quot;&gt;:cd&lt;/code&gt;).
+You can do so by adding this in your &lt;code class=&quot;highlighter-rouge&quot;&gt;.zshrc&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;.bashrc&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/sh&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+  &lt;span class=&quot;nb&quot;&gt;builtin cd&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$@&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# if the parent process is nvim, do a vim cd &lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ps &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;comm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PPID&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;grep &lt;/span&gt;nvim &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; /dev/null&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; vmux-send :cd &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$@&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;export cd&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;whats-next&quot;&gt;What’s next&lt;/h1&gt;
+
+&lt;p&gt;I loved my tmux status bar, so maybe I will try and find a replacement.
+My window managers have their own status bars, so it is not that important to me though.&lt;/p&gt;
+
+&lt;p&gt;Currently, my setup only supports one &lt;code class=&quot;highlighter-rouge&quot;&gt;vmux&lt;/code&gt; session, I need to fix that.&lt;/p&gt;
+
+&lt;p&gt;Maybe I could create a vim plugin integrating most of the stuff I described in here.&lt;/p&gt;
+
+&lt;p&gt;A protection against nesting could be nice.&lt;/p&gt;
+
+&lt;p&gt;Finally, I would like to protect vim from closing with a prompt when in &lt;code class=&quot;highlighter-rouge&quot;&gt;vmux&lt;/code&gt; mode.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;So far, I’m having fun using neovim instead of tmux.
+To me there is currently no obvious reason to switch back to tmux.&lt;/p&gt;</content><author><name></name></author><summary type="html">For a while now there has been a terminal feature integrated in neovim.</summary></entry><entry><title type="html">Consuming fuse_kafka events with logstash</title><link href="http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html" rel="alternate" type="text/html" title="Consuming fuse_kafka events with logstash" /><published>2015-01-15T00:00:00+01:00</published><updated>2015-01-15T00:00:00+01:00</updated><id>http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash</id><content type="html" xml:base="http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html">&lt;p&gt;&lt;a href=&quot;https://github.com/yazgoo/fuse_kafka&quot;&gt;fuse_kafka&lt;/a&gt; is a project I’ve
 been working on for the past months.&lt;/p&gt;
 
 &lt;p&gt;Basically, it is a system that captures writes done to specific directories

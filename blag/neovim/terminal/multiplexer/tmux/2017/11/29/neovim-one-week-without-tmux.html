@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Neovim terminal: one week without tmux</title>
-  <meta name="description" content="Disclaimer:">
+  <meta name="description" content="For a while now there has been a terminal feature integrated in neovim.">
 
   <link rel="stylesheet" href="/blag/assets/main.css">
   <link rel="canonical" href="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">
@@ -80,86 +80,96 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p>Disclaimer:</p>
+    <p>For a while now there has been a <a href="https://neovim.io/doc/user/nvim_terminal_emulator.html">terminal feature integrated in neovim</a>.</p>
+
+<p><a href="http://vimcasts.org/episodes/neovim-terminal/">There’s a vimcast</a> on it if you want more info.</p>
+
+<p>Vim has buffers, tabs, and splits.
+The question I’ve been asking myself is simple:
+Is it possible to replace my use of tmux with neovim ?
+Here is my feedback, of one week leaving tmux.</p>
+
+<p>Disclaimer:</p>
+
+<ol>
+  <li>I am not an advanced vim/neovim user</li>
+  <li>Nor do am I am an advanced tmux user</li>
+</ol>
+
+<h1 id="basic-usage-and-configuration">Basic usage and configuration</h1>
+
+<p>To use the terminal in vim, just type:</p>
+
+<p><code class="highlighter-rouge">:terminal</code></p>
+
+<p>This will replace the current buffer you’re focused on with a terminal emulator.
+You can write in the terminal by switching to insert mode.</p>
+
+<p>To leave the emulator, just type <code class="highlighter-rouge">^\^n</code>.</p>
+
+<p>I find it kind of complicated, so I’ve done the following re-mapping based on
+<a href="http://www.michaelabrahamsen.com/posts/replace-tmux-with-neovim/">Michael Abrahamsen blogpost</a>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tnoremap jj &lt;C-\&gt;&lt;C-n&gt;
+</code></pre></div></div>
+
+<h1 id="basic-stuff">Basic stuff</h1>
 
 <ul>
-  <li>not an advanced vim user</li>
-  <li>not an advanced tmux user</li>
+  <li>
+    <p>To copy paste, the usual <code class="highlighter-rouge">y</code> and <code class="highlighter-rouge">p</code> work, I mostly use the <code class="highlighter-rouge">+</code> register.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">:resize</code>, <code class="highlighter-rouge">:vertical-resize</code> works, which is awesome.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">^n</code> completion will pick up everything managed by vim, including stuff written in your terminal !</p>
+  </li>
 </ul>
 
-<p>tnoremap jj &lt;C-&gt;<C-n></C-n></p>
+<h1 id="zooming">Zooming</h1>
 
-<p>http://www.michaelabrahamsen.com/posts/replace-tmux-with-neovim/</p>
-
-<p>on enter terminal buffer keep in non insert mode, not a big deal to push i when I want to write to them</p>
-
-<p>copy paste:</p>
+<p>tmux has a really nice <a href="https://sanctum.geek.nz/arabesque/zooming-tmux-panes/">zooming feature</a>.
+I checked a few solutions to do that with vim.</p>
 
 <ul>
-  <li>just the usual y p</li>
-  <li>when want to pass stuff to the os, use “+ register</li>
-</ul>
-
-<p>resizing:</p>
-
-<ul>
-  <li>vertical-resize, resize work!</li>
-</ul>
-
-<p>zooming:</p>
-
-<ul>
-  <li>vim-zoom: kinda works, but buffer needs to be saved and you have to save your buffers</li>
-  <li>ZoomWin:
+  <li><a href="https://github.com/dhruvasagar/vim-zoom">vim-zoom</a>: kinda works, but your buffer needs to be saved</li>
+  <li><a href="https://github.com/regedarek/ZoomWin">ZoomWin</a>:
     <ul>
-      <li>big lag</li>
-      <li>doesn’t play well with pandoc and other plugins, many errors when zooming/restoring</li>
-      <li>bad with swap files</li>
+      <li>When I used it it had a few second lags when zooming</li>
+      <li>It did not play well with pandoc and other plugins, I got many errors when zooming/restoring</li>
     </ul>
   </li>
-  <li>szw/vim-maximizer:
+  <li><a href="https://github.com/szw/vim-maximizer">vim-maximizer</a>:
     <ul>
-      <li>just equivalent to doing a resize, so other windows don’t disappear just minimized</li>
-      <li>fast and simple =&gt; my choice</li>
+      <li>It is equivalent to doing a resize, so other windows don’t disappear, they are just minimized</li>
+      <li>It is fast and simple =&gt; my goto choice</li>
     </ul>
   </li>
 </ul>
 
-<p>nesting:</p>
+<h1 id="nesting">Nesting</h1>
 
-<ul>
-  <li>no protection against it:
-just have to forget the worflow of:
-    <ol>
-      <li>navigating in a terminal</li>
-      <li>launching vim
-instead:</li>
-      <li>navigate in a terminal (or better in NERD)</li>
-      <li>open file in a split
-will work, but some escape sequence won’t</li>
-    </ol>
-  </li>
-</ul>
+<p>There is no protection against running vim in vim:
+  It will work, but some escape sequence might not.</p>
 
-<p>detaching:</p>
+<h1 id="detaching">Detaching</h1>
 
 <p>tmux is a terminal multiplexer, but it also supports detaching/attaching
   this is really a usefull feature I’m not ready to lose yet.
-  For example, it allows me to upgrade my terminal emulator without loosing my session.</p>
+  For example, it allows me to upgrade my terminal emulator without loosing my session or to keep a session over SSH.</p>
 
-<p>As mentioned here https://github.com/neovim/neovim/issues/5035#issuecomment-288144900 ,
-  lets use abduco (a detach clone) for that:</p>
+<p>As mentioned <a href="https://github.com/neovim/neovim/issues/5035#issuecomment-288144900">here</a>,
+  let’s use abduco (a detach clone) for that:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>alias vmux="abduco -e '^q' -A nvim-session nvim"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+<span class="nb">alias </span><span class="nv">vmux</span><span class="o">=</span><span class="s2">"abduco -e '^g' -A nvim-session nvim"</span>
 </code></pre></div></div>
 
-<p>Just use CTRL+q to detach from the session</p>
+<p>When we want to run vim as a terminal multiplexer, we’ll just have to run <code class="highlighter-rouge">vmux</code>.
+  Just use <code class="highlighter-rouge">CTRL+g</code> to detach from the session.</p>
 
-<p>completion:</p>
-
-<p>^n completion will pick up everything managed by vim, including stuff written in your terminal !</p>
-
-<p>controlling vim session from within terminal:</p>
+<h1 id="controlling-vim-session-from-within-terminal">Controlling vim session from within terminal</h1>
 
 <p>One usual workflow I have is:</p>
 
@@ -171,53 +181,81 @@ will work, but some escape sequence won’t</li>
 
 <p>With tmux, I just had to do</p>
 
-<p><code class="highlighter-rouge">vim myfile</code></p>
+<p><code class="highlighter-rouge">$ vim myfile</code></p>
 
-<p>At first, I just copied the name of a file in a buffer, then open it in my vim session.
-  But I find it complicated.
-  What I’d like to do is, from within my terminal, call</p>
-<ul>
-  <li>vsplit myfile</li>
-  <li>split myfile</li>
-  <li>e myfile
-  Let’s change our vmux command to:</li>
-</ul>
+<p>At first, I just copied the name of a file in a buffer, then opened it in my vim session.
+But I find it complicated.
+What I’d like to do is, from within my terminal, call:</p>
 
-<table>
-  <tbody>
-    <tr>
-      <td>alias vmux=”(abduco -l</td>
-      <td>grep nvim-session)</td>
-      <td> </td>
-      <td>rm -f /tmp/vim-server;abduco -e ‘^g’ -A nvim-session nvim –cmd "let g:server_addr = serverstart(‘/tmp/vim-server’)"”</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>let’s create ‘$HOME/.config/nvim/send_command_to_vim_session.py :vsplit”</p>
-
-<p>#!/usr/bin/env python3
-  import neovim
-  import sys
-  nvim = neovim.attach(‘socket’, path=’/tmp/vim-server’)
-  nvim.command(“ “.join(sys.argv[1:]))</p>
-
-<p>alias vmux-send=”$HOME/.config/nvim/send_command_to_vim_session.py”
-  for cmd in split vsplit e tabnew
-  do
-    alias $cmd=”vmux-send :$cmd”
-  done</p>
-
-<p>Now in a :terminal, we will be able to call split or vsplit command !</p>
-
-<p>cd with terminal</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function cd() {  
-builtin cd "$@";
-# if the parent process is nvim, do a vim cd 
-(ps -o comm= $PPID | grep nvim &gt; /dev/null) &amp;&amp; vmux-send :cd "$@"
-}   export cd
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ vsplit myfile
+$ split myfile
+$ e myfile
 </code></pre></div></div>
+
+<p>Let’s change our vmux command to:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/usr/bin/sh</span>
+<span class="nb">alias </span><span class="nv">vmux</span><span class="o">=</span><span class="s2">"(abduco -l|grep nvim-session) || rm -f /tmp/vim-server;</span><span class="se">\</span><span class="s2">
+  abduco -e '^g' -A nvim-session nvim --cmd </span><span class="se">\</span><span class="s2">
+    </span><span class="se">\"</span><span class="s2">let g:server_addr = serverstart('/tmp/vim-server')</span><span class="se">\"</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<p>This will create a <code class="highlighter-rouge">/tmp/vim-server</code> file used to comunicate with neovim.</p>
+
+<p>As a command line client to the vim server, 
+Let’s create <code class="highlighter-rouge">$HOME/.config/nvim/send_command_to_vim_session.py</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">neovim</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">nvim</span> <span class="o">=</span> <span class="n">neovim</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="s">'socket'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">'/tmp/vim-server'</span><span class="p">)</span>
+<span class="n">nvim</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+</code></pre></div></div>
+
+<p>In <code class="highlighter-rouge">.bashrc</code> or <code class="highlighter-rouge">.zshrc</code>, let’s declare new commands:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/usr/bin/sh</span>
+<span class="nb">alias </span>vmux-send<span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.config/nvim/send_command_to_vim_session.py"</span>
+<span class="k">for </span>cmd <span class="k">in </span>split vsplit e tabnew
+<span class="k">do
+  </span><span class="nb">alias</span> <span class="nv">$cmd</span><span class="o">=</span><span class="s2">"vmux-send :</span><span class="nv">$cmd</span><span class="s2">"</span>
+<span class="k">done</span>
+</code></pre></div></div>
+
+<p>Now in a <code class="highlighter-rouge">:terminal</code> session, we will be able to call split or vsplit command !</p>
+
+<h1 id="cd-with-terminal">cd with terminal</h1>
+
+<p>When in terminal mode, when I change directory (<code class="highlighter-rouge">cd</code>), I would like vim to also change its
+working directory (<code class="highlighter-rouge">:cd</code>).
+You can do so by adding this in your <code class="highlighter-rouge">.zshrc</code> or <code class="highlighter-rouge">.bashrc</code>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/usr/bin/sh</span>
+<span class="k">function </span><span class="nb">cd</span><span class="o">()</span> <span class="o">{</span>  
+  <span class="nb">builtin cd</span> <span class="s2">"</span><span class="nv">$@</span><span class="s2">"</span><span class="p">;</span>
+  <span class="c"># if the parent process is nvim, do a vim cd </span>
+  <span class="o">(</span>ps <span class="nt">-o</span> <span class="nv">comm</span><span class="o">=</span> <span class="nv">$PPID</span> | <span class="nb">grep </span>nvim <span class="o">&gt;</span> /dev/null<span class="o">)</span> <span class="o">&amp;&amp;</span> vmux-send :cd <span class="s2">"</span><span class="nv">$@</span><span class="s2">"</span>
+<span class="o">}</span>
+<span class="nb">export cd</span>
+</code></pre></div></div>
+
+<h1 id="whats-next">What’s next</h1>
+
+<p>I loved my tmux status bar, so maybe I will try and find a replacement.
+My window managers have their own status bars, so it is not that important to me though.</p>
+
+<p>Currently, my setup only supports one <code class="highlighter-rouge">vmux</code> session, I need to fix that.</p>
+
+<p>Maybe I could create a vim plugin integrating most of the stuff I described in here.</p>
+
+<p>A protection against nesting could be nice.</p>
+
+<p>Finally, I would like to protect vim from closing with a prompt when in <code class="highlighter-rouge">vmux</code> mode.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>So far, I’m having fun using neovim instead of tmux.
+To me there is currently no obvious reason to switch back to tmux.</p>
 
   </div>
 
