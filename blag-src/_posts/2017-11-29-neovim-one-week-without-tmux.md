@@ -17,7 +17,7 @@ Here is my feedback, of one week leaving tmux.
 Disclaimer:
 
 1. I am not an advanced vim/neovim user
-2. Nor do am I am an advanced tmux user
+2. Nor do I am an advanced tmux user
 
 
 Basic usage and configuration
