@@ -12,7 +12,7 @@ For a while now there has been a [terminal feature integrated in neovim](https:/
 Vim has buffers, tabs, and splits.
 The question I've been asking myself is simple:
 Is it possible to replace my use of tmux with neovim ?
-Here is my feedback, of one week leaving tmux.
+Here is my feedback, after one week leaving tmux.
 
 Disclaimer:
 
