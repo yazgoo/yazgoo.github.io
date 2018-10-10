@@ -1,4 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2017-12-07T01:28:40+01:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Neovim terminal: one week without tmux</title><link href="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html" rel="alternate" type="text/html" title="Neovim terminal: one week without tmux" /><published>2017-11-29T00:00:00+01:00</published><updated>2017-11-29T00:00:00+01:00</updated><id>http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux</id><content type="html" xml:base="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">&lt;p&gt;For a while now there has been a &lt;a href=&quot;https://neovim.io/doc/user/nvim_terminal_emulator.html&quot;&gt;terminal feature integrated in neovim&lt;/a&gt;.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2018-10-10T19:36:31+02:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Monitoring MySQL load with /proc</title><link href="http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc.html" rel="alternate" type="text/html" title="Monitoring MySQL load with /proc" /><published>2018-10-10T00:00:00+02:00</published><updated>2018-10-10T00:00:00+02:00</updated><id>http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc</id><content type="html" xml:base="http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc.html">&lt;p&gt;On a MySQL server, I launched the following command&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;load&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infile&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/tmp/bar'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;into&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The command was running for quite some time, and I was looking for a fast way 
+to know its progress,
+withouth having to restart it or reload MySQL server changing some option.&lt;/p&gt;
+
+&lt;p&gt;The idea is to find how much of &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/bar&lt;/code&gt; MySQL has read.&lt;/p&gt;
+
+&lt;p&gt;First, lets find mysql PID:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;pgrep mysql
+1337
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, lets find &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/bar&lt;/code&gt; file descriptor in &lt;code class=&quot;highlighter-rouge&quot;&gt;/proc&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt; /proc/1337/fd |grep /tmp/bar
+total 0
+lr-x------. 1 user user 64 Oct 10 21:55 4 -&amp;gt; /tmp/bar
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is file descriptor #4.&lt;/p&gt;
+
+&lt;p&gt;fdinfo allows to know more about file descriptor #4.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /proc/1337/fdinfo/4
+pos:    84443136
+flags:  0100000
+mnt_id: 650
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The first line gives us the read position in the file.
+We then just have to divide it by the total size of the file:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /proc/1337/fdinfo/4|head &lt;span class=&quot;nt&quot;&gt;-1&lt;/span&gt;|sed &lt;span class=&quot;s1&quot;&gt;'s/.*\t//'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;00 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+/ &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-nl&lt;/span&gt; /tmp/bar | awk &lt;span class=&quot;s1&quot;&gt;'{print $5}'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;%
+42%
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So 42% of the file was processed !&lt;/p&gt;</content><author><name></name></author><category term="mysql" /><category term="proc" /><category term="linux" /><summary type="html">On a MySQL server, I launched the following command</summary></entry><entry><title type="html">Neovim terminal: one week without tmux</title><link href="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html" rel="alternate" type="text/html" title="Neovim terminal: one week without tmux" /><published>2017-11-29T00:00:00+01:00</published><updated>2017-11-29T00:00:00+01:00</updated><id>http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux</id><content type="html" xml:base="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">&lt;p&gt;For a while now there has been a &lt;a href=&quot;https://neovim.io/doc/user/nvim_terminal_emulator.html&quot;&gt;terminal feature integrated in neovim&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;http://vimcasts.org/episodes/neovim-terminal/&quot;&gt;There’s a vimcast&lt;/a&gt; on it if you want more info.&lt;/p&gt;
 
