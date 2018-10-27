@@ -135,7 +135,7 @@ You should definitely not do that when you're developing your plugin.
 # using it
 
 
-I then use it in my [tabbar](https://github.com/yazgoo/vmux-c98tabbar/blob/master/plugin/vmux-c98tabbar.vim#L9) vimscript (which is based on a fork of [c98tabbar.vim](https://github.com/yazgoo/c98tabbar.vim/tree/master/plugin), by calling my command
+I then use it in my [tabbar](https://github.com/yazgoo/vmux-c98tabbar/blob/master/plugin/vmux-c98tabbar.vim#L9) vimscript (which is based on a fork of [c98tabbar.vim](https://github.com/yazgoo/c98tabbar.vim/tree/master/plugin)), by calling my command
 
 ```vimscript
 if exists(":WindsUp")
