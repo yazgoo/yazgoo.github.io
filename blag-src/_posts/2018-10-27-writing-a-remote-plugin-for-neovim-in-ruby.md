@@ -35,7 +35,7 @@ I like kiteboarding, which depends on wind conditions.
 The thing is that its good to always have an eye on these conditions.
 There's a very good website which is called [winds-up](http://winds-up.com/)
 
-I had already written a ruby gem to get a ultrashort report from winds-up, 
+I had already written a [ruby gem](https://rubygems.org/gems/winds-up-client) to get a ultrashort report from winds-up, 
 here is what it looks like
 
 ```shell
