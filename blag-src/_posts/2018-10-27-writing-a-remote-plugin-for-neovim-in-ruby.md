@@ -5,7 +5,7 @@ layout: post
 tags: vim neovim ruby plugin
 ---
 
-One of the features that made me switch to neovim was that
+One of the features that made me switch to [neovim](https://neovim.io/) was that
 at the time I was writing a [plugin](https://github.com/ensime/ensime-vim) 
 for vim and I was surprised that
 there was no easy way to do asynchronous calls.
