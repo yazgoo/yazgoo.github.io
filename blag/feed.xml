@@ -1,4 +1,151 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2018-10-10T20:18:52+02:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Monitoring MySQL load with /proc</title><link href="http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc.html" rel="alternate" type="text/html" title="Monitoring MySQL load with /proc" /><published>2018-10-10T00:00:00+02:00</published><updated>2018-10-10T00:00:00+02:00</updated><id>http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc</id><content type="html" xml:base="http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc.html">&lt;p&gt;On a MySQL server, I launched the following command&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2018-10-27T07:24:27+02:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Writing a remote plugin for neovim in ruby</title><link href="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html" rel="alternate" type="text/html" title="Writing a remote plugin for neovim in ruby" /><published>2018-10-27T00:00:00+02:00</published><updated>2018-10-27T00:00:00+02:00</updated><id>http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby</id><content type="html" xml:base="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html">&lt;p&gt;One of the features that made me switch to neovim was that
+at the time I was writing a &lt;a href=&quot;https://github.com/ensime/ensime-vim&quot;&gt;plugin&lt;/a&gt; 
+for vim and I was surprised that
+there was no easy way to do asynchronous calls.&lt;/p&gt;
+
+&lt;p&gt;Meaning that if your command was taking too long, it freezed the UI.
+A famous example of that is SQL client plugin, 
+&lt;a href=&quot;https://github.com/vim-scripts/dbext.vim&quot;&gt;dbext&lt;/a&gt;, which will freeze
+vim when your sql request takes too long.&lt;/p&gt;
+
+&lt;h1 id=&quot;remote-plugins&quot;&gt;Remote plugins&lt;/h1&gt;
+
+&lt;p&gt;Remote plugins are one of the best features of neovim.
+Neovim will spawn a separate process, and communicate with it
+via &lt;a href=&quot;https://github.com/msgpack/msgpack/blob/0b8f5ac/spec.md&quot;&gt;msgpack&lt;/a&gt; RPC API.&lt;/p&gt;
+
+&lt;p&gt;So now plugins can process stuff in the background without vim freezing.&lt;/p&gt;
+
+&lt;h1 id=&quot;neovim-ruby&quot;&gt;neovim-ruby&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/neovim/neovim-ruby#neovim-ruby&quot;&gt;neovim-ruby README&lt;/a&gt; is
+well writen and will get you started, you should read it if you’re going
+to write a remote plugin.&lt;/p&gt;
+
+&lt;h1 id=&quot;winds-up-client&quot;&gt;winds-up-client&lt;/h1&gt;
+
+&lt;p&gt;I like kiteboarding, which depends on wind conditions.
+The thing is that its good to always have an eye on these conditions.
+There’s a very good website which is called &lt;a href=&quot;http://winds-up.com/&quot;&gt;winds-up&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I had already written a ruby gem to get a ultrashort report from winds-up, 
+here is what it looks like&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;winds-up-client &lt;span class=&quot;nt&quot;&gt;--lpass&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--ultrashort&lt;/span&gt;
+B3↓S1↘P2↘S13↘V2↘
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;lpass&lt;/code&gt; option tells the client to log in winds-up.com with lastpass&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ultrashort&lt;/code&gt; tells that we want the shortest status report&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The ultrashort report will contain all your favorite spots (first letter of each spot),
+the wind speed (in nautical knots) and the wind direction (an arrow),&lt;/p&gt;
+
+&lt;p&gt;For example &lt;code class=&quot;highlighter-rouge&quot;&gt;S13↘&lt;/code&gt; means that my spot ‘S’ has 13 knots comming from north-west.&lt;/p&gt;
+
+&lt;h1 id=&quot;writing-the-plugin&quot;&gt;writing the plugin&lt;/h1&gt;
+
+&lt;p&gt;I’m installing it in the same repo as my gem, so that when
+it is installed via a plugin manager like vim-plug,
+it already has the gem embeded with it.
+Here is what it looks like:&lt;/p&gt;
+
+&lt;p&gt;(rplugin/ruby/winds-up-client.rb)[/winds-up-client/blob/master/rplugin/ruby/winds-up-client.rb]&lt;/p&gt;
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'neovim'&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require_relative&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'../../lib/winds-up-client'&lt;/span&gt;
+&lt;span class=&quot;no&quot;&gt;Neovim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;plugin&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plug&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;WindsUpClient&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;lpass: &lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;ultrashort: &lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;last_check&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;nil&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;plug&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:WindsUp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nvim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;last_check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;nil?&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;or&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;last_check&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt; 
+      &lt;span class=&quot;k&quot;&gt;begin&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;nvim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;set_var&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;windsup&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;favorites_spots_text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;chomp&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;rescue&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Exception&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;last_check&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s break it down.&lt;/p&gt;
+
+&lt;p&gt;I install it in rplugin/ruby/winds-up-client.rb which is the path which neovim
+uses to load ruby neovim plugin.&lt;/p&gt;
+
+&lt;p&gt;I require my ruby library (which is in the same repo):&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;require_relative&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'../../lib/winds-up-client'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Within my plugin context, I instantiate my client with 
+the same arguments as the command line shown before:&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;no&quot;&gt;Neovim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;plugin&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plug&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;WindsUpClient&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;lpass: &lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;ultrashort: &lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I declare a variable which will contain the timestamp of the last call to my command.&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;n&quot;&gt;last_check&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;nil&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then I declare my command, which can now be invoked via :WindsUp
+It has an &lt;code class=&quot;highlighter-rouge&quot;&gt;nvim&lt;/code&gt; client object to interract with neovim.
+I make sure it only gets called every 60 seconds, using last_check variable:&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;n&quot;&gt;plug&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:WindsUp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nvim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;last_check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;nil?&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;or&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;last_check&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt; 
+      &lt;span class=&quot;c1&quot;&gt;# ... do stuff&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;last_check&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then I call my command, and set a neovim variable (&lt;code class=&quot;highlighter-rouge&quot;&gt;windsup&lt;/code&gt;) contents 
+with my ultrashort report.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.rubydoc.info/github/neovim/neovim-ruby/master/Neovim/Client&quot;&gt;Here&lt;/a&gt; 
+is more documentation on what you can do with &lt;code class=&quot;highlighter-rouge&quot;&gt;nvim&lt;/code&gt; object&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;begin&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;nvim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;set_var&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;windsup&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;favorites_spots_text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;chomp&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;rescue&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Exception&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I also catch any exception, because I don’t want my plugin to echo
+its errors into vim (which it will do in case of exception)&lt;/p&gt;
+
+&lt;h1 id=&quot;using-it&quot;&gt;using it&lt;/h1&gt;
+
+&lt;p&gt;I then use it in my &lt;a href=&quot;https://github.com/yazgoo/vmux-c98tabbar/blob/master/plugin/vmux-c98tabbar.vim#L9&quot;&gt;tabbar&lt;/a&gt; vimscript (which is based on a fork of &lt;a href=&quot;https://github.com/yazgoo/c98tabbar.vim/tree/master/plugin&quot;&gt;c98tabbar.vim&lt;/a&gt;, by calling my command&lt;/p&gt;
+
+&lt;div class=&quot;language-vimscript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; exists&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;:WindsUp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;WindsUp
+&lt;span class=&quot;k&quot;&gt;endif&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;end then retrieving the &lt;code class=&quot;highlighter-rouge&quot;&gt;g:windup&lt;/code&gt; variable contents to display them.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;if exists(&quot;g:windsup&quot;)
+  let l:s .= g:windsup
+endif
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Here is the result:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../../images/ruby-wuc-bar.png&quot; alt=&quot;tabbar&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;conclusion&lt;/h1&gt;
+
+&lt;p&gt;So here was my very simple plugin, you can have a look at it &lt;a href=&quot;https://github.com/yazgoo/winds-up-client#neovim-plugin&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;As you can see, neovim ruby plugins are really easy to write.&lt;/p&gt;
+
+&lt;p&gt;Hope it can help you if you want to write your own plugin !&lt;/p&gt;</content><author><name></name></author><category term="vim" /><category term="neovim" /><category term="ruby" /><category term="plugin" /><summary type="html">One of the features that made me switch to neovim was that at the time I was writing a plugin for vim and I was surprised that there was no easy way to do asynchronous calls.</summary></entry><entry><title type="html">Monitoring MySQL load with /proc</title><link href="http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc.html" rel="alternate" type="text/html" title="Monitoring MySQL load with /proc" /><published>2018-10-10T00:00:00+02:00</published><updated>2018-10-10T00:00:00+02:00</updated><id>http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc</id><content type="html" xml:base="http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc.html">&lt;p&gt;On a MySQL server, I launched the following command&lt;/p&gt;
 
 &lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;load&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infile&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/tmp/bar'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;into&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
