@@ -79,7 +79,7 @@ end
 
 Let's break it down.
 
-I install it in rplugin/ruby/winds-up-client.rb which is the path which neovim
+I install it in `rplugin/ruby/winds-up-client.rb` which is the path which neovim
 uses to load ruby neovim plugin.
 
 I require my ruby library (which is in the same repo):
@@ -129,7 +129,8 @@ end
 ```
 
 I also catch any exception, because I don't want my plugin to echo
-its errors into vim (which it will do in case of exception)
+its errors into vim (which it will do in case of exception).
+You should definitely not do that when you're developing your plugin.
 
 # using it
 

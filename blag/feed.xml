@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2018-10-27T07:29:00+02:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Writing a remote plugin for neovim in ruby</title><link href="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html" rel="alternate" type="text/html" title="Writing a remote plugin for neovim in ruby" /><published>2018-10-27T00:00:00+02:00</published><updated>2018-10-27T00:00:00+02:00</updated><id>http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby</id><content type="html" xml:base="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html">&lt;p&gt;One of the features that made me switch to neovim was that
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2018-10-27T07:31:20+02:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Writing a remote plugin for neovim in ruby</title><link href="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html" rel="alternate" type="text/html" title="Writing a remote plugin for neovim in ruby" /><published>2018-10-27T00:00:00+02:00</published><updated>2018-10-27T00:00:00+02:00</updated><id>http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby</id><content type="html" xml:base="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html">&lt;p&gt;One of the features that made me switch to neovim was that
 at the time I was writing a &lt;a href=&quot;https://github.com/ensime/ensime-vim&quot;&gt;plugin&lt;/a&gt; 
 for vim and I was surprised that
 there was no easy way to do asynchronous calls.&lt;/p&gt;
@@ -72,7 +72,7 @@ Here is what it looks like:&lt;/p&gt;
 
 &lt;p&gt;Let’s break it down.&lt;/p&gt;
 
-&lt;p&gt;I install it in rplugin/ruby/winds-up-client.rb which is the path which neovim
+&lt;p&gt;I install it in &lt;code class=&quot;highlighter-rouge&quot;&gt;rplugin/ruby/winds-up-client.rb&lt;/code&gt; which is the path which neovim
 uses to load ruby neovim plugin.&lt;/p&gt;
 
 &lt;p&gt;I require my ruby library (which is in the same repo):&lt;/p&gt;
@@ -117,7 +117,8 @@ is more documentation on what you can do with &lt;code class=&quot;highlighter-r
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;I also catch any exception, because I don’t want my plugin to echo
-its errors into vim (which it will do in case of exception)&lt;/p&gt;
+its errors into vim (which it will do in case of exception).
+You should definitely not do that when you’re developing your plugin.&lt;/p&gt;
 
 &lt;h1 id=&quot;using-it&quot;&gt;using it&lt;/h1&gt;
 

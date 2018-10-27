@@ -154,7 +154,7 @@ Here is what it looks like:</p>
 
 <p>Let’s break it down.</p>
 
-<p>I install it in rplugin/ruby/winds-up-client.rb which is the path which neovim
+<p>I install it in <code class="highlighter-rouge">rplugin/ruby/winds-up-client.rb</code> which is the path which neovim
 uses to load ruby neovim plugin.</p>
 
 <p>I require my ruby library (which is in the same repo):</p>
@@ -199,7 +199,8 @@ is more documentation on what you can do with <code class="highlighter-rouge">nv
 </code></pre></div></div>
 
 <p>I also catch any exception, because I don’t want my plugin to echo
-its errors into vim (which it will do in case of exception)</p>
+its errors into vim (which it will do in case of exception).
+You should definitely not do that when you’re developing your plugin.</p>
 
 <h1 id="using-it">using it</h1>
 
