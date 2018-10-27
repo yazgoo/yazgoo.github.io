@@ -58,7 +58,7 @@ it is installed via a plugin manager like vim-plug,
 it already has the gem embeded with it.
 Here is what it looks like:
 
-(rplugin/ruby/winds-up-client.rb)[/winds-up-client/blob/master/rplugin/ruby/winds-up-client.rb]
+[rplugin/ruby/winds-up-client.rb](https://github.com/yazgoo/winds-up-client/blob/master/rplugin/ruby/winds-up-client.rb)
 ```ruby
 require 'neovim'
 require_relative '../../lib/winds-up-client'
