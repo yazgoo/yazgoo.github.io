@@ -1,4 +1,89 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2018-10-27T07:45:04+02:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Writing a remote plugin for neovim in ruby</title><link href="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html" rel="alternate" type="text/html" title="Writing a remote plugin for neovim in ruby" /><published>2018-10-27T00:00:00+02:00</published><updated>2018-10-27T00:00:00+02:00</updated><id>http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby</id><content type="html" xml:base="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html">&lt;p&gt;One of the features that made me switch to &lt;a href=&quot;https://neovim.io/&quot;&gt;neovim&lt;/a&gt; was that
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2019-02-12T21:38:09+01:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Creating a looper in shell</title><link href="http://localhost:4000/blag/2019/02/12/creating-a-looper-in-shell.html" rel="alternate" type="text/html" title="Creating a looper in shell" /><published>2019-02-12T00:00:00+01:00</published><updated>2019-02-12T00:00:00+01:00</updated><id>http://localhost:4000/blag/2019/02/12/creating-a-looper-in-shell</id><content type="html" xml:base="http://localhost:4000/blag/2019/02/12/creating-a-looper-in-shell.html">&lt;p&gt;On my free time I like to play the guitar.&lt;/p&gt;
+
+&lt;p&gt;I have a descent microphone, and I’d like to be able to loop a part and then play over it.&lt;/p&gt;
+
+&lt;p&gt;Here is a script to do just that.&lt;/p&gt;
+
+&lt;p&gt;First, let’s create a function which will wait for any key to be pressed:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;input&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	stty raw
+	dd &lt;span class=&quot;nv&quot;&gt;bs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 2&amp;gt; /dev/null
+	stty &lt;span class=&quot;nt&quot;&gt;-raw&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then let’s call it:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;input
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then let’s start recording.&lt;/p&gt;
+
+&lt;p&gt;arecord is configured for my mic (which is on hardware device 1,0).&lt;/p&gt;
+
+&lt;p&gt;This also runs the command in the background and keeps its pid:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;arecord &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; S16_LE &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; 48000 &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; hw:1,0 out.wav &amp;amp;
+&lt;span class=&quot;nv&quot;&gt;pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We wait one second (to avoid double taps to be taken into account),
+and wait for a key to be pushed again:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sleep 1
+input
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then we stop arecord via kill:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$pid&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We then can play the recorded file in a loop, 
+and break the loop when aplay return code is not 0 (which happens when you it Ctrl+C)&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;do
+	&lt;/span&gt;aplay out.wav
+	&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;break
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Here is the whole script:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/env sh&lt;/span&gt;
+
+input&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	stty raw
+	dd &lt;span class=&quot;nv&quot;&gt;bs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 2&amp;gt; /dev/null
+	stty &lt;span class=&quot;nt&quot;&gt;-raw&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+input
+arecord &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; S16_LE &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; 48000 &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; hw:1,0 out.wav &amp;amp;
+&lt;span class=&quot;nv&quot;&gt;pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+sleep 1
+input
+
+&lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$pid&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;do
+	&lt;/span&gt;aplay out.wav
+	&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;break
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For now I can use an additional keyboard as a poor’s man pedal, here is how to use it:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;launch the script&lt;/li&gt;
+  &lt;li&gt;push a key to start recording&lt;/li&gt;
+  &lt;li&gt;push a key to stop recording and start playback&lt;/li&gt;
+  &lt;li&gt;hit Ctrl+C to stop playback&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I like this script as it is super useful and really simple !&lt;/p&gt;</content><author><name></name></author><category term="shell" /><category term="linux" /><category term="loop" /><summary type="html">On my free time I like to play the guitar.</summary></entry><entry><title type="html">Writing a remote plugin for neovim in ruby</title><link href="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html" rel="alternate" type="text/html" title="Writing a remote plugin for neovim in ruby" /><published>2018-10-27T00:00:00+02:00</published><updated>2018-10-27T00:00:00+02:00</updated><id>http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby</id><content type="html" xml:base="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html">&lt;p&gt;One of the features that made me switch to &lt;a href=&quot;https://neovim.io/&quot;&gt;neovim&lt;/a&gt; was that
 at the time I was writing a &lt;a href=&quot;https://github.com/ensime/ensime-vim&quot;&gt;plugin&lt;/a&gt; 
 for vim and I was surprised that
 there was no easy way to do asynchronous calls.&lt;/p&gt;
