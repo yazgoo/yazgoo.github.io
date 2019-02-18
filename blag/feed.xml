@@ -1,4 +1,202 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="/blag/" rel="alternate" type="text/html" /><updated>2019-02-14T13:49:56+01:00</updated><id>/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Creating a looper in shell</title><link href="/blag/2019/02/12/creating-a-looper-in-shell.html" rel="alternate" type="text/html" title="Creating a looper in shell" /><published>2019-02-12T00:00:00+01:00</published><updated>2019-02-12T00:00:00+01:00</updated><id>/blag/2019/02/12/creating-a-looper-in-shell</id><content type="html" xml:base="/blag/2019/02/12/creating-a-looper-in-shell.html">&lt;p&gt;On my free time I like to play the guitar.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2019-02-18T23:06:22+01:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Creating a looper in shell part 2: adding a layer</title><link href="http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2.html" rel="alternate" type="text/html" title="Creating a looper in shell part 2: adding a layer" /><published>2019-02-18T00:00:00+01:00</published><updated>2019-02-18T00:00:00+01:00</updated><id>http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2</id><content type="html" xml:base="http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2.html">&lt;h1 id=&quot;what-were-aiming-for&quot;&gt;What we’re aiming for&lt;/h1&gt;
+
+&lt;p&gt;In the &lt;a href=&quot;../12/creating-a-looper-in-shell.html&quot;&gt;previous article&lt;/a&gt;, we saw how to create a basic looper in shell.&lt;/p&gt;
+
+&lt;p&gt;This creates our background sound.&lt;/p&gt;
+
+&lt;p&gt;Lets add an “overdub” function, which is a way to add a layer on top of the background,&lt;/p&gt;
+
+&lt;p&gt;Here is a diagram showing what we’re aiming for:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/looper_with_layer_timeline.png&quot; alt=&quot;timeline&quot; title=&quot;looper with layer timeline&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If it’s still not clear, here is a video which explains how to use a looper
+pedal from JustinGuitar youtube channel (see 8:10 timecode):&lt;/p&gt;
+
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/Gd0NhglZWtw&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;h1 id=&quot;how-well-proceed&quot;&gt;how we’ll proceed&lt;/h1&gt;
+
+&lt;p&gt;Like in previous part, we’ll record the background in its own wav file (background.wav), based on pedal pushes.
+Then we’ll play it in a loop.
+On the third push, we’ll record the layer in layer.wav, and play it in subsequent loops, in parallel with background.wav.&lt;/p&gt;
+
+&lt;h1 id=&quot;ipc&quot;&gt;IPC&lt;/h1&gt;
+
+&lt;p&gt;Because terminal input can only be done in the foreground, 
+We’ll have to capture the overdub pedal push in the foreground, and transfer the push to the main loop running in the background.&lt;/p&gt;
+
+&lt;p&gt;To do that, we’ll use a very basic aproach: a text file which will contain false if the pedal was not pushed, and true if the pedal was pushed.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+[ main loop ] === reads ===&amp;gt; [ text file ] &amp;lt;==== writes ==== [ pedal push ]
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;lets-do-it&quot;&gt;let’s do it&lt;/h1&gt;
+
+&lt;p&gt;First, we will start the script by removing files from previous recordings:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;rm background.wav layer.wav
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;then, let’s record background.wav (this is the same thing as &lt;a href=&quot;../12/creating-a-looper-in-shell.html&quot;&gt;previous article&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;record_background&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  input
+  arecord &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; S16_LE &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; 48000 &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; hw:1,0 background.wav &amp;amp;
+  &lt;span class=&quot;nv&quot;&gt;pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+  sleep 1
+  input
+  &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$pid&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As mentioned earlier, we’ll be using a file named &lt;code class=&quot;highlighter-rouge&quot;&gt;should_record_layer&lt;/code&gt; to notify the main_loop that it should start recording the layer (when it contains &lt;code class=&quot;highlighter-rouge&quot;&gt;true&lt;/code&gt;), and initialize it at &lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;nb&quot;&gt;echo false&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_record_layer
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;main-loop&quot;&gt;main loop&lt;/h1&gt;
+
+&lt;p&gt;then let’s start the main loop&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true
+  &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;do
+    &lt;/span&gt;play_layer
+    record_layer  
+    aplay background.wav
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;break&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$record_layer_pid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$record_layer_pid&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$play_layer_pid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$play_layer_pid&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s have a look at what we do here.&lt;/p&gt;
+
+&lt;p&gt;First, if a layer was recorded, we play it in the background, and set a variable with aplay pid:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;play_layer&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;play_layer_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;layer.wav&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;aplay layer.wav &amp;amp;
+    &lt;span class=&quot;nv&quot;&gt;play_layer_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, if &lt;code class=&quot;highlighter-rouge&quot;&gt;should_record_layer&lt;/code&gt; file contains &lt;code class=&quot;highlighter-rouge&quot;&gt;true&lt;/code&gt;, we record in the background, and set a variable with arecord pid.
+Once arecord is started, we can set &lt;code class=&quot;highlighter-rouge&quot;&gt;should_record_layer&lt;/code&gt; to false.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;record_layer&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;record_layer_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;should_record_layer&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;arecord &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; S16_LE &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; 48000 &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; hw:1,0 layer.wav &amp;amp;
+    &lt;span class=&quot;nv&quot;&gt;record_layer_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;echo false&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_record_layer
+  &lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then we can start playing background.wav:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aplay background.wav
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;When we’re done playing background.wav, we kill arecord (the layer recorder) if it is running.
+We also kill aplay (the layer player) if it is running.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$record_layer_pid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$record_layer_pid&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$play_layer_pid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$play_layer_pid&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;lets-finish-it&quot;&gt;let’s finish it&lt;/h1&gt;
+
+&lt;p&gt;Then, we call main_loop in the background, wait for a pedal push, and notify main_loop
+via &lt;code class=&quot;highlighter-rouge&quot;&gt;should_record_layer&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;main_loop &amp;amp;
+&lt;span class=&quot;nv&quot;&gt;main_loop_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+input
+&lt;span class=&quot;nb&quot;&gt;echo true&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_record_layer
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally, we wait for main_loop to stop:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;wait&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$main_loop_pid&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;the-whole-script&quot;&gt;The whole script&lt;/h1&gt;
+
+&lt;p&gt;Here is the whole script&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/env sh&lt;/span&gt;
+
+input&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	stty raw
+	dd &lt;span class=&quot;nv&quot;&gt;bs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 2&amp;gt; /dev/null
+	stty &lt;span class=&quot;nt&quot;&gt;-raw&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+record_background&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  input
+  arecord &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; S16_LE &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; 48000 &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; hw:1,0 background.wav &amp;amp;
+  &lt;span class=&quot;nv&quot;&gt;pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+  sleep 1
+  input
+  &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$pid&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+play_layer&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;play_layer_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;layer.wav&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;aplay layer.wav &amp;amp;
+    &lt;span class=&quot;nv&quot;&gt;play_layer_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+record_layer&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;record_layer_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;should_record_layer&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;arecord &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; S16_LE &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; 48000 &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; hw:1,0 layer.wav &amp;amp;
+    &lt;span class=&quot;nv&quot;&gt;record_layer_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;echo false&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_record_layer
+  &lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+main_loop&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;echo false&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_record_layer
+  &lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true
+  &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;do
+    &lt;/span&gt;play_layer
+    record_layer  
+    aplay background.wav
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;break&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$record_layer_pid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$record_layer_pid&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$play_layer_pid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$play_layer_pid&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+rm background.wav layer.wav
+record_background
+main_loop &amp;amp;
+&lt;span class=&quot;nv&quot;&gt;main_loop_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+input
+&lt;span class=&quot;nb&quot;&gt;echo true&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_record_layer
+&lt;span class=&quot;nb&quot;&gt;wait&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$main_loop_pid&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;to-conclude&quot;&gt;to conclude&lt;/h1&gt;
+
+&lt;p&gt;With less than 60 lines of shell, we’ve made a software pedal with a layer.&lt;/p&gt;
+
+&lt;p&gt;With a cheap USB pedal like this which sends a key press, this script is really nice to use:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/pedal.jpg&quot; alt=&quot;timeline&quot; title=&quot;pedal&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="shell" /><category term="linux" /><category term="loop" /><summary type="html">What we’re aiming for</summary></entry><entry><title type="html">Creating a looper in shell</title><link href="http://localhost:4000/blag/2019/02/12/creating-a-looper-in-shell.html" rel="alternate" type="text/html" title="Creating a looper in shell" /><published>2019-02-12T00:00:00+01:00</published><updated>2019-02-12T00:00:00+01:00</updated><id>http://localhost:4000/blag/2019/02/12/creating-a-looper-in-shell</id><content type="html" xml:base="http://localhost:4000/blag/2019/02/12/creating-a-looper-in-shell.html">&lt;p&gt;On my free time I like to play the guitar.&lt;/p&gt;
 
 &lt;p&gt;I have a descent microphone, and I’d like to be able to loop a part and then play over it.&lt;/p&gt;
 
@@ -83,7 +281,7 @@ input
   &lt;li&gt;hit Ctrl+C to stop playback&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;I like this script as it is super useful and really simple !&lt;/p&gt;</content><author><name></name></author><category term="shell" /><category term="linux" /><category term="loop" /><summary type="html">On my free time I like to play the guitar.</summary></entry><entry><title type="html">Writing a remote plugin for neovim in ruby</title><link href="/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html" rel="alternate" type="text/html" title="Writing a remote plugin for neovim in ruby" /><published>2018-10-27T00:00:00+02:00</published><updated>2018-10-27T00:00:00+02:00</updated><id>/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby</id><content type="html" xml:base="/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html">&lt;p&gt;One of the features that made me switch to &lt;a href=&quot;https://neovim.io/&quot;&gt;neovim&lt;/a&gt; was that
+&lt;p&gt;I like this script as it is super useful and really simple !&lt;/p&gt;</content><author><name></name></author><category term="shell" /><category term="linux" /><category term="loop" /><summary type="html">On my free time I like to play the guitar.</summary></entry><entry><title type="html">Writing a remote plugin for neovim in ruby</title><link href="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html" rel="alternate" type="text/html" title="Writing a remote plugin for neovim in ruby" /><published>2018-10-27T00:00:00+02:00</published><updated>2018-10-27T00:00:00+02:00</updated><id>http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby</id><content type="html" xml:base="http://localhost:4000/blag/2018/10/27/writing-a-remote-plugin-for-neovim-in-ruby.html">&lt;p&gt;One of the features that made me switch to &lt;a href=&quot;https://neovim.io/&quot;&gt;neovim&lt;/a&gt; was that
 at the time I was writing a &lt;a href=&quot;https://github.com/ensime/ensime-vim&quot;&gt;plugin&lt;/a&gt; 
 for vim and I was surprised that
 there was no easy way to do asynchronous calls.&lt;/p&gt;
@@ -231,7 +429,7 @@ endif
 
 &lt;p&gt;As you can see, neovim ruby plugins are really easy to write.&lt;/p&gt;
 
-&lt;p&gt;Hope it can help you if you want to write your own plugin !&lt;/p&gt;</content><author><name></name></author><category term="vim" /><category term="neovim" /><category term="ruby" /><category term="plugin" /><summary type="html">One of the features that made me switch to neovim was that at the time I was writing a plugin for vim and I was surprised that there was no easy way to do asynchronous calls.</summary></entry><entry><title type="html">Monitoring MySQL load with /proc</title><link href="/blag/2018/10/10/monitoring-mysql-load-with-proc.html" rel="alternate" type="text/html" title="Monitoring MySQL load with /proc" /><published>2018-10-10T00:00:00+02:00</published><updated>2018-10-10T00:00:00+02:00</updated><id>/blag/2018/10/10/monitoring-mysql-load-with-proc</id><content type="html" xml:base="/blag/2018/10/10/monitoring-mysql-load-with-proc.html">&lt;p&gt;On a MySQL server, I launched the following command&lt;/p&gt;
+&lt;p&gt;Hope it can help you if you want to write your own plugin !&lt;/p&gt;</content><author><name></name></author><category term="vim" /><category term="neovim" /><category term="ruby" /><category term="plugin" /><summary type="html">One of the features that made me switch to neovim was that at the time I was writing a plugin for vim and I was surprised that there was no easy way to do asynchronous calls.</summary></entry><entry><title type="html">Monitoring MySQL load with /proc</title><link href="http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc.html" rel="alternate" type="text/html" title="Monitoring MySQL load with /proc" /><published>2018-10-10T00:00:00+02:00</published><updated>2018-10-10T00:00:00+02:00</updated><id>http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc</id><content type="html" xml:base="http://localhost:4000/blag/2018/10/10/monitoring-mysql-load-with-proc.html">&lt;p&gt;On a MySQL server, I launched the following command&lt;/p&gt;
 
 &lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;load&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infile&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/tmp/bar'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;into&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -273,7 +471,7 @@ We then just have to divide it by the total size of the file:&lt;/p&gt;
 42%
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;So 42% of the file was processed !&lt;/p&gt;</content><author><name></name></author><category term="mysql" /><category term="proc" /><category term="linux" /><summary type="html">On a MySQL server, I launched the following command</summary></entry><entry><title type="html">Neovim terminal: one week without tmux</title><link href="/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html" rel="alternate" type="text/html" title="Neovim terminal: one week without tmux" /><published>2017-11-29T00:00:00+01:00</published><updated>2017-11-29T00:00:00+01:00</updated><id>/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux</id><content type="html" xml:base="/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">&lt;p&gt;For a while now there has been a &lt;a href=&quot;https://neovim.io/doc/user/nvim_terminal_emulator.html&quot;&gt;terminal feature integrated in neovim&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;So 42% of the file was processed !&lt;/p&gt;</content><author><name></name></author><category term="mysql" /><category term="proc" /><category term="linux" /><summary type="html">On a MySQL server, I launched the following command</summary></entry><entry><title type="html">Neovim terminal: one week without tmux</title><link href="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html" rel="alternate" type="text/html" title="Neovim terminal: one week without tmux" /><published>2017-11-29T00:00:00+01:00</published><updated>2017-11-29T00:00:00+01:00</updated><id>http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux</id><content type="html" xml:base="http://localhost:4000/blag/neovim/terminal/multiplexer/tmux/2017/11/29/neovim-one-week-without-tmux.html">&lt;p&gt;For a while now there has been a &lt;a href=&quot;https://neovim.io/doc/user/nvim_terminal_emulator.html&quot;&gt;terminal feature integrated in neovim&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;http://vimcasts.org/episodes/neovim-terminal/&quot;&gt;There’s a vimcast&lt;/a&gt; on it if you want more info.&lt;/p&gt;
 
@@ -448,7 +646,7 @@ My window managers have their own status bars, so it is not that important to me
 &lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
 
 &lt;p&gt;So far, I’m having fun using neovim instead of tmux.
-To me there is currently no obvious reason to switch back to tmux.&lt;/p&gt;</content><author><name></name></author><summary type="html">For a while now there has been a terminal feature integrated in neovim.</summary></entry><entry><title type="html">Consuming fuse_kafka events with logstash</title><link href="/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html" rel="alternate" type="text/html" title="Consuming fuse_kafka events with logstash" /><published>2015-01-15T00:00:00+01:00</published><updated>2015-01-15T00:00:00+01:00</updated><id>/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash</id><content type="html" xml:base="/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html">&lt;p&gt;&lt;a href=&quot;https://github.com/yazgoo/fuse_kafka&quot;&gt;fuse_kafka&lt;/a&gt; is a project I’ve
+To me there is currently no obvious reason to switch back to tmux.&lt;/p&gt;</content><author><name></name></author><summary type="html">For a while now there has been a terminal feature integrated in neovim.</summary></entry><entry><title type="html">Consuming fuse_kafka events with logstash</title><link href="http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html" rel="alternate" type="text/html" title="Consuming fuse_kafka events with logstash" /><published>2015-01-15T00:00:00+01:00</published><updated>2015-01-15T00:00:00+01:00</updated><id>http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash</id><content type="html" xml:base="http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html">&lt;p&gt;&lt;a href=&quot;https://github.com/yazgoo/fuse_kafka&quot;&gt;fuse_kafka&lt;/a&gt; is a project I’ve
 been working on for the past months.&lt;/p&gt;
 
 &lt;p&gt;Basically, it is a system that captures writes done to specific directories
@@ -463,7 +661,7 @@ allows to read logstash events from kafka.&lt;/p&gt;
 
 &lt;!-- more --&gt;
 
-&lt;p&gt;&lt;img src=&quot;/blag/images/logstash_fuse_kafka_logo.png&quot; alt=&quot;logstash and fuse_kafka!&quot; title=&quot;logstash and fuse_kafka!&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/logstash_fuse_kafka_logo.png&quot; alt=&quot;logstash and fuse_kafka!&quot; title=&quot;logstash and fuse_kafka!&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;sample-architecture&quot;&gt;Sample architecture&lt;/h2&gt;
 
@@ -662,12 +860,12 @@ just by replacing the output line in &lt;code class=&quot;highlighter-rouge&quot
 
 &lt;p&gt;Here is what we get:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/blag/images/kibana.png&quot; alt=&quot;kibana screenshot&quot; title=&quot;kibana screenshot&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/kibana.png&quot; alt=&quot;kibana screenshot&quot; title=&quot;kibana screenshot&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;Logstash/ElasticSearch/Kibana are awesome, and fuse_kafka/kafka 
-now can fit right with this power trio!&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><category term="log centralization" /><category term="fuse_kafka" /><category term="elasticsearch" /><category term="kibana" /><category term="kafka" /><summary type="html">fuse_kafka is a project I’ve been working on for the past months.</summary></entry><entry><title type="html">Output rotation with logstash</title><link href="/blag/2015/01/08/output-rotation-with-logstash.html" rel="alternate" type="text/html" title="Output rotation with logstash" /><published>2015-01-08T00:00:00+01:00</published><updated>2015-01-08T00:00:00+01:00</updated><id>/blag/2015/01/08/output-rotation-with-logstash</id><content type="html" xml:base="/blag/2015/01/08/output-rotation-with-logstash.html">&lt;p&gt;I love &lt;a href=&quot;http://logstash.net/&quot;&gt;logstash&lt;/a&gt;, it is a really powerfull tool,
+now can fit right with this power trio!&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><category term="log centralization" /><category term="fuse_kafka" /><category term="elasticsearch" /><category term="kibana" /><category term="kafka" /><summary type="html">fuse_kafka is a project I’ve been working on for the past months.</summary></entry><entry><title type="html">Output rotation with logstash</title><link href="http://localhost:4000/blag/2015/01/08/output-rotation-with-logstash.html" rel="alternate" type="text/html" title="Output rotation with logstash" /><published>2015-01-08T00:00:00+01:00</published><updated>2015-01-08T00:00:00+01:00</updated><id>http://localhost:4000/blag/2015/01/08/output-rotation-with-logstash</id><content type="html" xml:base="http://localhost:4000/blag/2015/01/08/output-rotation-with-logstash.html">&lt;p&gt;I love &lt;a href=&quot;http://logstash.net/&quot;&gt;logstash&lt;/a&gt;, it is a really powerfull tool,
 and it also leverages jruby so it is really self-contained and portable.&lt;/p&gt;
 
 &lt;p&gt;Let’s say you want to use &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; different outputs based on current date.
@@ -778,7 +976,7 @@ we might have chosen an output on the two first seconds via this conditional:&lt
 
 &lt;p&gt;We also have chosen the output based on the &lt;code class=&quot;highlighter-rouge&quot;&gt;@timestamp&lt;/code&gt; field, but I wanted to use
 an output based on the actual current time, not based on the time associated with an event
-(both may differ).&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><summary type="html">I love logstash, it is a really powerfull tool, and it also leverages jruby so it is really self-contained and portable.</summary></entry><entry><title type="html">Orphan black gets it right</title><link href="/blag/2015/01/02/orphan-black-gets-it-right.html" rel="alternate" type="text/html" title="Orphan black gets it right" /><published>2015-01-02T00:00:00+01:00</published><updated>2015-01-02T00:00:00+01:00</updated><id>/blag/2015/01/02/orphan-black-gets-it-right</id><content type="html" xml:base="/blag/2015/01/02/orphan-black-gets-it-right.html">&lt;p&gt;I’ve been re-watching the awesome Orphan Black first series.
+(both may differ).&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><summary type="html">I love logstash, it is a really powerfull tool, and it also leverages jruby so it is really self-contained and portable.</summary></entry><entry><title type="html">Orphan black gets it right</title><link href="http://localhost:4000/blag/2015/01/02/orphan-black-gets-it-right.html" rel="alternate" type="text/html" title="Orphan black gets it right" /><published>2015-01-02T00:00:00+01:00</published><updated>2015-01-02T00:00:00+01:00</updated><id>http://localhost:4000/blag/2015/01/02/orphan-black-gets-it-right</id><content type="html" xml:base="http://localhost:4000/blag/2015/01/02/orphan-black-gets-it-right.html">&lt;p&gt;I’ve been re-watching the awesome Orphan Black first series.
 If you’ve not watched it yet, this post might contain spoilers.&lt;/p&gt;
 
 &lt;p&gt;I’m not going to talk about Tatiana Maslany acting nor about
@@ -796,7 +994,7 @@ information is encoded into one’s genome.&lt;/p&gt;
 
 &lt;p&gt;We get this screenshot:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/blag/images/screenshot_genome.png&quot; alt=&quot;genome screenshot&quot; title=&quot;genome screenshot&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/screenshot_genome.png&quot; alt=&quot;genome screenshot&quot; title=&quot;genome screenshot&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Delphine also states that she knows Cosima’s tag #, which is:&lt;/p&gt;
 
@@ -860,7 +1058,7 @@ validated too!&lt;/p&gt;
 
 &lt;p&gt;This kind of detail on TV is just great.
 It just make the series far more realistic 
-(though I have no idea on how realistic the biology part is)!&lt;/p&gt;</content><author><name></name></author><category term="orphan black" /><category term="ascii" /><summary type="html">I’ve been re-watching the awesome Orphan Black first series. If you’ve not watched it yet, this post might contain spoilers.</summary></entry><entry><title type="html">ruby gem to jar and war</title><link href="/blag/2014/06/21/ruby-gem-to-jar-and-war.html" rel="alternate" type="text/html" title="ruby gem to jar and war" /><published>2014-06-21T00:00:00+02:00</published><updated>2014-06-21T00:00:00+02:00</updated><id>/blag/2014/06/21/ruby-gem-to-jar-and-war</id><content type="html" xml:base="/blag/2014/06/21/ruby-gem-to-jar-and-war.html">&lt;p&gt;Some days ago I read the following tweet:&lt;/p&gt;
+(though I have no idea on how realistic the biology part is)!&lt;/p&gt;</content><author><name></name></author><category term="orphan black" /><category term="ascii" /><summary type="html">I’ve been re-watching the awesome Orphan Black first series. If you’ve not watched it yet, this post might contain spoilers.</summary></entry><entry><title type="html">ruby gem to jar and war</title><link href="http://localhost:4000/blag/2014/06/21/ruby-gem-to-jar-and-war.html" rel="alternate" type="text/html" title="ruby gem to jar and war" /><published>2014-06-21T00:00:00+02:00</published><updated>2014-06-21T00:00:00+02:00</updated><id>http://localhost:4000/blag/2014/06/21/ruby-gem-to-jar-and-war</id><content type="html" xml:base="http://localhost:4000/blag/2014/06/21/ruby-gem-to-jar-and-war.html">&lt;p&gt;Some days ago I read the following tweet:&lt;/p&gt;
 
 &lt;div&gt;
 &lt;blockquote class=&quot;twitter-tweet&quot; lang=&quot;en&quot;&gt;&lt;p&gt;Today is one of those days I question my time spent working on JRuby, when so many Rubyists still treat us like the great Satan.&lt;/p&gt;&amp;mdash; Charles Nutter (@headius) &lt;a href=&quot;https://twitter.com/headius/statuses/478133674710679552&quot;&gt;June 15, 2014&lt;/a&gt;&lt;/blockquote&gt;
@@ -1079,7 +1277,7 @@ warbler assumes you want a war!&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;//thenice.tumblr.com/post/133345213/deploying-a-rails-application-in-tomcat-with-jruby-a&quot;&gt;deploying a rails application in tomcat with jruby&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;//guides.rubygems.org/make-your-own-gem/&quot;&gt;make your own gem&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">Some days ago I read the following tweet:</summary></entry><entry><title type="html">impress arrows and impress circle</title><link href="/blag/2014/06/04/impress-arrows-and-impress-circle.html" rel="alternate" type="text/html" title="impress arrows and impress circle" /><published>2014-06-04T00:00:00+02:00</published><updated>2014-06-04T00:00:00+02:00</updated><id>/blag/2014/06/04/impress-arrows-and-impress-circle</id><content type="html" xml:base="/blag/2014/06/04/impress-arrows-and-impress-circle.html">&lt;p&gt;I’d like to introduce you to the stuff I’ve been working on for
+&lt;p&gt;&lt;a href=&quot;//guides.rubygems.org/make-your-own-gem/&quot;&gt;make your own gem&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">Some days ago I read the following tweet:</summary></entry><entry><title type="html">impress arrows and impress circle</title><link href="http://localhost:4000/blag/2014/06/04/impress-arrows-and-impress-circle.html" rel="alternate" type="text/html" title="impress arrows and impress circle" /><published>2014-06-04T00:00:00+02:00</published><updated>2014-06-04T00:00:00+02:00</updated><id>http://localhost:4000/blag/2014/06/04/impress-arrows-and-impress-circle</id><content type="html" xml:base="http://localhost:4000/blag/2014/06/04/impress-arrows-and-impress-circle.html">&lt;p&gt;I’d like to introduce you to the stuff I’ve been working on for
 the last few weeks or so which are helper libraries on top of
 the awesome impress.js.&lt;/p&gt;
 
@@ -1149,129 +1347,4 @@ For example here is part of the previous document source:&lt;/p&gt;
     &amp;lt;/div&amp;gt; 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;I hope all these can help you in some way.&lt;/p&gt;</content><author><name></name></author><category term="javascript" /><category term="impress.js" /><summary type="html">I’d like to introduce you to the stuff I’ve been working on for the last few weeks or so which are helper libraries on top of the awesome impress.js.</summary></entry><entry><title type="html">X240 Thinkpad touchpad</title><link href="/blag/2014/05/16/x240-thinkpad-touchpad.html" rel="alternate" type="text/html" title="X240 Thinkpad touchpad" /><published>2014-05-16T00:00:00+02:00</published><updated>2014-05-16T00:00:00+02:00</updated><id>/blag/2014/05/16/x240-thinkpad-touchpad</id><content type="html" xml:base="/blag/2014/05/16/x240-thinkpad-touchpad.html">&lt;p&gt;Out of the box, the suport for x240 touchpad under Ubuntu is poor.
-Here is what I did to fix it, based on &lt;a href=&quot;http://mydevelopedworld.wordpress.com/2013/11/30/how-to-configure-new-lenovo-x240-touchpad-on-ubuntu-13-10/&quot;&gt;this article&lt;/a&gt;.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;p&gt;####The problems####&lt;/p&gt;
-
-&lt;p&gt;The touchpad is in only one part (it’s also called a clickpad):&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/blag/images/clickpad.png&quot; alt=&quot;clickpad image&quot; title=&quot;clickpad&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;On ubuntu, by default, there are problems with it:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;When you click, you move the mouse.&lt;/li&gt;
-  &lt;li&gt;Right click is configured on the lower right corner: 
-     I would expect it to be on the upper right one.&lt;/li&gt;
-  &lt;li&gt;There is no middle click.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;####The xorg synaptic configuration####&lt;/p&gt;
-
-&lt;p&gt;The file we’ll be editing is: 
-&lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/share/X11/xorg.conf.d/50-synaptics.conf&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;So you should back it up.&lt;/p&gt;
-
-&lt;p&gt;####Fix with no explanation####&lt;/p&gt;
-
-&lt;p&gt;Here is a summary of the fix (if you want explanations, skip this part):&lt;/p&gt;
-
-&lt;p&gt;In this section:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Section &quot;InputClass&quot;
-        Identifier &quot;Default clickpad buttons&quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;replace: &lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;SoftButtonAreas&quot; &quot;50% 0 82% 0 0 0 0 0&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;with: &lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;SoftButtonAreas&quot; &quot;65% 0 0 10% 35% 60% 0 10%&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;And in the same section, add: &lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;AreaTopEdge&quot; &quot;10%&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;Then restart Xorg: (e.g. &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo service lightdm restart&lt;/code&gt;).&lt;br /&gt;
-You’re done.&lt;/p&gt;
-
-&lt;p&gt;To sum it up, here is a diff (run &lt;code class=&quot;highlighter-rouge&quot;&gt;patch 50-synaptics.conf $with_this&lt;/code&gt;):&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;34c34
-&amp;lt;         Option &quot;SoftButtonAreas&quot; &quot;50% 0 82% 0 0 0 0 0&quot;
----
-&amp;gt;       Option &quot;SoftButtonAreas&quot; &quot;65% 0 0 10% 35% 65% 0 10%&quot;
-37c37
-&amp;lt; #       Option &quot;AreaBottomEdge&quot; &quot;82%&quot;
----
-&amp;gt;         Option &quot;AreaTopEdge&quot; &quot;10%&quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;####Fixing the click problem#####&lt;/p&gt;
-
-&lt;p&gt;in the following section:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Section &quot;InputClass&quot;
-        Identifier &quot;Default clickpad buttons&quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;We have to update the SoftButtonAreas field which has height parameters.
-From &lt;code class=&quot;highlighter-rouge&quot;&gt;man snyaptics&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Option &quot;SoftButtonAreas&quot; &quot;RBL RBR RBT RBB MBL MBR MBT MBB&quot;
-
-This option is only available on ClickPad devices.
-Enable soft button click area support on ClickPad devices.
-The first four parameters are the left, right, top, bottom edge of the right button, respectively,
-the second four parameters are  the  left, right, top, bottom edge of the middle button, respectively.
-[...]
-If any edge is set to 0 (not 0%), the button is assumed to extend  to  infinity 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Here is the initial value: &lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;SoftButtonAreas&quot; &quot;50% 0 82% 0 0 0 0 0&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;So the right button is starting at half the left of the clickpad and starting at 82% of its top.
-Also, the manual states that:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Setting all values to 0 (not 0%) disables soft button areas.
-test
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;So the middle button is disabled.
-So here is the right click zone (clicking anywhere else is considered as a left click):&lt;/p&gt;
-
-&lt;div style=&quot;width:520px; height:370px; background-image:url('/blag/images/clickpad.png')&quot;&gt;
-&lt;div style=&quot;position:relative; left: 50%; top: 82%; width: 42%; height:16.65%; background-color: green; border-bottom-right-radius: 10px; opacity: 0.8;&quot;&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Say we want the right button to start at 65% of the left and stop at 10% of the top.
-If we want the middle button to start at 35% of the left and end at 10% of the top, here is what we should write:&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;SoftButtonAreas&quot; &quot;65% 0 0 10% 35% 65% 0 10%&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;The resulting zones are (blue is middle click, green is right click):&lt;/p&gt;
-
-&lt;div style=&quot;width:520px; height:370px; background-image:url('/blag/images/clickpad.png')&quot;&gt;
-&lt;div style=&quot;position: relative; float: left; left: 38%; top: 6%; width: 27%; height:10%; background-color: blue; opacity: 0.8;&quot;&gt;
-&lt;/div&gt;
-&lt;div style=&quot;position: relative; left: 65%; top: 6%; width: 26%; height:10%; background-color: green; opacity: 0.8;&quot;&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;p&gt;####Do not move the mouse while clicking####&lt;/p&gt;
-
-&lt;p&gt;Again from the manual, there’s this option:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Option &quot;AreaTopEdge&quot; &quot;integer&quot;
-
-Ignore  movements,  scrolling  and  tapping  which  take  place above this edge.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;So we’d like enable that below the buttons which are located at 10% of the touchpad.
-So let’s add:&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Option &quot;AreaTopEdge&quot; &quot;10%&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;Then, restart Xorg: (e.g. &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo service lightdm restart&lt;/code&gt;).&lt;br /&gt;
-We’re done.&lt;/p&gt;</content><author><name></name></author><category term="thinkpad" /><category term="x240" /><category term="touchpad" /><summary type="html">Out of the box, the suport for x240 touchpad under Ubuntu is poor. Here is what I did to fix it, based on this article.</summary></entry></feed>
+&lt;p&gt;I hope all these can help you in some way.&lt;/p&gt;</content><author><name></name></author><category term="javascript" /><category term="impress.js" /><summary type="html">I’d like to introduce you to the stuff I’ve been working on for the last few weeks or so which are helper libraries on top of the awesome impress.js.</summary></entry></feed>
