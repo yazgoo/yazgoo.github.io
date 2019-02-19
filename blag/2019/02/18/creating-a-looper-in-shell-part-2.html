@@ -112,6 +112,15 @@ We’ll have to capture the overdub pedal push in the foreground, and transfer t
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rm background.wav layer.wav
 </code></pre></div></div>
 
+<p>As in previous part, we’ll be using this function to capture key presses.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>input() {
+  stty raw
+  dd bs=1 count=1 2&gt; /dev/null
+  stty -raw
+}
+</code></pre></div></div>
+
 <p>then, let’s record background.wav - this is the same thing as in <a href="../12/creating-a-looper-in-shell.html">previous article</a></p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>record_background<span class="o">()</span> <span class="o">{</span>
@@ -207,9 +216,9 @@ input
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/usr/bin/env sh</span>
 
 input<span class="o">()</span> <span class="o">{</span>
-	stty raw
-	dd <span class="nv">bs</span><span class="o">=</span>1 <span class="nv">count</span><span class="o">=</span>1 2&gt; /dev/null
-	stty <span class="nt">-raw</span>
+  stty raw
+  dd <span class="nv">bs</span><span class="o">=</span>1 <span class="nv">count</span><span class="o">=</span>1 2&gt; /dev/null
+  stty <span class="nt">-raw</span>
 <span class="o">}</span>
 
 record_background<span class="o">()</span> <span class="o">{</span>

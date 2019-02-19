@@ -53,6 +53,16 @@ First, we will start the script by removing files from previous recordings:
 rm background.wav layer.wav
 ```
 
+As in previous part, we'll be using this function to capture key presses.
+
+```
+input() {
+  stty raw
+  dd bs=1 count=1 2> /dev/null
+  stty -raw
+}
+```
+
 then, let's record background.wav - this is the same thing as in [previous article](../12/creating-a-looper-in-shell.html)
 
 ```shell
@@ -67,6 +77,7 @@ record_background() {
 ```
 
 As mentioned earlier, we'll be using a file named `should_record_layer` to notify the main_loop that it should start recording the layer (when it contains `true`), and initialize it at `false`.
+
 
 ```shell
   echo false > should_record_layer
@@ -158,9 +169,9 @@ Here is the whole script
 #!/usr/bin/env sh
 
 input() {
-	stty raw
-	dd bs=1 count=1 2> /dev/null
-	stty -raw
+  stty raw
+  dd bs=1 count=1 2> /dev/null
+  stty -raw
 }
 
 record_background() {

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2019-02-19T06:24:34+01:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Creating a looper in shell part 2: adding a layer</title><link href="http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2.html" rel="alternate" type="text/html" title="Creating a looper in shell part 2: adding a layer" /><published>2019-02-18T00:00:00+01:00</published><updated>2019-02-18T00:00:00+01:00</updated><id>http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2</id><content type="html" xml:base="http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2.html">&lt;h1 id=&quot;what-were-aiming-for&quot;&gt;What we’re aiming for&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2019-02-19T06:36:53+01:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Creating a looper in shell part 2: adding a layer</title><link href="http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2.html" rel="alternate" type="text/html" title="Creating a looper in shell part 2: adding a layer" /><published>2019-02-18T00:00:00+01:00</published><updated>2019-02-18T00:00:00+01:00</updated><id>http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2</id><content type="html" xml:base="http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2.html">&lt;h1 id=&quot;what-were-aiming-for&quot;&gt;What we’re aiming for&lt;/h1&gt;
 
 &lt;p&gt;In the &lt;a href=&quot;../12/creating-a-looper-in-shell.html&quot;&gt;previous article&lt;/a&gt;, we saw how to create a basic looper in shell.&lt;/p&gt;
 
@@ -41,6 +41,15 @@ We’ll have to capture the overdub pedal push in the foreground, and transfer t
 &lt;p&gt;First, we will start the script by removing files from previous recordings:&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;rm background.wav layer.wav
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As in previous part, we’ll be using this function to capture key presses.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;input() {
+  stty raw
+  dd bs=1 count=1 2&amp;gt; /dev/null
+  stty -raw
+}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;then, let’s record background.wav - this is the same thing as in &lt;a href=&quot;../12/creating-a-looper-in-shell.html&quot;&gt;previous article&lt;/a&gt;&lt;/p&gt;
@@ -138,9 +147,9 @@ input
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/env sh&lt;/span&gt;
 
 input&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-	stty raw
-	dd &lt;span class=&quot;nv&quot;&gt;bs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 2&amp;gt; /dev/null
-	stty &lt;span class=&quot;nt&quot;&gt;-raw&lt;/span&gt;
+  stty raw
+  dd &lt;span class=&quot;nv&quot;&gt;bs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 2&amp;gt; /dev/null
+  stty &lt;span class=&quot;nt&quot;&gt;-raw&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
 record_background&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
