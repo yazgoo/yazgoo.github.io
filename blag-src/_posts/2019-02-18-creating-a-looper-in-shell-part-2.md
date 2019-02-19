@@ -36,11 +36,13 @@ We'll have to capture the overdub pedal push in the foreground, and transfer the
 To do that, we'll use a very basic aproach: a text file which will contain false if the pedal was not pushed, and true if the pedal was pushed.
 
 
-```
-
-[ main loop ] === reads ===> [ text file ] <==== writes ==== [ pedal push ]
-
-```
+<pre style="line-height:15px;">
+ ╭────────────╮             ╭───────────╮             ╭─────────────╮
+ │            │   reads     │           │   writes    │             │
+ │ main loop  ├────────────>│ text file │<────────────┤ pedal input │
+ │            │             │           │             │             │
+ ╰────────────╯             ╰───────────╯             ╰─────────────╯
+</pre>
 
 # let's do it
 
@@ -51,7 +53,7 @@ First, we will start the script by removing files from previous recordings:
 rm background.wav layer.wav
 ```
 
-then, let's record background.wav (this is the same thing as [previous article](../12/creating-a-looper-in-shell.html)
+then, let's record background.wav - this is the same thing as in [previous article](../12/creating-a-looper-in-shell.html)
 
 ```shell
 record_background() {

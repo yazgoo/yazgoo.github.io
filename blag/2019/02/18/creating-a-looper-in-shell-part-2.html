@@ -97,10 +97,13 @@ We’ll have to capture the overdub pedal push in the foreground, and transfer t
 
 <p>To do that, we’ll use a very basic aproach: a text file which will contain false if the pedal was not pushed, and true if the pedal was pushed.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-[ main loop ] === reads ===&gt; [ text file ] &lt;==== writes ==== [ pedal push ]
-
-</code></pre></div></div>
+<pre style="line-height:15px;">
+ ╭────────────╮             ╭───────────╮             ╭─────────────╮
+ │            │   reads     │           │   writes    │             │
+ │ main loop  ├────────────&gt;│ text file │&lt;────────────┤ pedal input │
+ │            │             │           │             │             │
+ ╰────────────╯             ╰───────────╯             ╰─────────────╯
+</pre>
 
 <h1 id="lets-do-it">let’s do it</h1>
 
@@ -109,7 +112,7 @@ We’ll have to capture the overdub pedal push in the foreground, and transfer t
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rm background.wav layer.wav
 </code></pre></div></div>
 
-<p>then, let’s record background.wav (this is the same thing as <a href="../12/creating-a-looper-in-shell.html">previous article</a></p>
+<p>then, let’s record background.wav - this is the same thing as in <a href="../12/creating-a-looper-in-shell.html">previous article</a></p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>record_background<span class="o">()</span> <span class="o">{</span>
   input
