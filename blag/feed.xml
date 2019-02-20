@@ -1,4 +1,311 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="/blag/" rel="alternate" type="text/html" /><updated>2019-02-19T10:01:06+01:00</updated><id>/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Creating a looper in shell part 2: adding a layer</title><link href="/blag/2019/02/18/creating-a-looper-in-shell-part-2.html" rel="alternate" type="text/html" title="Creating a looper in shell part 2: adding a layer" /><published>2019-02-18T00:00:00+01:00</published><updated>2019-02-18T00:00:00+01:00</updated><id>/blag/2019/02/18/creating-a-looper-in-shell-part-2</id><content type="html" xml:base="/blag/2019/02/18/creating-a-looper-in-shell-part-2.html">&lt;h1 id=&quot;what-were-aiming-for&quot;&gt;What we’re aiming for&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2019-02-26T06:52:37+01:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Creating a looper in shell part 3: multiple layers</title><link href="http://localhost:4000/blag/2019/02/20/creating-a-looper-in-shell-part-3.html" rel="alternate" type="text/html" title="Creating a looper in shell part 3: multiple layers" /><published>2019-02-20T00:00:00+01:00</published><updated>2019-02-20T00:00:00+01:00</updated><id>http://localhost:4000/blag/2019/02/20/creating-a-looper-in-shell-part-3</id><content type="html" xml:base="http://localhost:4000/blag/2019/02/20/creating-a-looper-in-shell-part-3.html">&lt;h1 id=&quot;creating-a-looper-in-shell-part-3-multiple-layers&quot;&gt;Creating a looper in shell part 3: multiple layers&lt;/h1&gt;
+
+&lt;p&gt;To understand this article better it is advised to have read the &lt;a href=&quot;../18/creating-a-looper-in-shell-part-2.html&quot;&gt;previous one&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In the &lt;a href=&quot;../18/creating-a-looper-in-shell-part-2.html&quot;&gt;previous article&lt;/a&gt;, we saw how to add a layer to the loop, here was the script behavior:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/looper_with_layer_timeline.png&quot; alt=&quot;timeline&quot; title=&quot;looper with layer timeline&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This aims at adding multiple layers by pressing any key, and being able to remove last layer by pressing &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; (pedal #2).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/pedal2.png&quot; alt=&quot;timeline&quot; title=&quot;looper with layer timeline&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;programming-pedals&quot;&gt;programming pedals&lt;/h1&gt;
+
+&lt;p&gt;As mentionned earlier, I’m using cheap pedals.&lt;/p&gt;
+
+&lt;p&gt;I’m using &lt;a href=&quot;https://github.com/rgerganov/footswitch&quot;&gt;footswitch&lt;/a&gt; to program pedals.&lt;/p&gt;
+
+&lt;p&gt;For example, here is how to get one of them to simulate a &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; keypress:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; ./footswitch &lt;span class=&quot;nt&quot;&gt;-k&lt;/span&gt; a
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I’ll be using two pedals, one for adding a layer, one for removing last layer.&lt;/p&gt;
+
+&lt;h1 id=&quot;lets-add-layers&quot;&gt;Let’s add layers&lt;/h1&gt;
+
+&lt;p&gt;Here are diffs between &lt;a href=&quot;../18/creating-a-looper-in-shell-part-2.html&quot;&gt;last version&lt;/a&gt; and new one (in red are the old lines and in green the new ones).&lt;/p&gt;
+
+&lt;style&gt;
+#wrapper {
+display: inline-block;
+margin-top: 1em;
+min-width: 800px;
+text-align: left;
+}
+h2 {
+background: #fafafa;
+background: -moz-linear-gradient(#fafafa, #eaeaea);
+background: -webkit-linear-gradient(#fafafa, #eaeaea);
+-ms-filter: &quot;progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa',endColorstr='#eaeaea')&quot;;
+border: 1px solid #d8d8d8;
+border-bottom: 0;
+color: #555;
+font: 14px sans-serif;
+overflow: hidden;
+padding: 10px 6px;
+text-shadow: 0 1px 0 white;
+margin: 0;
+}
+.file-diff {
+border: 1px solid #d8d8d8;
+margin-bottom: 1em;
+overflow: auto;
+padding: 0.5em 0;
+}
+.file-diff &gt; div {
+width: 100%:
+}
+pre {
+margin: 0;
+font-family: &quot;Bitstream Vera Sans Mono&quot;, Courier, monospace;
+font-size: 12px;
+line-height: 1.4em;
+text-indent: 0.5em;
+}
+.file {
+color: #aaa;
+}
+.delete {
+background-color: #fdd;
+}
+.insert {
+background-color: #dfd;
+}
+.info {
+color: #a0b;
+}
+&lt;/style&gt;
+
+&lt;p&gt;Let’s modify the input function so that it returns &lt;code class=&quot;highlighter-rouge&quot;&gt;dd&lt;/code&gt; return code
+and so that it sets a variable (&lt;code class=&quot;highlighter-rouge&quot;&gt;key&lt;/code&gt; with the key that was pressed):&lt;/p&gt;
+
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;pre class=&quot;context&quot;&gt; input() {&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;   stty raw&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-  dd bs=1 count=1 2&amp;gt; /dev/null&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  key=$(dd bs=1 count=1 2&amp;gt; /dev/null)&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  rc=$?&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  [ $rc -ne 0 ] &amp;amp;&amp;amp; return $rc&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;   stty -raw&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  return 0&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt; }&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Instead of playing one layer (&lt;code class=&quot;highlighter-rouge&quot;&gt;layer.wav&lt;/code&gt;), we play a bunch of them (&lt;code class=&quot;highlighter-rouge&quot;&gt;layer1.wav&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;layer2.wav&lt;/code&gt;, …) based on &lt;code class=&quot;highlighter-rouge&quot;&gt;$layer_number&lt;/code&gt; variable.
+Instead of returning one pid, we return a list op PIDs.&lt;/p&gt;
+
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;pre class=&quot;context&quot;&gt; input() {&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-play_layer() {&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-  play_layer_pid=&quot;&quot;&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-  if [ -e &quot;layer.wav&quot; ]&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-  then&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-    aplay layer.wav &amp;amp;&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-    play_layer_pid=$!&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-  fi&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+play_layers() {&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  play_layer_pids=&quot;&quot;&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  for i in $(seq $layer_number)&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  do&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    aplay layer$i.wav &amp;amp;&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    play_layer_pids=&quot;$! $play_layer_pids&quot;&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  done&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt; }&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We change current layer to record name to &lt;code class=&quot;highlighter-rouge&quot;&gt;layer${layer_number}.wav&lt;/code&gt; instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;layer.wav&lt;/code&gt; (after incrementing it):&lt;/p&gt;
+
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;pre class=&quot;context&quot;&gt; record_layer() {&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;   record_layer_pid=&quot;&quot;&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;   if $(cat should_record_layer)&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;   then&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-    arecord -f S16_LE -r 48000 -D hw:1,0 layer.wav &amp;amp;&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    layer_number=$[ $layer_number + 1 ]&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    arecord -f S16_LE -r 48000 -D hw:1,0 layer${layer_number}.wav &amp;amp;&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;     record_layer_pid=$!&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;     echo false &amp;gt; should_record_layer&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;   fi&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt; }&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We add a function to remove the last layer registered if &lt;code class=&quot;highlighter-rouge&quot;&gt;should_remove_layer&lt;/code&gt; file contains &lt;code class=&quot;highlighter-rouge&quot;&gt;true&lt;/code&gt;, by decrementing &lt;code class=&quot;highlighter-rouge&quot;&gt;$layer_number&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;pre class=&quot;insert&quot;&gt;+remove_layer() {&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  record_layer_pid=&quot;&quot;&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  if $(cat should_remove_layer)&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  then&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    layer_number=$[ $layer_number - 1 ]&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    echo false &amp;gt; should_remove_layer&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  fi&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+}&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We initialize &lt;code class=&quot;highlighter-rouge&quot;&gt;should_remove_layer&lt;/code&gt; to false, layer_number to 0, and rename &lt;code class=&quot;highlighter-rouge&quot;&gt;play_layer&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;play_layers&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;play_layer_pid&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;play_layer_pids&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;pre class=&quot;context&quot;&gt; main_loop() {&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;   echo false &amp;gt; should_record_layer&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  echo false &amp;gt; should_remove_layer&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  layer_number=0&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;   while true&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;   do&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-    play_layer&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-    record_layer  &lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    remove_layer&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    play_layers&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    record_layer&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;     aplay background.wav&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;     [ $? -ne 0 ] &amp;amp;&amp;amp; break&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-    [ -n $record_layer_pid ] &amp;amp;&amp;amp; kill $record_layer_pid&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-    [ -n $play_layer_pid ] &amp;amp;&amp;amp; kill $play_layer_pid&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    [ -n &quot;$record_layer_pid&quot; ] &amp;amp;&amp;amp; kill $record_layer_pid&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    [ -n &quot;$play_layer_pids&quot; ] &amp;amp;&amp;amp; kill $play_layer_pids&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt;   done&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt; }&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Instead of waiting for only one input (since there was only one layer), we wait for multiple input in a loop.
+If “a” is pressed, we notify that we &lt;code class=&quot;highlighter-rouge&quot;&gt;should_remove_layer&lt;/code&gt;.
+Overwise, we notify that we &lt;code class=&quot;highlighter-rouge&quot;&gt;should_record_layer&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;pre class=&quot;insert&quot;&gt;+input_loop() {&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  while true&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  do&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    input&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    [ &quot;$key&quot; = $'\003' ] &amp;amp;&amp;amp; break&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    if [ &quot;$key&quot; = &quot;a&quot; ]&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    then&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+      echo true &amp;gt; should_remove_layer&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    else&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+      echo true &amp;gt; should_record_layer&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    fi&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+    sleep 1&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+  done&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+}&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt; record_background&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt; main_loop &amp;amp;&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt; main_loop_pid=$!&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-input&lt;/pre&gt;
+&lt;pre class=&quot;delete&quot;&gt;-echo true &amp;gt; should_record_layer&lt;/pre&gt;
+&lt;pre class=&quot;insert&quot;&gt;+input_loop&lt;/pre&gt;
+&lt;pre class=&quot;context&quot;&gt; wait $main_loop_pid&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&quot;wrapper&quot;&gt;
+&lt;/div&gt;
+
+&lt;h1 id=&quot;the-whole-script&quot;&gt;The whole script&lt;/h1&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/env sh&lt;/span&gt;
+
+input&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  stty raw
+  &lt;span class=&quot;nv&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;dd &lt;span class=&quot;nv&quot;&gt;bs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 2&amp;gt; /dev/null&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;rc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$rc&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$rc&lt;/span&gt;
+  stty &lt;span class=&quot;nt&quot;&gt;-raw&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return &lt;/span&gt;0
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+record_background&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  input
+  arecord &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; S16_LE &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; 48000 &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; hw:1,0 background.wav &amp;amp;
+  &lt;span class=&quot;nv&quot;&gt;pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+  sleep 1
+  input
+  &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$pid&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+play_layers&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;play_layer_pids&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;i &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;seq &lt;span class=&quot;nv&quot;&gt;$layer_number&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;do
+    &lt;/span&gt;aplay layer&lt;span class=&quot;nv&quot;&gt;$i&lt;/span&gt;.wav &amp;amp;
+    &lt;span class=&quot;nv&quot;&gt;play_layer_pids&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$play_layer_pids&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+record_layer&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;record_layer_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;should_record_layer&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;layer_number&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$layer_number&lt;/span&gt; + 1 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+    arecord &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; S16_LE &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; 48000 &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; hw:1,0 layer&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;layer_number&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;.wav &amp;amp;
+    &lt;span class=&quot;nv&quot;&gt;record_layer_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;echo false&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_record_layer
+  &lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+remove_layer&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;record_layer_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;should_remove_layer&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;layer_number&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$layer_number&lt;/span&gt; - 1 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;echo false&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_remove_layer
+  &lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+main_loop&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;echo false&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_record_layer
+  &lt;span class=&quot;nb&quot;&gt;echo false&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_remove_layer
+  &lt;span class=&quot;nv&quot;&gt;layer_number&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+  &lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true
+  &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;do
+    &lt;/span&gt;remove_layer
+    play_layers
+    record_layer
+    aplay background.wav
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;break&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$record_layer_pid&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$record_layer_pid&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$play_layer_pids&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$play_layer_pids&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+input_loop&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true
+  &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;do
+    &lt;/span&gt;input
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$key&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;$'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\0&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;03'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;break
+    &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$key&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;a&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;then
+      &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo true&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_remove_layer
+    &lt;span class=&quot;k&quot;&gt;else
+      &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo true&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; should_record_layer
+    &lt;span class=&quot;k&quot;&gt;fi
+    &lt;/span&gt;sleep 1
+  &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+record_background
+main_loop &amp;amp;
+&lt;span class=&quot;nv&quot;&gt;main_loop_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$!&lt;/span&gt;
+input_loop
+&lt;span class=&quot;nb&quot;&gt;wait&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$main_loop_pid&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;The whole script is now available &lt;a href=&quot;https://github.com/yazgoo/looperish&quot;&gt;in its own repo&lt;/a&gt;.
+Of course, patches are welcome !&lt;/p&gt;
+
+&lt;p&gt;I use this script on a daily basis, and there are tons of things that could be polished.
+Maybe I’ll rewrite it in some other language :)&lt;/p&gt;</content><author><name></name></author><category term="shell" /><category term="linux" /><category term="loop" /><summary type="html">Creating a looper in shell part 3: multiple layers</summary></entry><entry><title type="html">Creating a looper in shell part 2: adding a layer</title><link href="http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2.html" rel="alternate" type="text/html" title="Creating a looper in shell part 2: adding a layer" /><published>2019-02-18T00:00:00+01:00</published><updated>2019-02-18T00:00:00+01:00</updated><id>http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2</id><content type="html" xml:base="http://localhost:4000/blag/2019/02/18/creating-a-looper-in-shell-part-2.html">&lt;h1 id=&quot;what-were-aiming-for&quot;&gt;What we’re aiming for&lt;/h1&gt;
+>>>>>>> looper3
 
 &lt;p&gt;In the &lt;a href=&quot;../12/creating-a-looper-in-shell.html&quot;&gt;previous article&lt;/a&gt;, we saw how to create a basic looper in shell.&lt;/p&gt;
 
@@ -1289,6 +1596,7 @@ warbler assumes you want a war!&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;//thenice.tumblr.com/post/133345213/deploying-a-rails-application-in-tomcat-with-jruby-a&quot;&gt;deploying a rails application in tomcat with jruby&lt;/a&gt;&lt;/p&gt;
 
+<<<<<<< HEAD
 &lt;p&gt;&lt;a href=&quot;//guides.rubygems.org/make-your-own-gem/&quot;&gt;make your own gem&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">Some days ago I read the following tweet:</summary></entry><entry><title type="html">impress arrows and impress circle</title><link href="/blag/2014/06/04/impress-arrows-and-impress-circle.html" rel="alternate" type="text/html" title="impress arrows and impress circle" /><published>2014-06-04T00:00:00+02:00</published><updated>2014-06-04T00:00:00+02:00</updated><id>/blag/2014/06/04/impress-arrows-and-impress-circle</id><content type="html" xml:base="/blag/2014/06/04/impress-arrows-and-impress-circle.html">&lt;p&gt;I’d like to introduce you to the stuff I’ve been working on for
 the last few weeks or so which are helper libraries on top of
 the awesome impress.js.&lt;/p&gt;
