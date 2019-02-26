@@ -10,11 +10,11 @@ To understand this article better it is advised to have read the [previous one](
 
 In the [previous article](../18/creating-a-looper-in-shell-part-2.html), we saw how to add a layer to the loop, here was the script behavior:
 
-![timeline]({{"/images/looper_with_layer_timeline.png"|absolute_url}} "looper with layer timeline")
+![timeline]({{"/blag/images/looper_with_layer_timeline.png"}} "looper with layer timeline")
 
 This aims at adding multiple layers by pressing any key, and being able to remove last layer by pressing `a` (pedal #2).
 
-![timeline]({{"/images/pedal2.png"|absolute_url}} "looper with layer timeline")
+![timeline]({{"/blag/images/pedal2.png"}} "looper with multiple layer timeline")
 
 # programming pedals
 
