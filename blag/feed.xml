@@ -1,4 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2019-10-15T19:48:43+02:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Presenting youtube-subscriptions</title><link href="http://localhost:4000/blag/2019/10/15/presenting-youtube-subscriptions.html" rel="alternate" type="text/html" title="Presenting youtube-subscriptions" /><published>2019-10-15T00:00:00+02:00</published><updated>2019-10-15T00:00:00+02:00</updated><id>http://localhost:4000/blag/2019/10/15/presenting-youtube-subscriptions</id><content type="html" xml:base="http://localhost:4000/blag/2019/10/15/presenting-youtube-subscriptions.html">&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/WVZpqXBmB3U&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/blag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blag/" rel="alternate" type="text/html" /><updated>2020-02-13T08:50:01+01:00</updated><id>http://localhost:4000/blag/</id><title type="html">It must be bunnies</title><subtitle>My little blog</subtitle><entry><title type="html">Videos in the terminal with unicode blocks: blockish-caca</title><link href="http://localhost:4000/blag/2020/02/12/blockish-caca.html" rel="alternate" type="text/html" title="Videos in the terminal with unicode blocks: blockish-caca" /><published>2020-02-12T00:00:00+01:00</published><updated>2020-02-12T00:00:00+01:00</updated><id>http://localhost:4000/blag/2020/02/12/blockish-caca</id><content type="html" xml:base="http://localhost:4000/blag/2020/02/12/blockish-caca.html">&lt;h1 id=&quot;overview&quot;&gt;Overview&lt;/h1&gt;
+
+&lt;p&gt;Over the past weeks I’ve been working on blockish,
+a rust crate to render images in the terminal using unicode characters and ANSI escape codes.&lt;/p&gt;
+
+&lt;p&gt;Since it was quite fast, I was wondering if I could render videos with it.&lt;/p&gt;
+
+&lt;h1 id=&quot;how-a-video-player-works&quot;&gt;How a video player works&lt;/h1&gt;
+
+&lt;pre style=&quot;line-height:15px;&quot;&gt;
+ ╭──────────────────────────╮
+ │                          │
+ │                          │
+ │                          │
+ │        Video Player      │
+ │                          │
+ │                          │            ╭────────────────────────────╮
+ │                          │            │                            │
+ ╰────────────┬─────────────╯            │                            │
+              │                          │                            │
+              │send frame                │         terminal           │
+              │                          │                            │
+              ▼                          │                            │
+ ╭──────────────────────────╮            │                            │
+ │                          │            ╰────────────────────────────╯
+ │                          │                        ▲ 
+ │                          │                        │
+ │        libcaca           │                        │
+ │                          ├────────────────────────╯
+ │                          │          print frame
+ │                          │
+ ╰──────────────────────────╯
+&lt;/pre&gt;
+
+&lt;h1 id=&quot;test&quot;&gt;test&lt;/h1&gt;
+
+&lt;p&gt;blixobulle&lt;/p&gt;</content><author><name></name></author><category term="rust" /><category term="blockish" /><category term="libcaca" /><category term="terminal" /><category term="LD_PRELOAD" /><summary type="html">Overview</summary></entry><entry><title type="html">Presenting youtube-subscriptions</title><link href="http://localhost:4000/blag/2019/10/15/presenting-youtube-subscriptions.html" rel="alternate" type="text/html" title="Presenting youtube-subscriptions" /><published>2019-10-15T00:00:00+02:00</published><updated>2019-10-15T00:00:00+02:00</updated><id>http://localhost:4000/blag/2019/10/15/presenting-youtube-subscriptions</id><content type="html" xml:base="http://localhost:4000/blag/2019/10/15/presenting-youtube-subscriptions.html">&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/WVZpqXBmB3U&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
 
 &lt;p&gt;&lt;a href=&quot;https://github.com/yazgoo/youtube-subscriptions/&quot;&gt;github repo&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><category term="rust" /><category term="youtube" /><category term="terminal" /><summary type="html"></summary></entry><entry><title type="html">Creating a looper in shell part 3: multiple layers</title><link href="http://localhost:4000/blag/2019/02/20/creating-a-looper-in-shell-part-3.html" rel="alternate" type="text/html" title="Creating a looper in shell part 3: multiple layers" /><published>2019-02-20T00:00:00+01:00</published><updated>2019-02-20T00:00:00+01:00</updated><id>http://localhost:4000/blag/2019/02/20/creating-a-looper-in-shell-part-3</id><content type="html" xml:base="http://localhost:4000/blag/2019/02/20/creating-a-looper-in-shell-part-3.html">&lt;h1 id=&quot;creating-a-looper-in-shell-part-3-multiple-layers&quot;&gt;Creating a looper in shell part 3: multiple layers&lt;/h1&gt;
 
@@ -1296,86 +1332,4 @@ we might have chosen an output on the two first seconds via this conditional:&lt
 
 &lt;p&gt;We also have chosen the output based on the &lt;code class=&quot;highlighter-rouge&quot;&gt;@timestamp&lt;/code&gt; field, but I wanted to use
 an output based on the actual current time, not based on the time associated with an event
-(both may differ).&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><summary type="html">I love logstash, it is a really powerfull tool, and it also leverages jruby so it is really self-contained and portable.</summary></entry><entry><title type="html">Orphan black gets it right</title><link href="http://localhost:4000/blag/2015/01/02/orphan-black-gets-it-right.html" rel="alternate" type="text/html" title="Orphan black gets it right" /><published>2015-01-02T00:00:00+01:00</published><updated>2015-01-02T00:00:00+01:00</updated><id>http://localhost:4000/blag/2015/01/02/orphan-black-gets-it-right</id><content type="html" xml:base="http://localhost:4000/blag/2015/01/02/orphan-black-gets-it-right.html">&lt;p&gt;I’ve been re-watching the awesome Orphan Black first series.
-If you’ve not watched it yet, this post might contain spoilers.&lt;/p&gt;
-
-&lt;p&gt;I’m not going to talk about Tatiana Maslany acting nor about
-special effects when twins are involved which are both great.&lt;/p&gt;
-
-&lt;p&gt;What I’m gonna talk about is the geeky stuff happening on the last
-episode of the first season.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;h2 id=&quot;information-we-get&quot;&gt;Information we get&lt;/h2&gt;
-
-&lt;p&gt;Here is the plot: two characters are trying to figure out how 
-information is encoded into one’s genome.&lt;/p&gt;
-
-&lt;p&gt;We get this screenshot:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://localhost:4000/blag/images/screenshot_genome.png&quot; alt=&quot;genome screenshot&quot; title=&quot;genome screenshot&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Delphine also states that she knows Cosima’s tag #, which is:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;324b21 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;I’m gonna assume that what we see here actually means something
-(remember, we’re watching TV).&lt;/p&gt;
-
-&lt;h2 id=&quot;decoding&quot;&gt;Decoding&lt;/h2&gt;
-
-&lt;p&gt;Ok, so let’s try and decode the part that’s highligted!&lt;/p&gt;
-
-&lt;p&gt;Here it is:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;GCTTGCTTCGAAGGTCGCAAGTGCGAAGCGTGCGTTGGAGCGATGCGA
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This part is 48 nucleotides long.
-One thing you can notice here is that 48 is a multiple of 8 (6 times 8).&lt;/p&gt;
-
-&lt;p&gt;Oh! 324b21, also is 6 characters long!&lt;/p&gt;
-
-&lt;p&gt;Let’s assume the second 8 bytes encode the character ‘2’ in ASCII,
-which is 50 in ASCII, 00110010 in binary.
-Following this assumption, CGAAGGTC is equivalent to 00110010.
-So G and C would be zeroes, and A and T would be ones.&lt;/p&gt;
-
-&lt;h2 id=&quot;wrapping-it-up&quot;&gt;Wrapping it up&lt;/h2&gt;
-
-&lt;p&gt;Now, we can write a script that tries and decodes clone DNA:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ARGV&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/[AT]/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/[^1]/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;scan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/......../&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;collect&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to_i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;chr&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;join&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;substitutes As and Ts with 1s&lt;/li&gt;
-  &lt;li&gt;substitutes all other letters with 0s&lt;/li&gt;
-  &lt;li&gt;split the string in strings of eight bits&lt;/li&gt;
-  &lt;li&gt;convert each 8bit part to an integer from base 2&lt;/li&gt;
-  &lt;li&gt;convert each integer to a character&lt;/li&gt;
-  &lt;li&gt;joins all characters&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Lets try it on our sequence:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ./decode.rb GCTTGCTTCGAAGGTCGCAAGTGCGAAGCGTGCGTTGGAGCGATGCGA
-324b21
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Cosima’s tag!&lt;/p&gt;
-
-&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;Our assumption on the second character encoding ‘2’ in ASCII is validated.
-The other assumption that it all made sense, which was far more risky is
-validated too!&lt;/p&gt;
-
-&lt;p&gt;This kind of detail on TV is just great.
-It just make the series far more realistic 
-(though I have no idea on how realistic the biology part is)!&lt;/p&gt;</content><author><name></name></author><category term="orphan black" /><category term="ascii" /><summary type="html">I’ve been re-watching the awesome Orphan Black first series. If you’ve not watched it yet, this post might contain spoilers.</summary></entry></feed>
+(both may differ).&lt;/p&gt;</content><author><name></name></author><category term="logstash" /><summary type="html">I love logstash, it is a really powerfull tool, and it also leverages jruby so it is really self-contained and portable.</summary></entry></feed>
