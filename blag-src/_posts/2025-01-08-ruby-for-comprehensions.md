@@ -5,6 +5,7 @@ layout: post
 tags: ruby scala
 ---
 
+# Porting scala for comprehensions to Ruby
 
 ## Context: `map` and `flatMap`
 
