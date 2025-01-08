@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Scala for comprehensions in Ruby | It must be bunnies</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Scala for comprehensions in Ruby" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Context: map and flatMap" />
+<meta property="og:description" content="Context: map and flatMap" />
+<link rel="canonical" href="/blag/2025/01/08/ruby-for-comprehensions.html" />
+<meta property="og:url" content="/blag/2025/01/08/ruby-for-comprehensions.html" />
+<meta property="og:site_name" content="It must be bunnies" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-01-08T00:00:00+01:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Scala for comprehensions in Ruby" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-01-08T00:00:00+01:00","datePublished":"2025-01-08T00:00:00+01:00","description":"Context: map and flatMap","headline":"Scala for comprehensions in Ruby","mainEntityOfPage":{"@type":"WebPage","@id":"/blag/2025/01/08/ruby-for-comprehensions.html"},"url":"/blag/2025/01/08/ruby-for-comprehensions.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blag/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/blag/feed.xml" title="It must be bunnies" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blag/">It must be bunnies</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blag/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <h2 id="context-map-and-flatmap">Context: <code class="language-plaintext highlighter-rouge">map</code> and <code class="language-plaintext highlighter-rouge">flatMap</code></h2>
+
+<p>Scala is a functional language, so the operators <code class="language-plaintext highlighter-rouge">map</code> and <code class="language-plaintext highlighter-rouge">flatMap</code> are widely used.</p>
+
+<p>To recap:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">map</code> applies a function to each element of a data structure.</li>
+  <li><code class="language-plaintext highlighter-rouge">flatMap</code> applies a function that returns a data structure to each element of a data structure and “flattens” the result.</li>
+</ul>
+
+<p>This applies to lists but not only to them.</p>
+
+<h3 id="examples-of-map">Examples of <code class="language-plaintext highlighter-rouge">map</code></h3>
+
+<p>With a list:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">list</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">)</span>
+<span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="nv">list</span><span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="o">)</span>
+<span class="c1">// result: List(2, 4, 6)</span>
+</code></pre></div></div>
+
+<p>With an <code class="language-plaintext highlighter-rouge">Option</code>:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">option</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+<span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="nv">option</span><span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="o">)</span>
+<span class="c1">// result: Some(2)</span>
+
+<span class="k">val</span> <span class="nv">option</span> <span class="k">=</span> <span class="nc">None</span>
+<span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="nv">option</span><span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="o">)</span>
+<span class="c1">// result: None</span>
+</code></pre></div></div>
+
+<h3 id="examples-of-flatmap">Examples of <code class="language-plaintext highlighter-rouge">flatMap</code></h3>
+
+<p>With a list:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">list</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">)</span>
+<span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="nv">list</span><span class="o">.</span><span class="py">flatMap</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="nc">List</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="o">))</span>
+<span class="c1">// result: List(1, 2, 2, 4, 3, 6)</span>
+</code></pre></div></div>
+
+<p>With an <code class="language-plaintext highlighter-rouge">Either</code> (a type that can hold either a value (Right) or an error (Left)):</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">either</span> <span class="k">=</span> <span class="nc">Right</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+<span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="nv">either</span><span class="o">.</span><span class="py">flatMap</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="nc">Right</span><span class="o">(</span><span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="o">))</span>
+<span class="c1">// result: Right(2)</span>
+
+<span class="k">val</span> <span class="nv">either</span> <span class="k">=</span> <span class="nc">Left</span><span class="o">(</span><span class="s">"error"</span><span class="o">)</span>
+<span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="nv">either</span><span class="o">.</span><span class="py">flatMap</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="nc">Right</span><span class="o">(</span><span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="o">))</span>
+<span class="c1">// result: Left("error")</span>
+</code></pre></div></div>
+
+<h3 id="context-functional-programming">Context: Functional Programming</h3>
+
+<p>In Scala, it is common to chain <code class="language-plaintext highlighter-rouge">map</code>, <code class="language-plaintext highlighter-rouge">flatMap</code>, and <code class="language-plaintext highlighter-rouge">filter</code> to write functional programs.</p>
+
+<p>For example, suppose we want to compute all tuples from 0 to 9 whose sum equals 10:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="o">(</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">9</span><span class="o">).</span><span class="py">flatMap</span> <span class="o">{</span> <span class="n">x</span> <span class="k">=&gt;</span>
+  <span class="o">(</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">9</span><span class="o">).</span><span class="py">map</span> <span class="o">{</span> <span class="n">y</span> <span class="k">=&gt;</span>
+    <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}.</span><span class="py">filter</span> <span class="o">{</span> <span class="nf">case</span> <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">)</span> <span class="k">=&gt;</span>
+  <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">10</span>
+<span class="o">}</span>
+<span class="c1">// result: Vector((1,9), (2,8), (3,7), (4,6), (5,5), (6,4), (7,3), (8,2), (9,1))</span>
+</code></pre></div></div>
+
+<h3 id="for-comprehensions">For Comprehensions</h3>
+
+<p>This can quickly become hard to read. To address this, Scala offers <code class="language-plaintext highlighter-rouge">for comprehensions</code>, which allow for more readable code.</p>
+
+<p>Using a <code class="language-plaintext highlighter-rouge">for comprehension</code>, the previous code becomes:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+    <span class="n">x</span> <span class="k">&lt;-</span> <span class="mi">0</span> <span class="n">to</span> <span class="mi">9</span>
+    <span class="n">y</span> <span class="k">&lt;-</span> <span class="mi">0</span> <span class="n">to</span> <span class="mi">9</span> <span class="k">if</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">10</span>
+<span class="o">}</span> <span class="nf">yield</span> <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">)</span>
+<span class="c1">// result: Vector((1,9), (2,8), (3,7), (4,6), (5,5), (6,4), (7,3), (8,2), (9,1))</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">&lt;-</code> denotes a generator (a data structure to iterate over).</li>
+  <li><code class="language-plaintext highlighter-rouge">if</code> (a guard) filters elements.</li>
+  <li><code class="language-plaintext highlighter-rouge">yield</code> returns the result (in this case, a tuple).</li>
+</ul>
+
+<p>In practice, <code class="language-plaintext highlighter-rouge">&lt;-</code> is a shortcut for <code class="language-plaintext highlighter-rouge">flatMap</code>.</p>
+
+<p>It is also possible to use <code class="language-plaintext highlighter-rouge">map</code> with the <code class="language-plaintext highlighter-rouge">=</code> operator. For example, to multiply each element of a list by 2 and associate these elements with their double:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+    <span class="n">x</span> <span class="k">&lt;-</span> <span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">)</span>
+    <span class="n">y</span> <span class="k">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="o">}</span> <span class="nf">yield</span> <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">)</span>
+<span class="c1">// result: List((1,2), (2,4), (3,6))</span>
+</code></pre></div></div>
+
+<h2 id="port-to-ruby">Port to Ruby</h2>
+
+<p>To explore whether a Ruby syntax is feasible, I attempted to replicate <code class="language-plaintext highlighter-rouge">for comprehensions</code>.</p>
+
+<p>Here’s the proposed syntax, inspired by Scala while keeping Ruby’s spirit:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">result</span> <span class="o">=</span> <span class="n">for_c</span><span class="p">(</span>
+    <span class="n">gen</span><span class="p">(</span><span class="ss">:x</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">9</span><span class="p">)</span> <span class="p">},</span>
+    <span class="n">gen</span><span class="p">(</span><span class="ss">:y</span><span class="p">,</span> <span class="n">if_c</span> <span class="p">{</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">10</span> <span class="p">})</span> <span class="p">{</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">9</span><span class="p">)</span> <span class="p">},</span>
+<span class="p">)</span> <span class="p">{</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="p">}</span>
+<span class="c1"># result: [[1, 9], [2, 8], [3, 7], [4, 6], [5, 5], [6, 4], [7, 3], [8, 2], [9, 1]]</span>
+</code></pre></div></div>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">result</span> <span class="o">=</span> <span class="n">for_c</span><span class="p">(</span>
+    <span class="n">gen</span><span class="p">(</span><span class="ss">:x</span><span class="p">)</span> <span class="p">{</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="p">},</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:y</span><span class="p">)</span> <span class="p">{</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span> <span class="p">}</span>
+<span class="p">)</span> <span class="p">{</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="p">}</span>
+<span class="c1"># result: [[1, 2], [2, 4], [3, 6]]</span>
+</code></pre></div></div>
+
+<p>By reimplementing Scala’s <code class="language-plaintext highlighter-rouge">Either</code>, error handling can be simplified without using exceptions:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">validate_username</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">username</span><span class="p">.</span><span class="nf">length</span> <span class="o">&lt;</span> <span class="mi">8</span>
+    <span class="no">Either</span><span class="p">.</span><span class="nf">left</span><span class="p">(</span><span class="s2">"Username is too short (8 characters minimum)"</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="no">Either</span><span class="p">.</span><span class="nf">right</span><span class="p">(</span><span class="n">username</span><span class="p">.</span><span class="nf">downcase</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">validate_date_of_birth</span><span class="p">(</span><span class="n">dob</span><span class="p">,</span> <span class="n">today</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">dob</span><span class="p">.</span><span class="nf">next_year</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">today</span>
+    <span class="no">Either</span><span class="p">.</span><span class="nf">left</span><span class="p">(</span><span class="s2">"User must be 18 years old or older"</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="no">Either</span><span class="p">.</span><span class="nf">right</span><span class="p">(</span><span class="n">dob</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">validate_user</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">dob</span><span class="p">)</span>
+  <span class="n">for_c</span><span class="p">(</span>
+    <span class="n">gen</span><span class="p">(</span><span class="ss">:username</span><span class="p">)</span> <span class="p">{</span> <span class="n">validate_username</span><span class="p">(</span><span class="n">username</span><span class="p">)</span> <span class="p">},</span>
+    <span class="n">gen</span><span class="p">(</span><span class="ss">:dob</span><span class="p">)</span> <span class="p">{</span> <span class="n">validate_date_of_birth</span><span class="p">(</span><span class="n">dob</span><span class="p">,</span> <span class="no">Date</span><span class="p">.</span><span class="nf">today</span><span class="p">)</span> <span class="p">},</span>
+  <span class="p">)</span> <span class="p">{</span> <span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">dob</span><span class="p">)</span> <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="nb">puts</span> <span class="n">validate_user</span><span class="p">(</span><span class="s2">"Bob"</span><span class="p">,</span> <span class="no">Date</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="c1"># Left("Username is too short (8 characters minimum)")</span>
+<span class="nb">puts</span> <span class="n">validate_user</span><span class="p">(</span><span class="s2">"Bob_12345"</span><span class="p">,</span> <span class="no">Date</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">1960</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="c1"># Right(Bob_12345 (1960-03-05))</span>
+</code></pre></div></div>
+
+<h2 id="implementation-of-for_c">Implementation of <code class="language-plaintext highlighter-rouge">for_c</code></h2>
+
+<p>Here’s the core implementation:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Makes variables declared at each step available in code blocks</span>
+<span class="k">def</span> <span class="nf">with_binding_from_hash</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="n">obj</span> <span class="o">=</span> <span class="no">Object</span><span class="p">.</span><span class="nf">new</span>
+  <span class="n">variables</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+    <span class="n">obj</span><span class="p">.</span><span class="nf">instance_variable_set</span><span class="p">(</span><span class="s2">"@</span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="n">obj</span><span class="p">.</span><span class="nf">define_singleton_method</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="p">{</span> <span class="nb">instance_variable_get</span><span class="p">(</span><span class="s2">"@</span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+  <span class="n">obj</span><span class="p">.</span><span class="nf">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="c1"># Interprets code blocks with guards</span>
+<span class="k">def</span> <span class="nf">for_comprehension_with_guard</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+  <span class="n">with_binding_from_hash</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">head</span><span class="p">).</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">value</span><span class="o">|</span>
+    <span class="n">new_env</span> <span class="o">=</span> <span class="n">env</span><span class="p">.</span><span class="nf">clone</span><span class="p">.</span><span class="nf">merge</span><span class="p">({</span> <span class="n">head</span><span class="p">.</span><span class="nf">name</span> <span class="o">=&gt;</span> <span class="n">value</span> <span class="p">})</span>
+    <span class="p">[</span><span class="n">new_env</span><span class="p">,</span> <span class="n">value</span><span class="p">]</span>
+  <span class="k">end</span><span class="p">.</span><span class="nf">select</span> <span class="k">do</span> <span class="o">|</span><span class="n">new_env</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+    <span class="n">head</span><span class="p">.</span><span class="nf">guard</span><span class="p">.</span><span class="nf">nil?</span> <span class="o">||</span> <span class="n">with_binding_from_hash</span><span class="p">(</span><span class="n">new_env</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">head</span><span class="p">.</span><span class="nf">guard</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># Main method</span>
+<span class="k">def</span> <span class="nf">for_comprehension</span><span class="p">(</span><span class="n">ranges</span><span class="p">,</span> <span class="n">env</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">ranges</span><span class="p">.</span><span class="nf">empty?</span>
+    <span class="n">with_binding_from_hash</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="n">head</span><span class="p">,</span> <span class="o">*</span><span class="n">tail</span> <span class="o">=</span> <span class="n">ranges</span>
+    <span class="c1"># If at the end or the next element is a `let`, perform a map; otherwise, flat_map</span>
+    <span class="n">mapping</span> <span class="o">=</span> <span class="n">tail</span><span class="p">.</span><span class="nf">empty?</span> <span class="o">||</span> <span class="n">tail</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Let</span><span class="p">)</span> <span class="p">?</span> <span class="ss">:map</span> <span class="p">:</span> <span class="ss">:flat_map</span>
+    <span class="k">if</span> <span class="n">head</span><span class="p">.</span><span class="nf">is_a?</span> <span class="no">Gen</span>
+      <span class="c1"># For generators, iterate over values</span>
+      <span class="n">for_comprehension_with_guard</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">env</span><span class="p">).</span><span class="nf">send</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">new_env</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+        <span class="n">for_comprehension</span><span class="p">(</span><span class="n">tail</span><span class="p">,</span> <span class="n">new_env</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">elsif</span> <span class="n">head</span><span class="p">.</span><span class="nf">is_a?</span> <span class="no">Let</span>
+      <span class="c1"># For `let`, associate the value with the variable</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="n">with_binding_from_hash</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">head</span><span class="p">)</span>
+      <span class="n">new_env</span> <span class="o">=</span> <span class="n">env</span><span class="p">.</span><span class="nf">clone</span><span class="p">.</span><span class="nf">merge</span><span class="p">({</span> <span class="n">head</span><span class="p">.</span><span class="nf">name</span> <span class="o">=&gt;</span> <span class="n">value</span> <span class="p">})</span>
+      <span class="n">for_comprehension</span><span class="p">(</span><span class="n">tail</span><span class="p">,</span> <span class="n">new_env</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The complete implementation of <code class="language-plaintext highlighter-rouge">for_c</code> is available on <a href="https://gist.github.com/yazgoo/e897b5d31b0fae7bb0b299c6a1225ecd">gist.github.com</a>.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>The reader can judge the readability and utility of this syntax. The code is not optimized; it remains an experiment.</p>
+
+<p>I am currently exploring implementing effects (IOs) similar to Haskell/cats-effect/ZIO in Ruby, and this syntax will simplify the code significantly.</p>
+
+
+<p>
+<script src="https://utteranc.es/client.js"
+        repo="yazgoo/blag-comments"
+        issue-term="title"
+        label="utterances"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+</p>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blag/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">It must be bunnies</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">It must be bunnies</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/yazgoo"><svg class="svg-icon"><use xlink:href="/blag/assets/minima-social-icons.svg#github"></use></svg> <span class="username">yazgoo</span></a></li><li><a href="https://www.twitter.com/oogzay"><svg class="svg-icon"><use xlink:href="/blag/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">oogzay</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>My little blog</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

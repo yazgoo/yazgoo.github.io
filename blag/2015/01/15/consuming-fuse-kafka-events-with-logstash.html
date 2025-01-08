@@ -1,71 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
-
-  <head>
+<html lang="en"><head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Consuming fuse_kafka events with logstash | It must be bunnies</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Consuming fuse_kafka events with logstash" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="fuse_kafka is a project I’ve been working on for the past months." />
+<meta property="og:description" content="fuse_kafka is a project I’ve been working on for the past months." />
+<link rel="canonical" href="/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html" />
+<meta property="og:url" content="/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html" />
+<meta property="og:site_name" content="It must be bunnies" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2015-01-15T00:00:00+01:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Consuming fuse_kafka events with logstash" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2015-01-15T00:00:00+01:00","datePublished":"2015-01-15T00:00:00+01:00","description":"fuse_kafka is a project I’ve been working on for the past months.","headline":"Consuming fuse_kafka events with logstash","mainEntityOfPage":{"@type":"WebPage","@id":"/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html"},"url":"/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blag/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/blag/feed.xml" title="It must be bunnies" /></head>
+<body><header class="site-header" role="banner">
 
-  <title>Consuming fuse_kafka events with logstash</title>
-  <meta name="description" content="fuse_kafka is a project I’ve been working on for the past months.">
-
-  <link rel="stylesheet" href="/blag/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/blag/2015/01/15/consuming-fuse-kafka-events-with-logstash.html">
-  <link rel="alternate" type="application/rss+xml" title="It must be bunnies" href="/blag/feed.xml">
-  
-  
-</head>
-
-
-  <body>
-
-    <header class="site-header" role="banner">
-
-  <div class="wrapper">
-    
-    
-    <a class="site-title" href="/blag/">It must be bunnies</a>
-  
-    
-      <nav class="site-nav">
+  <div class="wrapper"><a class="site-title" rel="author" href="/blag/">It must be bunnies</a><nav class="site-nav">
         <input type="checkbox" id="nav-trigger" class="nav-trigger" />
         <label for="nav-trigger">
           <span class="menu-icon">
             <svg viewBox="0 0 18 15" width="18px" height="15px">
-              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
-              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
-              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
             </svg>
           </span>
         </label>
 
-        <div class="trigger">
-          
-            
-            
-          
-            
-            
-            <a class="page-link" href="/blag/about/">About</a>
-            
-          
-            
-            
-          
-            
-            
-          
-            
-            
-          
-        </div>
-      </nav>
-    
-  </div>
+        <div class="trigger"><a class="page-link" href="/blag/about/">About</a></div>
+      </nav></div>
 </header>
-
-
-    <main class="page-content" aria-label="Content">
+<main class="page-content" aria-label="Content">
       <div class="wrapper">
         <p><a href="https://github.com/yazgoo/fuse_kafka">fuse_kafka</a> is a project I’ve
 been working on for the past months.</p>
@@ -82,11 +52,11 @@ allows to read logstash events from kafka.</p>
 
 <!-- more -->
 
-<p><img src="http://localhost:4000/blag/images/logstash_fuse_kafka_logo.png" alt="logstash and fuse_kafka!" title="logstash and fuse_kafka!" /></p>
+<p><img src="/blag/images/logstash_fuse_kafka_logo.png" alt="logstash and fuse_kafka!" title="logstash and fuse_kafka!" /></p>
 
 <h2 id="sample-architecture">Sample architecture</h2>
 
-<p>Here is an example of <code class="highlighter-rouge">fuse_kafka</code> setup</p>
+<p>Here is an example of <code class="language-plaintext highlighter-rouge">fuse_kafka</code> setup</p>
 
 <p><img src="../../../images/fuse_kafka_with_logstash.svg" alt="generic architecture" title="generic architecture" /></p>
 
@@ -109,22 +79,22 @@ allows to read logstash events from kafka.</p>
 
 <p>Let’s create a working directory</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!bash</span>
-<span class="nv">$ </span>mkdir /tmp/tutorial
-<span class="nv">$ </span><span class="nb">cd</span> /tmp/tutorial
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!bash
+$ mkdir /tmp/tutorial
+$ cd /tmp/tutorial
 </code></pre></div></div>
 
 <p>Let’s download <a href="http://logstash.net/">logstash</a>:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!bash</span>
-<span class="nv">$ </span>wget https://download.elasticsearch.org/logstash/logstash/logstash-1.4.2.tar.gz
-<span class="nv">$ </span><span class="nb">tar </span>xzf logstash-1.4.2.tar.gz
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!bash
+$ wget https://download.elasticsearch.org/logstash/logstash/logstash-1.4.2.tar.gz
+$ tar xzf logstash-1.4.2.tar.gz
 </code></pre></div></div>
 
 <p>And fuse_kafka:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!bash</span>
-<span class="nv">$ </span>git clone https://github.com/yazgoo/fuse_kafka.git
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!bash
+$ git clone https://github.com/yazgoo/fuse_kafka.git
 </code></pre></div></div>
 
 <h2 id="starting-fuse_kafka-agent">Starting fuse_kafka agent</h2>
@@ -133,33 +103,33 @@ allows to read logstash events from kafka.</p>
 <a href="https://github.com/yazgoo/fuse_kafka/blob/master/README.md">README</a>,
 we’ll first build fuse_kafka:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!bash</span>
-<span class="nv">$ </span>./fuse_kafka/build.py
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!bash
+$ ./fuse_kafka/build.py
 </code></pre></div></div>
 
 <p>Then, we’ll open one terminal and start zookeeper (this will also download kafka):</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!bash</span>
-<span class="nv">$ </span>./fuse_kafka/build.py zookeeper_start
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!bash
+$ ./fuse_kafka/build.py zookeeper_start
 </code></pre></div></div>
 
 <p>On another terminal, let’s start kafka:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!bash</span>
-<span class="nv">$ </span>./fuse_kafka/build.py kafka_start
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!bash
+$ ./fuse_kafka/build.py kafka_start
 </code></pre></div></div>
 
 <p>Now, we’ll start fuse_kafka shipper:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!bash</span>
-<span class="nv">$ </span><span class="nb">cd </span>fuse_kafka
-<span class="nv">$ </span>src/fuse_kafka.py start
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!bash
+$ cd fuse_kafka
+$ src/fuse_kafka.py start
 </code></pre></div></div>
 
 <p>Let’s check the shipper is running:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!bash</span>
-<span class="nv">$ </span>src/fuse_kafka.py status
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!bash
+$ src/fuse_kafka.py status
 listening on /tmp/fuse-kafka-test
 service is running
 </code></pre></div></div>
@@ -168,42 +138,42 @@ service is running
 
 <p>Ok, so from a new terminal, in fuse_kafka directory, let’s launch logstash:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ../logstash-1.4.2/bin/logstash -p src/ -f conf/logstash.conf
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ../logstash-1.4.2/bin/logstash -p src/ -f conf/logstash.conf
 </code></pre></div></div>
 
 <p>Now, let’s try and write to the directory that fuse_kafka is watching:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo "hello, world" &gt; /tmp/fuse-kafka-test/first
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo "hello, world" &gt; /tmp/fuse-kafka-test/first
 </code></pre></div></div>
 
 <p>On logstash terminal, you should get this output
 (see <a href="https://github.com/yazgoo/fuse_kafka/blob/master/README.md">README</a>
  for more information on each field):</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!ruby</span>
-<span class="p">{</span>
-          <span class="s2">"path"</span> <span class="o">=&gt;</span> <span class="s2">"/tmp/fuse-kafka-test/first"</span><span class="p">,</span>
-           <span class="s2">"pid"</span> <span class="o">=&gt;</span> <span class="mi">4682</span><span class="p">,</span>
-           <span class="s2">"uid"</span> <span class="o">=&gt;</span> <span class="mi">1000</span><span class="p">,</span>
-           <span class="s2">"gid"</span> <span class="o">=&gt;</span> <span class="mi">1000</span><span class="p">,</span>
-      <span class="s2">"@message"</span> <span class="o">=&gt;</span> <span class="s2">"hello, world</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
-    <span class="s2">"@timestamp"</span> <span class="o">=&gt;</span> <span class="s2">"2015-01-16T11:45:41.000+01:00"</span><span class="p">,</span>
-          <span class="s2">"user"</span> <span class="o">=&gt;</span> <span class="s2">"yazgoo"</span><span class="p">,</span>
-         <span class="s2">"group"</span> <span class="o">=&gt;</span> <span class="s2">"yazgoo"</span><span class="p">,</span>
-       <span class="s2">"command"</span> <span class="o">=&gt;</span> <span class="s2">"-bash "</span><span class="p">,</span>
-      <span class="s2">"@version"</span> <span class="o">=&gt;</span> <span class="s2">"0.1.4"</span><span class="p">,</span>
-       <span class="s2">"@fields"</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="s2">"hostname"</span> <span class="o">=&gt;</span> <span class="s2">"test"</span>
-    <span class="p">},</span>
-         <span class="s2">"@tags"</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="s2">"test"</span>
-    <span class="p">]</span>
-<span class="p">}</span>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!ruby
+{
+          "path" =&gt; "/tmp/fuse-kafka-test/first",
+           "pid" =&gt; 4682,
+           "uid" =&gt; 1000,
+           "gid" =&gt; 1000,
+      "@message" =&gt; "hello, world\n",
+    "@timestamp" =&gt; "2015-01-16T11:45:41.000+01:00",
+          "user" =&gt; "yazgoo",
+         "group" =&gt; "yazgoo",
+       "command" =&gt; "-bash ",
+      "@version" =&gt; "0.1.4",
+       "@fields" =&gt; {
+        "hostname" =&gt; "test"
+    },
+         "@tags" =&gt; [
+        [0] "test"
+    ]
+}
 </code></pre></div></div>
 
 <p>This shows that the whole thing worked as expected:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. fuse_kafka captured the writing done with echo and sent it to kafka
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. fuse_kafka captured the writing done with echo and sent it to kafka
 1. logstash read it from kafka
 </code></pre></div></div>
 
@@ -211,21 +181,21 @@ service is running
 
 <h3 id="logstash-configuration">logstash configuration</h3>
 
-<p>Let’s have a look at logstash configuration in <code class="highlighter-rouge">conf/logstash.conf</code>:</p>
+<p>Let’s have a look at logstash configuration in <code class="language-plaintext highlighter-rouge">conf/logstash.conf</code>:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!ruby</span>
-<span class="n">input</span>
-<span class="p">{</span>
-    <span class="n">kafka</span>
-    <span class="p">{</span>
-        <span class="nb">load</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s2">"$PWD/kafka_2.8.0-0.8.1.1/libs/**/*.jar"</span><span class="p">]</span>
-        <span class="n">zk_connect</span> <span class="o">=&gt;</span> <span class="s2">"localhost"</span>
-        <span class="n">group_id</span> <span class="o">=&gt;</span> <span class="s2">"logstash"</span>
-        <span class="n">topic</span> <span class="o">=&gt;</span> <span class="s2">"logs"</span>
-        <span class="n">num_threads</span> <span class="o">=&gt;</span> <span class="mi">4</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-<span class="n">output</span> <span class="p">{</span> <span class="n">stdout</span> <span class="p">{</span> <span class="n">codec</span> <span class="o">=&gt;</span> <span class="n">rubydebug</span> <span class="p">}</span> <span class="p">}</span>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!ruby
+input
+{
+    kafka
+    {
+        load =&gt; ["$PWD/kafka_2.8.0-0.8.1.1/libs/**/*.jar"]
+        zk_connect =&gt; "localhost"
+        group_id =&gt; "logstash"
+        topic =&gt; "logs"
+        num_threads =&gt; 4
+    }
+}
+output { stdout { codec =&gt; rubydebug } }
 </code></pre></div></div>
 
 <p>This is the most basic configuration (see <a href="http://logstash.net/docs/1.4.2/configuration#conditionals">documentation</a> for more information on the syntax).</p>
@@ -233,43 +203,43 @@ service is running
 <p>The output part is writing events to stdout.</p>
 
 <p>In the input part,
-we’re reading from a local kafka (<code class="highlighter-rouge">zk_connect</code> is zookeeper address),
-    <code class="highlighter-rouge">load</code>ing jars from kafka directory, and reading logs <code class="highlighter-rouge">topic</code>.</p>
+we’re reading from a local kafka (<code class="language-plaintext highlighter-rouge">zk_connect</code> is zookeeper address),
+    <code class="language-plaintext highlighter-rouge">load</code>ing jars from kafka directory, and reading logs <code class="language-plaintext highlighter-rouge">topic</code>.</p>
 
 <h3 id="kafka-plugin">kafka plugin</h3>
 
 <p>We use <a href="https://github.com/yazgoo/fuse_kafka/blob/master/src/logstash/inputs/kafka.rb">kafka input plugin</a>,
-which is available in <code class="highlighter-rouge">src/logstash/inputs/kafka.rb</code></p>
+which is available in <code class="language-plaintext highlighter-rouge">src/logstash/inputs/kafka.rb</code></p>
 
 <p>This plugin is based on kafka java consumer, hence the jars we load from
-<code class="highlighter-rouge">"$PWD/kafka_2.8.0-0.8.1.1/libs/**/*.jar"</code></p>
+<code class="language-plaintext highlighter-rouge">"$PWD/kafka_2.8.0-0.8.1.1/libs/**/*.jar"</code></p>
 
 <h2 id="using-elasticsearch-and-kibana">Using elasticsearch and kibana</h2>
 
 <p>logstash being so easy to use, we can enable kibana and elastic search,
-just by replacing the output line in <code class="highlighter-rouge">conf/logstash.conf</code> with:</p>
+just by replacing the output line in <code class="language-plaintext highlighter-rouge">conf/logstash.conf</code> with:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!ruby</span>
-<span class="n">output</span>
-<span class="p">{</span>
-    <span class="n">elasticsearch</span>
-    <span class="p">{</span>
-        <span class="n">host</span> <span class="o">=&gt;</span> <span class="n">localhost</span>
-        <span class="n">embedded</span> <span class="o">=&gt;</span> <span class="kp">true</span>
-    <span class="p">}</span>
-    <span class="n">stdout</span> <span class="p">{</span> <span class="n">codec</span> <span class="o">=&gt;</span> <span class="n">rubydebug</span> <span class="p">}</span>
-<span class="p">}</span>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!ruby
+output
+{
+    elasticsearch
+    {
+        host =&gt; localhost
+        embedded =&gt; true
+    }
+    stdout { codec =&gt; rubydebug }
+}
 </code></pre></div></div>
 
 <p>So now, let’s launch logstash with elasticsearch and kibana UI in embedded mode:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>../logstash-1.4.2/bin/logstash -p src/ -f conf/logstash.conf web --port 1234
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>../logstash-1.4.2/bin/logstash -p src/ -f conf/logstash.conf web --port 1234
 </code></pre></div></div>
 
 <p>A default UI should be available at 
 <a href="http://localhost:1234/index.html#/dashboard/file/guided.json">http://localhost:1234/index.html#/dashboard/file/guided.json</a></p>
 
-<p>On the <code class="highlighter-rouge">DOCUMENTS</code> widget, lets select:</p>
+<p>On the <code class="language-plaintext highlighter-rouge">DOCUMENTS</code> widget, lets select:</p>
 
 <ul>
   <li>@fields.hostname</li>
@@ -281,7 +251,7 @@ just by replacing the output line in <code class="highlighter-rouge">conf/logsta
 
 <p>Here is what we get:</p>
 
-<p><img src="http://localhost:4000/blag/images/kibana.png" alt="kibana screenshot" title="kibana screenshot" /></p>
+<p><img src="/blag/images/kibana.png" alt="kibana screenshot" title="kibana screenshot" /></p>
 
 <h2 id="conclusion">Conclusion</h2>
 
@@ -301,9 +271,8 @@ now can fit right with this power trio!</p>
 </p>
 
       </div>
-    </main>
-
-    <footer class="site-footer">
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blag/"></data>
 
   <div class="wrapper">
 
@@ -312,34 +281,11 @@ now can fit right with this power trio!</p>
     <div class="footer-col-wrapper">
       <div class="footer-col footer-col-1">
         <ul class="contact-list">
-          <li>
-            
-              It must be bunnies
-            
-            </li>
-            
-        </ul>
+          <li class="p-name">It must be bunnies</li></ul>
       </div>
 
-      <div class="footer-col footer-col-2">
-        <ul class="social-media-list">
-          
-          <li>
-            <a href="https://github.com/yazgoo"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
-</span><span class="username">yazgoo</span></a>
-
-          </li>
-          
-
-          
-          <li>
-            <a href="https://twitter.com/oogzay"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
-</span><span class="username">oogzay</span></a>
-
-          </li>
-          
-        </ul>
-      </div>
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/yazgoo"><svg class="svg-icon"><use xlink:href="/blag/assets/minima-social-icons.svg#github"></use></svg> <span class="username">yazgoo</span></a></li><li><a href="https://www.twitter.com/oogzay"><svg class="svg-icon"><use xlink:href="/blag/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">oogzay</span></a></li></ul>
+</div>
 
       <div class="footer-col footer-col-3">
         <p>My little blog</p>
@@ -349,8 +295,6 @@ now can fit right with this power trio!</p>
   </div>
 
 </footer>
-
-
-  </body>
+</body>
 
 </html>
