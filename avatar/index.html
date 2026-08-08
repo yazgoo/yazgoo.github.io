@@ -1,0 +1,220 @@
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: #00ff00;
+        font-family: sans-serif;
+        overflow: hidden;
+    }
+
+    #controls {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        width: 300px;
+        padding: 12px;
+        background: rgba(20, 20, 20, 0.85);
+        border-radius: 8px;
+        color: white;
+        z-index: 10;
+    }
+
+    .label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+        font-size: 13px;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    #start {
+        width: 100%;
+        padding: 8px;
+        border: 0;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    #avatar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+
+        max-width: 100%;
+        max-height: 100%;
+
+        width: 200px;
+        height: 200px;
+
+        object-fit: contain;
+
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+
+        /* Starting position */
+        transform: translate(-50%, -50%);
+    }
+</style>
+
+<div id="controls">
+
+    <div class="label">
+        <span>Volume</span>
+        <span id="volumeValue">0</span>
+    </div>
+
+    <input
+        id="volume"
+        type="range"
+        min="0"
+        max="100"
+        value="0"
+        disabled
+    >
+
+    <div class="label">
+        <span>Threshold</span>
+        <span id="thresholdValue">20</span>
+    </div>
+
+    <input
+        id="threshold"
+        type="range"
+        min="0"
+        max="100"
+        value="20"
+    >
+
+    <button id="start" >Enable microphone</button>
+
+</div>
+
+<img id="avatar" src="close.png" alt="Avatar">
+
+<script>
+    const avatar = document.getElementById("avatar");
+
+    const volumeSlider = document.getElementById("volume");
+    const volumeValue = document.getElementById("volumeValue");
+
+    const thresholdSlider = document.getElementById("threshold");
+    const thresholdValue = document.getElementById("thresholdValue");
+
+    const startButton = document.getElementById("start");
+
+    let audioContext;
+    let analyser;
+    let microphone;
+    let dataArray;
+
+    let talking = false;
+
+    // Smooth wobble state
+    let wobbleTime = 0;
+    let currentY = 0;
+
+    thresholdSlider.addEventListener("input", () => {
+        thresholdValue.textContent = thresholdSlider.value;
+    });
+
+    startButton.addEventListener("click", async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: true
+            });
+
+            audioContext = new AudioContext();
+
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 1024;
+
+            microphone = audioContext.createMediaStreamSource(stream);
+            microphone.connect(analyser);
+
+            dataArray = new Uint8Array(analyser.fftSize);
+
+            startButton.textContent = "Microphone enabled";
+            startButton.disabled = true;
+
+            updateVolume();
+            animateAvatar();
+
+        } catch (error) {
+            console.error(error);
+
+            alert(
+                "Could not access the microphone.\n\n" +
+                "Make sure microphone permission is allowed."
+            );
+        }
+    });
+
+    function updateVolume() {
+        analyser.getByteTimeDomainData(dataArray);
+
+        // Calculate RMS volume.
+        let sum = 0;
+
+        for (let i = 0; i < dataArray.length; i++) {
+            const value = (dataArray[i] - 128) / 128;
+            sum += value * value;
+        }
+
+        const rms = Math.sqrt(sum / dataArray.length);
+
+        // Convert to a convenient 0-100 range.
+        let volume = Math.min(100, rms * 300);
+
+        volumeSlider.value = volume;
+        volumeValue.textContent = Math.round(volume);
+
+        const threshold = Number(thresholdSlider.value);
+
+        if (volume >= threshold) {
+            if (!talking) {
+                talking = true;
+                avatar.src = "open.png";
+            }
+        } else {
+            if (talking) {
+                talking = false;
+                avatar.src = "close.png";
+            }
+        }
+
+        requestAnimationFrame(updateVolume);
+    }
+
+    // Smooth vertical bobbing animation
+    function animateAvatar() {
+        if (talking) {
+            wobbleTime += 0.08;
+
+            // Vertical movement in pixels
+            const targetY = Math.sin(wobbleTime) * 30;
+
+            // Smooth interpolation
+            currentY += (targetY - currentY) * 0.15;
+
+        } else {
+            // Smoothly return to center
+            currentY += (0 - currentY) * 0.15;
+        }
+
+        avatar.style.transform =
+            `translate(-50%, calc(-50% + ${currentY}px))`;
+
+        requestAnimationFrame(animateAvatar);
+    }
+</script>
