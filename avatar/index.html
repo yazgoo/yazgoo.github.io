@@ -96,8 +96,7 @@
         value="20"
     >
 
-    <button id="start" >Enable microphone</button>
-
+    <input id="backgroundColor" type="color" value="#00ff00">
 </div>
 
 <img id="avatar" src="close.png" alt="Avatar">
@@ -127,8 +126,13 @@
     thresholdSlider.addEventListener("input", () => {
         thresholdValue.textContent = thresholdSlider.value;
     });
+    const backgroundColor = document.getElementById("backgroundColor");
 
-    startButton.addEventListener("click", async () => {
+    backgroundColor.addEventListener("input", () => {
+        document.body.style.backgroundColor = backgroundColor.value;
+    });
+
+    async function startMicrophone() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: true
@@ -144,21 +148,15 @@
 
             dataArray = new Uint8Array(analyser.fftSize);
 
-            startButton.textContent = "Microphone enabled";
-            startButton.disabled = true;
-
             updateVolume();
             animateAvatar();
 
         } catch (error) {
-            console.error(error);
-
-            alert(
-                "Could not access the microphone.\n\n" +
-                "Make sure microphone permission is allowed."
-            );
+            console.error("Microphone error:", error);
         }
-    });
+    }
+
+    startMicrophone();
 
     function updateVolume() {
         analyser.getByteTimeDomainData(dataArray);
